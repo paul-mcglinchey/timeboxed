@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Timeboxed.Api": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7193",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "EnvironmentName": "dev"
+      }
+    }
+  }
+}

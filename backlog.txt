@@ -1,0 +1,13 @@
+ISSUES
+- need to only allow users to access clients within a group if they belong to that group, store in user auth via UserFront
+- refactor server to retrieve group access via auth (also pass in from front-end to specify the group to select from)
+- refactor colour generations out of specific classes -DONE
+	- make reusable
+	- update server / db when colour is generated for a client / user without colour
+- create tag component
+	- use composition to create a user tag component
+- activity log changes
+	- should expose an enumerated type which allows for a task to be set (CRUD)
+	- should allow an object to be set for reference (Client, session, group etc)
+	- lowercase everything, can write formatting methods at FE
+	- log the get requests for specific clients also

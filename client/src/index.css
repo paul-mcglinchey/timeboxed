@@ -1,0 +1,27 @@
+/* ./src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwindcss/forms;
+
+body {
+  margin: 0;
+  top: 0;
+}
+
+@layer components {
+  .text-color-header {
+    @apply text-blue-500 dark:text-blue-500;
+  }
+  .text-color-subheader {
+    @apply text-gray-700 dark:text-blue-300
+  }
+  .text-color-paragraph {
+    @apply text-gray-600 dark:text-gray-200
+  }
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Timeboxed.Migrator": {
+      "commandName": "Project",
+      "commandLineArgs": "\"server=localhost;initial catalog=Timeboxed;integrated security=true\""
+    }
+  }
+}
