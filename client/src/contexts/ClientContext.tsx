@@ -35,7 +35,7 @@ export const ClientContext = createContext<IClientContext>({
 export const ClientProvider = ({ children }: IClientProviderProps) => {
   const [clients, setClients] = useState<IClientListResponse[]>([])
   const [count, setCount] = useState<number>(0)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<any>()
 
   const [sortField, setSortField] = useState<string | undefined>(clientTableHeaders[0]!.value)

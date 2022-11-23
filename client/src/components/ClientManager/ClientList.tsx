@@ -29,7 +29,6 @@ const ClientList = ({ setAddClientOpen }: IClientListProps) => {
         <Fragment>
           <div className="flex flex-col flex-grow space-y-4">
             <SearchBar
-              filter={filter}
               setFilter={setFilter}
               initialFilterField={filterableFields[0]!}
               filterableFields={filterableFields}

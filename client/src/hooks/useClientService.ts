@@ -2,7 +2,7 @@ import { IClient, IClientListResponse, IClientsResponse, ISession, IUpdateSessio
 import { ClientContext } from "../contexts"
 import { endpoints } from '../config'
 import { useRequestBuilderService, useAsyncHandler, useResolutionService, useGroupService } from '.'
-import { useCallback, useContext } from "react"
+import { useContext } from "react"
 import { IClientService } from "./interfaces"
 
 const useClientService = (): IClientService => {
@@ -11,20 +11,20 @@ const useClientService = (): IClientService => {
   const { setClients, setCount, setIsLoading, buildQueryString } = clientContext
 
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler, asyncReturnHandler } = useAsyncHandler(setIsLoading)
   const { handleResolution } = useResolutionService()
   const { currentGroup } = useGroupService()
 
   const groupId: string | undefined = currentGroup?.id
 
-  const getClient = useCallback(async (clientId: string): Promise<IClient | undefined> => {
+  const getClient = asyncReturnHandler<IClient>(async (clientId: string) => {
     if (!groupId) throw new Error()
 
     const res = await fetch(endpoints.client(clientId, groupId), buildRequest('GET'))
     const json: IClient = await res.json()
 
     return json
-  }, [buildRequest, groupId])
+  })
 
   const addClient = asyncHandler(async (values: IClient) => {
     if (!groupId) throw new Error()

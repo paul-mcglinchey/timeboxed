@@ -5,7 +5,7 @@ import { IAsyncHandler } from "./interfaces"
 
 const useAsyncHandler = (setIsLoading: Dispatch<SetStateAction<boolean>>): IAsyncHandler => {
   const { addNotification } = useNotification()
-  
+
   const asyncHandler = useCallback((fn: (...args: any[]) => any, failureActions: (() => void)[] = [], notify: boolean = true) => async (...args: any) => {
     try {
       setIsLoading(true)
@@ -19,14 +19,19 @@ const useAsyncHandler = (setIsLoading: Dispatch<SetStateAction<boolean>>): IAsyn
     }
   }, [addNotification, setIsLoading])
   
-  const asyncReturnHandler = <T>(fn: (...args: any[]) => any) => async (...args: any): Promise<T | void> => {
+  const asyncReturnHandler = useCallback(<T>(fn: (...args: any[]) => any) => async (...args: any): Promise<T | undefined> => {
     try {
-      return await fn(...args)
+      setIsLoading(true)
+      var returnValue = await fn(...args)
     } catch (err) {
       console.error(err)
-      return addNotification('Something went wrong...', Notification.Error)
+      addNotification('Something went wrong...', Notification.Error)
+    } finally {
+      setIsLoading(false)
+
+      return returnValue
     }
-  }
+  }, [addNotification, setIsLoading])
   
   return { asyncHandler, asyncReturnHandler }
 }

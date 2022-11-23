@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Formik, Form } from "formik";
 import { Transition } from "@headlessui/react";
 import { SelectorIcon } from "@heroicons/react/solid";
@@ -14,25 +14,23 @@ interface IUpdateClientFormProps {
 
 const UpdateClientForm = ({ clientId, ContextualSubmissionButton }: IUpdateClientFormProps & IContextualFormProps) => {
 
-  const [middleNamesRequired, setMiddleNamesRequired] = useState(false)
-  const toggleMiddleNamesRequired = () => setMiddleNamesRequired(!middleNamesRequired)
-
-  const [addressActive, setAddressActive] = useState(false)
+  const [middleNamesExpanded, setMiddleNamesExpanded] = useState(false)
+  const [addressExpanded, setAddressExpanded] = useState(false)
   const [client, setClient] = useState<IClient | undefined>()
 
-  const { getClient, updateClient } = useClientService();
+  const { getClient, updateClient, isLoading, error } = useClientService()
+
+  const _fetchClient = useCallback(async () => {
+    setClient(await getClient(clientId))
+  }, [setClient, clientId])
 
   useEffect(() => {
-    const _fetch = async () => {
-      setClient(await getClient(clientId))
-    }
-
-    _fetch()
-  }, [clientId, getClient])
+    _fetchClient()
+  }, [_fetchClient])
 
   return (
     <>
-      {client && (
+      {client ? (
         <Formik
           enableReinitialize
           initialValues={{
@@ -59,11 +57,11 @@ const UpdateClientForm = ({ clientId, ContextualSubmissionButton }: IUpdateClien
             <Form className="flex flex-grow flex-col space-y-2 content-end">
               <div className="flex flex-col md:flex-row md:space-x-2 space-x-0 space-y-1 md:space-y-0">
                 <StyledField name="firstName" label="First name" errors={errors.firstName} touched={touched.firstName} />
-                {middleNamesRequired ? (
+                {middleNamesExpanded ? (
                   <StyledField name="middleNames" label="Middle Names" errors={errors.middleNames} touched={errors.middleNames} />
                 ) : (
                   <div className="relative flex md:block justify-center">
-                    <button className="relative" onClick={() => toggleMiddleNamesRequired()}>
+                    <button className="relative" onClick={() => setMiddleNamesExpanded(!middleNamesExpanded)}>
                       <SelectorIcon className="md:h-6 md:w-6 h-10 w-10 transform md:rotate-90 text-blue-500 hover:scale-110 transition-all" />
                     </button>
                   </div>
@@ -73,9 +71,9 @@ const UpdateClientForm = ({ clientId, ContextualSubmissionButton }: IUpdateClien
               <StyledField name="primaryEmailAddress" label="Email" errors={errors.primaryEmailAddress} touched={touched.primaryEmailAddress} />
               <StyledField name="primaryPhoneNumber" label="Phone number" errors={errors.primaryPhoneNumber} touched={touched.primaryPhoneNumber} />
               <StyledField type="date" name="birthDate" label="Date of Birth" component={CustomDate} errors={errors.birthDate} touched={touched.birthDate} />
-              <FormSection title="Address" state={addressActive} setState={setAddressActive}>
+              <FormSection title="Address" state={addressExpanded} setState={setAddressExpanded}>
                 <Transition
-                  show={addressActive}
+                  show={addressExpanded}
                   enter="transition ease-out duration-200"
                   enterFrom="transform opacity-0 scale-y-0"
                   enterTo="transform opacity-100 scale-y-100"
@@ -106,6 +104,14 @@ const UpdateClientForm = ({ clientId, ContextualSubmissionButton }: IUpdateClien
             </Form>
           )}
         </Formik>
+      ) : (
+        isLoading ? (
+          <div>Loading...</div>
+        ) : (
+          error && (
+            <div>{error}</div>
+          )
+        )
       )}
     </>
   )
