@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik, Form } from "formik";
 import { Transition } from "@headlessui/react";
 import { SelectorIcon } from "@heroicons/react/solid";
@@ -20,13 +20,13 @@ const UpdateClientForm = ({ clientId, ContextualSubmissionButton }: IUpdateClien
 
   const { getClient, updateClient, isLoading, error } = useClientService()
 
-  const _fetchClient = useCallback(async () => {
-    setClient(await getClient(clientId))
-  }, [setClient, getClient, clientId])
-
   useEffect(() => {
-    _fetchClient()
-  }, [_fetchClient])
+    const _fetch = async () => {
+      setClient(await getClient(clientId))
+    }
+
+    _fetch()
+  }, [clientId, getClient])
 
   return (
     <>
