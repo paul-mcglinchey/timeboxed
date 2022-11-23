@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import { loginValidationSchema } from '../../schema';
 import { useAuthService } from '../../hooks';
-import { StyledField, Button } from '.';
+import { FormikInput, Button } from '.';
 import { PublicWrapper, SpinnerIcon } from '.';
 
 const Login = () => {
@@ -25,8 +25,8 @@ const Login = () => {
           <Form>
             <div className="flex flex-col space-y-4">
               <div className="flex-col space-y-2">
-                <StyledField name="usernameOrEmail" label="Email or Username" errors={errors.usernameOrEmail} touched={touched.usernameOrEmail} />
-                <StyledField name="password" type="password" label="Password" errors={errors.password} touched={touched.password} />
+                <FormikInput name="usernameOrEmail" label="Email or Username" errors={errors.usernameOrEmail} touched={touched.usernameOrEmail} />
+                <FormikInput name="password" type="password" label="Password" errors={errors.password} touched={touched.password} />
               </div>
               <div className="flex justify-between">
                 <Link to='/signup' className="px-4 py-2 font-bold filter drop-shadow-none shadow-none transition-all dark:text-gray-600 dark:hover:text-gray-400">

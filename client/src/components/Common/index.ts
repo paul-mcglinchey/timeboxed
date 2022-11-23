@@ -14,9 +14,11 @@ export { default as FetchError } from './FetchError'
 
 export { default as FormSection } from './FormSection'
 export { default as CustomDate } from './CustomDate'
-export { default as StyledField } from './StyledField'
+export { default as FormikInput } from './FormikInput'
+export { default as Input } from './Input'
+export { default as TagInput } from './TagInput'
+export { default as InputLabel } from './InputLabel'
 export { default as StyledNumericField } from './StyledNumericField'
-export { default as StyledTagField } from './StyledTagField'
 
 export { ListboxSelector, ListboxMultiSelector } from './ListboxSelector'
 export { ComboboxMultiSelector } from './ComboboxSelector'

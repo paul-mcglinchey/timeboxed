@@ -4,7 +4,7 @@ import { ExternalLinkIcon } from '@heroicons/react/solid';
 import { useEmployeeService, useRotaService } from '../../hooks';
 import { IContextualFormProps, IRota } from '../../models';
 import { rotaValidationSchema } from '../../schema';
-import { StyledField, FormSection } from '../Common';
+import { FormikInput, FormSection } from '../Common';
 import { EmployeeMultiSelector, AddEmployeeModal } from '.';
 import { generateColour } from '../../services';
 
@@ -36,14 +36,14 @@ const RotaForm = ({ rota, ContextualSubmissionButton }: IRotaFormProps & IContex
         }}
       >
         {({ values, errors, touched, setFieldValue }) => (
-          <Form className="flex flex-1 flex-col space-y-6">
-            <div className="flex flex-col space-y-3">
-              <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0 items-end">
-                <StyledField name="name" label="Name" errors={errors.name} touched={touched.name} />
-                <StyledField type="number" name="closingHour" label="Closing hour" errors={errors.closingHour} touched={touched.closingHour} />
-              </div>
-              <StyledField as="textarea" name="description" label="Description" errors={errors.description} touched={touched.description} />
+          <Form>
+            <FormSection title="Details">
+            <div className="grid grid-cols-5 gap-2">
+              <FormikInput name="name" label="Name" errors={errors.name} touched={touched.name} classes="col-span-4"/>
+              <FormikInput type="number" name="closingHour" label="Closing hour" errors={errors.closingHour} touched={touched.closingHour} />
             </div>
+            <FormikInput as="textarea" name="description" label="Description" errors={errors.description} touched={touched.description} />
+            </FormSection>
             <div className="flex flex-col space-y-4">
               <FormSection title="Employees" state={values.employees.length > 0} setState={() => setFieldValue("employees", values.employees?.length > 0 ? [] : employees.map(e => e.id))}>
                 <div className="flex flex-col space-y-4 flex-grow rounded">

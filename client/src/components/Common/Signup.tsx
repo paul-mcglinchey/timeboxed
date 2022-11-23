@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import { signupValidationSchema } from '../../schema';
 import { useAuthService } from '../../hooks';
-import { StyledField, Button } from '.';
+import { FormikInput, Button } from '.';
 import { PublicWrapper, SpinnerIcon } from '.';
 
 const Signup = () => {
@@ -27,9 +27,9 @@ const Signup = () => {
           <Form>
             <div className="flex flex-col space-y-4">
               <div className="flex-col space-y-2">
-                <StyledField name="email" label="Email" errors={errors.email} touched={touched.email} />
-                <StyledField name="username" label="Username" errors={errors.username} touched={touched.username} />
-                <StyledField name="password" type="password" label="Password" errors={errors.password} touched={touched.password} />
+                <FormikInput name="email" label="Email" errors={errors.email} touched={touched.email} />
+                <FormikInput name="username" label="Username" errors={errors.username} touched={touched.username} />
+                <FormikInput name="password" type="password" label="Password" errors={errors.password} touched={touched.password} />
               </div>
               <div className="flex flex-grow justify-end items-center space-x-2">
                 {isLoading && (

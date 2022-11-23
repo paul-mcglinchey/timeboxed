@@ -46,7 +46,7 @@ const Modal = ({ children, title, description, isOpen, close, level = 1, allowAd
                   level === 1 && "mt-16 max-w-7xl", level === 2 && "mt-32 max-w-5xl"
                 )}
               >
-                <div className="flex justify-between mb-6 items-center">
+                <div className="flex justify-between mb-2 items-center">
                   <Dialog.Title
                     as="h2"
                     className="text-2xl font-semibold leading-6 text-color-header"

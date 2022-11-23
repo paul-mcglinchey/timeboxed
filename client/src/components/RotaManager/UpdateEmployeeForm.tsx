@@ -3,7 +3,7 @@ import { Formik, Form } from "formik";
 import { Transition } from "@headlessui/react";
 import { useEmployeeService } from "../../hooks";
 import { IContextualFormProps, IEmployee } from "../../models";
-import { CustomDate, FormSection, StyledField, ListboxSelector } from "../Common";
+import { CustomDate, FormSection, FormikInput, ListboxSelector } from "../Common";
 import { generateColour } from "../../services";
 
 interface IUpdateEmployeeFormProps {
@@ -56,7 +56,7 @@ const UpdateEmployeeForm = ({ employee, ContextualSubmissionButton }: IUpdateEmp
         <Form>
           <div className="flex flex-grow flex-col space-y-6 content-end">
             <FormSection title="Job description">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-2">
                 <ListboxSelector<string>
                   label="Employee Role"
                   showLabel
@@ -68,26 +68,24 @@ const UpdateEmployeeForm = ({ employee, ContextualSubmissionButton }: IUpdateEmp
                   label="Reports To"
                   showLabel
                   items={employees.map(e => ({ label: `${e.firstName} ${e.lastName}`, value: e.id }))}
-                  initialSelected={(e => e ? { value: e.id, label: `${e.firstName} ${e.lastName}`} : null)(getEmployee(values.reportsTo)) ?? null}
+                  initialSelected={(e => e ? { value: e.id, label: `${e.firstName} ${e.lastName}` } : null)(getEmployee(values.reportsTo)) ?? null}
                   onUpdate={(selected) => setFieldValue('role', selected.value)}
                 />
               </div>
             </FormSection>
             <FormSection title="Employee information">
               <div className="grid grid-cols-1 gap-4">
-                <div className="grid grid-cols-3 gap-4">
-                  <StyledField name="firstName" label="First name" errors={errors.firstName} touched={touched.firstName} />
-                  <StyledField name="middleNames" label="Middle Names" errors={errors.middleNames} touched={touched.middleNames} />
-                  <StyledField name="lastName" label="Last name" errors={errors.lastName} touched={touched.lastName} />
+                <div className="grid grid-cols-3 gap-2">
+                  <FormikInput name="firstName" label="First name" errors={errors.firstName} touched={touched.firstName} />
+                  <FormikInput name="middleNames" label="Middle Names" errors={errors.middleNames} touched={touched.middleNames} />
+                  <FormikInput name="lastName" label="Last name" errors={errors.lastName} touched={touched.lastName} />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <StyledField name="primaryEmailAddress" label="Email" errors={errors.primaryEmailAddress} touched={touched.primaryEmailAddress} />
-                  <StyledField name="primaryPhoneNumber" label="Phone number" errors={errors.primaryPhoneNumber} touched={touched.primaryPhoneNumber} />
-                  <StyledField type="date" name="birthDate" label="Date of Birth" component={CustomDate} errors={errors.birthDate} touched={touched.birthDate} />
-                  <StyledField type="date" name="startDate" label="Start date" component={CustomDate} errors={errors.startDate} touched={touched.startDate} />
+                <div className="grid grid-cols-2 gap-2">
+                  <FormikInput name="primaryEmailAddress" label="Email" errors={errors.primaryEmailAddress} touched={touched.primaryEmailAddress} />
+                  <FormikInput name="primaryPhoneNumber" label="Phone number" errors={errors.primaryPhoneNumber} touched={touched.primaryPhoneNumber} />
+                  <FormikInput type="date" name="birthDate" label="Date of Birth" component={CustomDate} errors={errors.birthDate} touched={touched.birthDate} />
+                  <FormikInput type="date" name="startDate" label="Start date" component={CustomDate} errors={errors.startDate} touched={touched.startDate} />
                 </div>
-              </div>
-              <div className="flex space-x-4">
               </div>
             </FormSection>
             <FormSection title="Employee address" showExpander expanded={showAddress} expanderAction={toggleShowAddress}>
@@ -99,23 +97,15 @@ const UpdateEmployeeForm = ({ employee, ContextualSubmissionButton }: IUpdateEmp
                 leave="transition ease-in duration-200"
                 leaveFrom="transform opacity-100 scale-y-100"
                 leaveTo="transform opacity-0 scale-y-0"
-                className="origin-top flex flex-col space-y-2"
+                className="origin-top"
               >
-                <div className="flex flex-col space-y-2">
-                  <div className="flex flex-col space-y-2">
-                    <StyledField name="firstLine" label="Address Line 1" errors={errors.firstLine} touched={touched.firstLine} />
-                    <StyledField name="secondLine" label="Address Line 2" errors={errors.secondLine} touched={touched.secondLine} />
-                    <StyledField name="thirdLine" label="Address Line 3" errors={errors.thirdLine} touched={touched.thirdLine} />
-                  </div>
-                  <div className="flex flex-1 md:flex-row flex-col md:space-x-2 space-x-0 space-y-2 md:space-y-0">
-                    <div className="md:max-w-1/5">
-                      <StyledField name="city" label="City" errors={errors.city} touched={touched.city} />
-                    </div>
-                    <div className="relative">
-                      <StyledField name="country" label="Country" errors={errors.country} touched={touched.country} />
-                    </div>
-                    <StyledField name="postCode" label="Post Code" errors={errors.postCode} touched={touched.postCode} />
-                  </div>
+                <FormikInput name="firstLine" label="Address Line 1" errors={errors.firstLine} touched={touched.firstLine} />
+                <FormikInput name="secondLine" label="Address Line 2" errors={errors.secondLine} touched={touched.secondLine} />
+                <FormikInput name="thirdLine" label="Address Line 3" errors={errors.thirdLine} touched={touched.thirdLine} />
+                <div className="grid grid-cols-3 gap-2">
+                  <FormikInput name="city" label="City" errors={errors.city} touched={touched.city} />
+                  <FormikInput name="country" label="Country" errors={errors.country} touched={touched.country} />
+                  <FormikInput name="postCode" label="Post Code" errors={errors.postCode} touched={touched.postCode} />
                 </div>
               </Transition>
             </FormSection>
@@ -130,9 +120,9 @@ const UpdateEmployeeForm = ({ employee, ContextualSubmissionButton }: IUpdateEmp
                 leaveTo="transform opacity-0 scale-y-0"
                 className="origin-top flex flex-col space-y-2"
               >
-                <div className="flex flex-col md:flex-row md:space-x-4 space-x-0 space-y-2 md:space-y-0">
-                  <StyledField name="minHours" label="Minimum hours" errors={errors.minHours} touched={touched.minHours} />
-                  <StyledField name="maxHours" label="Maximum hours" errors={errors.maxHours} touched={touched.maxHours} />
+                <div className="grid grid-cols-2 gap-2">
+                  <FormikInput name="minHours" label="Minimum hours" errors={errors.minHours} touched={touched.minHours} />
+                  <FormikInput name="maxHours" label="Maximum hours" errors={errors.maxHours} touched={touched.maxHours} />
                 </div>
               </Transition>
             </FormSection>

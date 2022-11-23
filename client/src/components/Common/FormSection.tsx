@@ -15,12 +15,10 @@ interface IFormSectionProps extends IChildrenProps {
 
 const FormSection = ({ children, title, classes, state, setState, showExpander, expanded, expanderAction }: IFormSectionProps) => {
   return (
-    <div className={combineClassNames("flex flex-col", classes)}>
+    <div className={combineClassNames("flex flex-col mb-4", classes)}>
       {showExpander && expanderAction ? (
         <button type="button" onClick={() => expanderAction()} className="flex justify-between items-center pb-2">
-          <div>
-            <h3 className="text-2xl font-semibold tracking-wide">{title}</h3>
-          </div>
+          <h3 className="text-lg font-semibold tracking-wide">{title}</h3>
           <div>
             {typeof state === "boolean" && typeof setState === "function" && (
               <Switch enabled={state} setEnabled={() => setState(!state)} description="" />
@@ -30,7 +28,7 @@ const FormSection = ({ children, title, classes, state, setState, showExpander, 
         </button>
       ) : (
         <div className="flex justify-between items-center pb-2">
-          <h3 className="text-2xl font-semibold tracking-wide">{title}</h3>
+          <h3 className="text-lg font-semibold tracking-wide">{title}</h3>
           {typeof state === "boolean" && typeof setState === "function" && (
             <Switch enabled={state} setEnabled={() => setState(!state)} description="" />
           )}

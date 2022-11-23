@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { IEmployeeSchedule, ISchedule } from "../../models"
 import { ScheduleShiftInput } from ".";
-import { Button, Modal, StyledField } from "../Common";
+import { Button, Modal, FormikInput } from "../Common";
 import { FormikContextType, getIn, useFormikContext } from "formik";
 import { getDateOnly } from "../../services";
 
@@ -68,24 +68,20 @@ const ScheduleTableRowItem = ({ values, day, employeeIndex, index, editing }: IS
         {() => (
           <div className="flex flex-col space-y-4">
             <div className="flex space-x-4">
-              <StyledField
+              <FormikInput
                 label="Start hour"
-                classes="uppercase"
-                noAutocomplete
                 name={`employeeSchedules.${employeeIndex}.shifts.${index}.startHour`}
                 errors={getIn(errors, `employeeSchedules.${employeeIndex}.shifts.${index}.startHour`)}
                 touched={getIn(touched, `employeeSchedules.${employeeIndex}.shifts.${index}.startHour`)}
               />
-              <StyledField
+              <FormikInput
                 label="Start hour"
-                classes="uppercase"
-                noAutocomplete
                 name={`employeeSchedules.${employeeIndex}.shifts.${index}.endHour`}
                 errors={getIn(errors, `employeeSchedules.${employeeIndex}.shifts.${index}.endHour`)}
                 touched={getIn(touched, `employeeSchedules.${employeeIndex}.shifts.${index}.endHour`)}
               />
             </div>
-            <StyledField
+            <FormikInput
               label="Notes"
               name={`employeeSchedules.${employeeIndex}.shifts.${index}.notes`}
               errors={getIn(errors, `employeeSchedules.${employeeIndex}.shifts.${index}.notes`)}

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Formik, Form } from 'formik';
-import { StyledField, Button } from '.';
+import { FormikInput, Button } from '.';
 import PublicWrapper from './PublicWrapper';
 
 const PasswordResetRequest = () => {
@@ -23,7 +23,7 @@ const PasswordResetRequest = () => {
           <Form>
             <div className="flex flex-col space-y-4">
               <div className="flex-col space-y-2">
-                <StyledField name="email" label="Email" errors={errors.email} touched={touched.email} />
+                <FormikInput name="email" label="Email" errors={errors.email} touched={touched.email} />
               </div>
               <div className="flex justify-between">
                 <Link to='/login'>

@@ -3,7 +3,7 @@ import { useGroupService, useUserService } from "../../hooks";
 import { IContextualFormProps, IGroup, IUser } from "../../models";
 import { generateColour } from "../../services";
 import { groupValidationSchema } from "../../schema";
-import { ColourPicker, FormSection, InlineButton, Modal, StyledField } from "../Common";
+import { ColourPicker, FormSection, InlineButton, Modal, FormikInput } from "../Common";
 import { ApplicationMultiSelector, UserRoleSelector } from '.'
 import { useState } from "react";
 
@@ -32,18 +32,14 @@ const GroupForm = ({ group, ContextualSubmissionButton }: IGroupFormProps & ICon
       }}
     >
       {({ errors, touched, values, setFieldValue, isValid }) => (
-        <Form className="flex flex-1 flex-col space-y-8">
-          <div className="flex flex-col space-y-4">
-            <div className="flex flex-col space-y-4">
-              <div className="flex space-x-4">
-                <StyledField name="name" label="Groupname" errors={errors.name} touched={touched.name} />
-                <div className="self-end mb-1">
-                  <ColourPicker square colour={values.colour} setColour={(pc) => setFieldValue('colour', pc)} />
-                </div>
-              </div>
-              <StyledField as="textarea" name="description" label="Description" errors={errors.description} touched={touched.description} />
+        <Form>
+          <FormSection title="Details">
+            <div className="flex items-end space-x-2">
+              <FormikInput name="name" label="Groupname" errors={errors.name} touched={touched.name} classes="flex flex-grow" />
+              <ColourPicker square colour={values.colour} setColour={(pc) => setFieldValue('colour', pc)} />
             </div>
-          </div>
+            <FormikInput as="textarea" name="description" label="Description" errors={errors.description} touched={touched.description} />
+          </FormSection>
           <FormSection title="Group Applications">
             <ApplicationMultiSelector
               formValues={values.applications}
@@ -80,8 +76,9 @@ const GroupForm = ({ group, ContextualSubmissionButton }: IGroupFormProps & ICon
           )}
           {ContextualSubmissionButton(group ? 'Update group' : 'Create group', undefined, isValid)}
         </Form>
-      )}
-    </Formik>
+      )
+      }
+    </Formik >
   )
 }
 
