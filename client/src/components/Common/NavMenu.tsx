@@ -41,9 +41,9 @@ const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
                 </Disclosure.Button>
               </div>
               <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-                <Link to="/" className="flex-shrink-0 flex items-center transform hover:scale-102 transition-transform">
+                <Link to="/" className="flex-shrink-0 flex space-x-2 items-center transform hover:scale-102 transition-transform">
                   <ThumbIcon
-                    className="lg:hidden h-10 w-10 dark:text-white"
+                    className="h-10 w-10 dark:text-white"
                     alt="tiebreaker"
                   />
                   <WideIcon
