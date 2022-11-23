@@ -2,7 +2,7 @@ import { IClient, IClientListResponse, IClientsResponse, ISession, IUpdateSessio
 import { ClientContext } from "../contexts"
 import { endpoints } from '../config'
 import { useRequestBuilderService, useAsyncHandler, useResolutionService, useGroupService } from '.'
-import { useContext } from "react"
+import { useContext, useMemo } from "react"
 import { IClientService } from "./interfaces"
 
 const useClientService = (): IClientService => {
@@ -17,14 +17,14 @@ const useClientService = (): IClientService => {
 
   const groupId: string | undefined = currentGroup?.id
 
-  const getClient = asyncReturnHandler<IClient>(async (clientId: string) => {
+  const getClient = useMemo(() => asyncReturnHandler<IClient | undefined>(async (clientId: string) => {
     if (!groupId) throw new Error()
 
     const res = await fetch(endpoints.client(clientId, groupId), buildRequest('GET'))
     const json: IClient = await res.json()
 
     return json
-  })
+  }), [asyncReturnHandler, buildRequest, groupId])
 
   const addClient = asyncHandler(async (values: IClient) => {
     if (!groupId) throw new Error()

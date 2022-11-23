@@ -19,7 +19,7 @@ const useAsyncHandler = (setIsLoading: Dispatch<SetStateAction<boolean>>): IAsyn
     }
   }, [addNotification, setIsLoading])
   
-  const asyncReturnHandler = useCallback(<T>(fn: (...args: any[]) => any) => async (...args: any): Promise<T | undefined> => {
+  const asyncReturnHandler = useCallback(<T>(fn: (...args: any[]) => any) => async (...args: any): Promise<T> => {
     try {
       setIsLoading(true)
       var returnValue = await fn(...args)

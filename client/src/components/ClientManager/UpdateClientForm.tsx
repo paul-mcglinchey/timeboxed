@@ -22,7 +22,7 @@ const UpdateClientForm = ({ clientId, ContextualSubmissionButton }: IUpdateClien
 
   const _fetchClient = useCallback(async () => {
     setClient(await getClient(clientId))
-  }, [setClient, clientId])
+  }, [setClient, getClient, clientId])
 
   useEffect(() => {
     _fetchClient()

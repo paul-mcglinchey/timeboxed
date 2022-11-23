@@ -1,8 +1,7 @@
-import { SearchIcon } from "@heroicons/react/solid";
+import { SearchIcon, XIcon } from "@heroicons/react/solid";
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { IFilter, IFilterableField } from "../../models";
 import { ListboxSelector } from "./ListboxSelector";
-import SquareIconButton from "./SquareIconButton";
 
 interface ISearchBarProps {
   setFilter: Dispatch<SetStateAction<IFilter>>
@@ -21,8 +20,8 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields }: ISearchB
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Enter') {
       console.log(e.key + ' pressed')
-      setFilter(f => ({ ...f, value: filterValue}))
-    } 
+      setFilter(f => ({ ...f, value: filterValue }))
+    }
   }, [filterValue, setFilter])
 
   useEffect(() => {
@@ -34,19 +33,26 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields }: ISearchB
   }, [handleKeyDown])
 
   return (
-    <div className="py-1 flex justify-between items-center text-gray-400 space-x-4 bg-gray-800 px-4 rounded-md shadowj">
-      <div className="flex flex-grow space-x-4 items-center">
-        <input id="search-bar" value={filterValue ?? ''} onChange={(e) => setFilterValue(e.target.value)} className="flex flex-1 px-2 my-2 bg-transparent outline-none focus:outline-none text-gray-400" />
-        <ListboxSelector<string>
-          initialSelected={{ value: initialFilterField.name, label: initialFilterField.label }}
-          items={filterableFields.map(ff => ({ value: ff.name, label: ff.label }))}
-          label="Searchable fields"
-          buttonClasses="bg-transparent hover:bg-gray-700 transition-colors p-4"
-          optionsClasses="w-40"
-          onUpdate={(item) => updateFilterField({ label: item.label, name: item.value })}
-        />
-        <SquareIconButton action={() => setFilter(f => ({ ...f, value: filterValue }))} Icon={SearchIcon} className="w-6 h-6" />
+    <div className="flex justify-between items-center rounded-md shadow">
+      <div className="flex flex-1 relative">
+        <input id="search-bar" value={filterValue ?? ''} onChange={(e) => setFilterValue(e.target.value)} className="flex flex-1 py-2 px-4 rounded-l-md bg-gray-800 outline-none focus:outline-none text-gray-400" />
+        {filterValue && (
+          <button onClick={() => setFilterValue(null)} className="absolute right-2 top-3 focus-within:outline outline-1 outline-offset-1 outline-blue-500 rounded text-gray-500">
+            <XIcon className="w-4 h-4" />
+          </button>
+        )}
       </div>
+      <ListboxSelector<string>
+        initialSelected={{ value: initialFilterField.name, label: initialFilterField.label }}
+        items={filterableFields.map(ff => ({ value: ff.name, label: ff.label }))}
+        label="Searchable fields"
+        buttonClasses="bg-gray-800 hover:bg-gray-700 transition-colors p-4 rounded-none"
+        optionsClasses="w-40"
+        onUpdate={(item) => updateFilterField({ label: item.label, name: item.value })}
+      />
+      <button className="py-2 px-4 bg-gray-800 rounded-r-md transition-colors hover:text-blue-500 focus-within:outline-none focus-within:text-blue-500" onClick={() => setFilter(f => ({ ...f, value: filterValue }))}>
+        <SearchIcon className="w-6 h-6" />
+      </button>
     </div>
   )
 }
