@@ -5,7 +5,6 @@
       "commandLineArgs": "--port 7193",
       "launchBrowser": false,
       "environmentVariables": {
-        "EnvironmentName": "dev"
       }
     }
   }
