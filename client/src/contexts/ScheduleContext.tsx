@@ -1,6 +1,6 @@
 import { createContext, useCallback, useEffect, useState } from "react";
 import { IChildrenProps, IFetch, ISchedule, ISchedulesResponse } from "../models";
-import { useFetch, useGroupService, useRequestBuilder } from "../hooks";
+import { useFetch, useGroupService, useRequestBuilderService } from "../hooks";
 import { endpoints } from "../config";
 import { IScheduleContext } from "./interfaces";
 
@@ -26,8 +26,8 @@ export const ScheduleProvider = ({ rotaId, children }: IScheduleProviderProps & 
 
   const { currentGroup } = useGroupService()
 
-  const { requestBuilder } = useRequestBuilder()
-  const { response }: IFetch<ISchedulesResponse> = useFetch(endpoints.schedules(rotaId || "", currentGroup?.id || ""), requestBuilder(), [rotaId, currentGroup], setIsLoading, setError)
+  const { buildRequest } = useRequestBuilderService()
+  const { response }: IFetch<ISchedulesResponse> = useFetch(endpoints.schedules(rotaId || "", currentGroup?.id || ""), buildRequest(), [rotaId, currentGroup], setIsLoading, setError)
 
   useEffect(() => {
     if (response) {

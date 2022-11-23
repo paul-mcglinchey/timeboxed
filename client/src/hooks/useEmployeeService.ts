@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { IEmployee } from "../models";
 import { generateColour } from "../services"
 import { EmployeeContext } from "../contexts";
-import { useRequestBuilder, useAsyncHandler, useResolutionService } from '../hooks'
+import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '../hooks'
 import { endpoints } from '../config'
 import useGroupService from "./useGroupService";
 import { IEmployeeService } from "./interfaces";
@@ -12,7 +12,7 @@ const useEmployeeService = (): IEmployeeService => {
   const employeeContext = useContext(EmployeeContext)
   const { employees, setEmployees, setIsLoading } = employeeContext
   
-  const { requestBuilder } = useRequestBuilder()
+  const { buildRequest } = useRequestBuilderService()
   const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { handleResolution } = useResolutionService()
 
@@ -25,7 +25,7 @@ const useEmployeeService = (): IEmployeeService => {
   const addEmployee = asyncHandler(async (values: IEmployee) => {
     if (!currentGroup?.id) throw new Error()
 
-    const res = await fetch(endpoints.employees(currentGroup.id), requestBuilder('POST', undefined, { ...values, colour: generateColour() }))
+    const res = await fetch(endpoints.employees(currentGroup.id), buildRequest('POST', undefined, { ...values, colour: generateColour() }))
     const json = await res.json()
 
     handleResolution(res, json, 'create', 'employee', [() => addEmployeeInContext(json)])
@@ -35,7 +35,7 @@ const useEmployeeService = (): IEmployeeService => {
     console.log(employeeId, currentGroup)
     if (!employeeId || !currentGroup?.id) throw new Error()
 
-    const res = await fetch(endpoints.employee(employeeId, currentGroup.id), requestBuilder('PUT', undefined, { ...values }))
+    const res = await fetch(endpoints.employee(employeeId, currentGroup.id), buildRequest('PUT', undefined, { ...values }))
     const json = await res.json()
 
     handleResolution(res, json, 'update', 'employee', [() => updateEmployeeInContext(employeeId, values)])
@@ -44,7 +44,7 @@ const useEmployeeService = (): IEmployeeService => {
   const deleteEmployee = asyncHandler(async (employeeId: string | undefined) => {
     if (!employeeId || !currentGroup?.id) throw new Error()
 
-    const res = await fetch(endpoints.employee(employeeId, currentGroup?.id), requestBuilder('DELETE'))
+    const res = await fetch(endpoints.employee(employeeId, currentGroup?.id), buildRequest('DELETE'))
     const json = await res.json()
 
     handleResolution(res, json, 'delete', 'employee', [() => deleteEmployeeInContext(employeeId)])

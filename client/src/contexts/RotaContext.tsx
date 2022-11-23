@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { IChildrenProps, IFetch, IRota, IRotasResponse } from "../models";
-import { useFetch, useGroupService, useRequestBuilder } from "../hooks";
+import { useFetch, useGroupService, useRequestBuilderService } from "../hooks";
 import { endpoints, rotaTableHeaders } from "../config";
 import { IRotaContext } from "./interfaces";
 import { SortDirection } from "../enums";
@@ -32,8 +32,8 @@ export const RotaProvider = ({ children }: IChildrenProps) => {
   const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.Desc)
 
   const { currentGroup } = useGroupService()
-  const { requestBuilder } = useRequestBuilder()
-  const { response }: IFetch<IRotasResponse> = useFetch(endpoints.rotas(currentGroup?.id || ""), requestBuilder(), [sortField, sortDirection, currentGroup], setIsLoading, setError)
+  const { buildRequest } = useRequestBuilderService()
+  const { response }: IFetch<IRotasResponse> = useFetch(endpoints.rotas(currentGroup?.id || ""), buildRequest(), [sortField, sortDirection, currentGroup], setIsLoading, setError)
 
   useEffect(() => {
     if (response) {

@@ -1,6 +1,6 @@
-import { createContext, useEffect, useState } from "react";
-import { IChildrenProps, IFetch, IClient, IClientsResponse, IFilter } from "../models";
-import { useFetch, useGroupService, useRequestBuilder } from "../hooks";
+import { createContext, useCallback, useEffect, useState } from "react";
+import { IChildrenProps, IClientListResponse, IClientsResponse, IFilter } from "../models";
+import { useAsyncHandler, useGroupService, useRequestBuilderService } from "../hooks";
 import { clientTableHeaders, endpoints } from "../config";
 import { getItemInLocalStorage, setItemInLocalStorage } from "../services";
 import { IClientContext } from "./interfaces";
@@ -23,31 +23,17 @@ export const ClientContext = createContext<IClientContext>({
   setPageNumber: () => {},
   pageSize: 10,
   setPageSize: () => {},
-  filters: {},
-  setFilters: () => {},
+  filter: { value: null, label: null, name: null },
+  setFilter: () => {},
+  buildQueryString: () => {},
   isLoading: false,
   setIsLoading: () => {},
   error: undefined,
   setError: () => {}
 });
 
-const buildQueryString = (pageNumber: number, pageSize: number, sortField: string | undefined, sortDirection: SortDirection, filters: IFilter) => {
-  var queryString = "";
-
-  queryString += `pageNumber=${pageNumber}&pageSize=${pageSize}&`;
-  queryString += `sortField=${sortField}&sortDirection=${sortDirection}`
-
-  for (var key in filters) {
-    if (filters[key]!.value) {
-      queryString += `&${key}=${filters[key]!.value}`
-    }
-  }
-
-  return queryString;
-}
-
 export const ClientProvider = ({ children }: IClientProviderProps) => {
-  const [clients, setClients] = useState<IClient[]>([])
+  const [clients, setClients] = useState<IClientListResponse[]>([])
   const [count, setCount] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<any>()
@@ -57,27 +43,40 @@ export const ClientProvider = ({ children }: IClientProviderProps) => {
   const [pageNumber, setPageNumber] = useState<number>(parseInt(getItemInLocalStorage('clientlist-pagenumber') || "1"));
   const [pageSize, setPageSize] = useState<number>(parseInt(getItemInLocalStorage('clientlist-pagesize') || "10"));
 
-  const [filters, setFilters] = useState<IFilter>({
-    'name': { value: null, label: 'Name' }
-  });
+  const [filter, setFilter] = useState<IFilter>({ value: null, label: null, name: null })
 
   const { currentGroup } = useGroupService()
-  const { requestBuilder } = useRequestBuilder()
-  const { response }: IFetch<IClientsResponse> = useFetch
-  (
-    `${endpoints.clients(currentGroup?.id || "")}?${buildQueryString(pageNumber, pageSize, sortField, sortDirection, filters)}`, 
-    requestBuilder(), 
-    [sortField, sortDirection, pageSize, pageNumber, filters, currentGroup],
-    setIsLoading,
-    setError
-  )
+  const { buildRequest } = useRequestBuilderService()
+  const { asyncHandler } = useAsyncHandler(setIsLoading)
+
+  const buildQueryString = useCallback(() => {
+    var queryString = "?";
+  
+    queryString += `pageNumber=${pageNumber}&pageSize=${pageSize}&`;
+    queryString += `sortField=${sortField}&sortDirection=${sortDirection}`
+
+    if (filter.value) queryString += `${queryString.includes('?') ? '&' : '?'}${filter.name}=${filter.value}`
+  
+    return queryString;
+  }, [filter, pageNumber, pageSize, sortField, sortDirection])
+
+  const fetchClients = useCallback(async () => {
+    if (currentGroup) {
+      const res = await fetch(`${endpoints.clients(currentGroup.id)}${buildQueryString()}`, buildRequest())
+      const json: IClientsResponse = await res.json()
+
+      setClients(json.items)
+      setCount(json.count)
+    }
+  }, [currentGroup, buildQueryString, buildRequest])
 
   useEffect(() => {
-    if (response) {
-      setClients(response.items)
-      setCount(response.count)
-    }
-  }, [response])
+
+    const _fetch = asyncHandler(async () => await fetchClients())
+
+    _fetch()
+
+  }, [fetchClients, asyncHandler])
 
   useEffect(() => {
     setItemInLocalStorage('clientlist-pagenumber', pageNumber)
@@ -100,8 +99,9 @@ export const ClientProvider = ({ children }: IClientProviderProps) => {
     setPageNumber,
     pageSize,
     setPageSize,
-    filters,
-    setFilters,
+    filter,
+    setFilter,
+    buildQueryString,
     isLoading,
     setIsLoading,
     error,

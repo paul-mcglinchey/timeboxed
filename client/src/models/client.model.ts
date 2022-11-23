@@ -42,7 +42,20 @@ export interface IUpdateClientRequest {
   colour: string | null
 }
 
+export interface IClientListResponse extends ITracking {
+  id: string
+  firstName: string
+  lastName: string
+  primaryEmailAddress: string
+  sessions: string[]
+  colour: string
+}
+
 export interface IClientsResponse {
   count: number
-  items: IClient[]
+  items: IClientListResponse[]
+}
+
+export interface IClientResponse {
+  client: IClient
 }

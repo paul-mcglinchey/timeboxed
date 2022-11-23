@@ -46,7 +46,7 @@ namespace Timeboxed.Api.Models.Responses
         [JsonConverter(typeof(NullableDateOnlyJsonConverter))]
         public DateOnly? BirthDate { get; set; }
 
-        public List<SessionResponse> Sessions { get; set; }
+        public List<Guid> Sessions { get; set; }
 
         public string Colour { get; set; }
 
@@ -69,7 +69,7 @@ namespace Timeboxed.Api.Models.Responses
             PostCode = client.PostCode,
             ZipCode = client.ZipCode,
             BirthDate = client.BirthDate,
-            Sessions = client.Sessions.Select<Session, SessionResponse>(s => s).ToList(),
+            Sessions = client.Sessions.Select(s => s.Id).ToList(),
             Colour = client.Colour,
             UpdatedAt = client.UpdatedAt,
             CreatedAt = client.CreatedAt,

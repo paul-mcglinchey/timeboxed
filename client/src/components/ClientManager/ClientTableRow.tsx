@@ -1,10 +1,10 @@
 import { ViewGridAddIcon } from '@heroicons/react/outline';
 import { useUserService } from '../../hooks';
-import { IClient } from '../../models';
+import { IClientListResponse } from '../../models';
 import { InlineLink, InlineButton, TableRow, TableRowItem, Modal, UpdateClientForm, AddSessionForm } from '..';
 import { useState } from 'react';
 
-const ClientTableRow = ({ client }: { client: IClient }) => {
+const ClientTableRow = ({ client }: { client: IClientListResponse }) => {
 
   const [editClientOpen, setEditClientOpen] = useState<boolean>(false)
   const [addSessionOpen, setAddSessionOpen] = useState<boolean>(false)
@@ -66,7 +66,7 @@ const ClientTableRow = ({ client }: { client: IClient }) => {
           close={() => setEditClientOpen(false)}
         >
           {(ConfirmationButton) => (
-            <UpdateClientForm ContextualSubmissionButton={ConfirmationButton} client={client} />
+            <UpdateClientForm ContextualSubmissionButton={ConfirmationButton} clientId={client.id} />
           )}
         </Modal>
       </TableRowItem>

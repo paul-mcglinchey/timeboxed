@@ -1,6 +1,10 @@
 export interface IFilter {
-  [key: string]: {
-    value: any | null,
-    label: string
-  }
+  value: string | null
+  name: string | null
+  label: string | null
+}
+
+export interface IFilterableField {
+  label: string
+  name: string
 }

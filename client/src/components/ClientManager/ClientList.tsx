@@ -1,6 +1,6 @@
 import { Dispatch, Fragment, SetStateAction } from 'react';
 import { UserAddIcon } from '@heroicons/react/solid';
-import { IClient } from '../../models';
+import { IClientListResponse, IFilterableField } from '../../models';
 import { useAuthService, useClientService } from '../../hooks';
 import { Paginator, Table, Prompter, SearchBar } from '../Common';
 import { ClientTableRow } from '.';
@@ -13,27 +13,31 @@ interface IClientListProps {
 
 const ClientList = ({ setAddClientOpen }: IClientListProps) => {
 
-  const { clients, count, filters, setFilters, sortField, setSortField, sortDirection, setSortDirection, isLoading, pageNumber, setPageNumber, pageSize, setPageSize } = useClientService()
+  const { clients, count, filter, setFilter, sortField, setSortField, sortDirection, setSortDirection, isLoading, pageNumber, setPageNumber, pageSize, setPageSize } = useClientService()
   const { hasPermission } = useAuthService()
 
-  const filtersApplied = (): boolean => {
-    return Object.keys(filters).every(f => ![null, undefined, ''].includes(filters[f]?.value))
-  }
+  const filterApplied = (): boolean => filter.value !== null
+
+  const filterableFields: IFilterableField[] = [
+    { name: 'name', label: 'Name' },
+    { name: 'email', label: 'Email' }
+  ]
 
   return (
     <div className="rounded-lg flex flex-col space-y-0 pb-2">
-      {(count > 0 || filtersApplied()) ? (
+      {(count > 0 || filterApplied()) ? (
         <Fragment>
           <div className="flex flex-col flex-grow space-y-4">
             <SearchBar
-              filters={filters}
-              setFilters={setFilters} 
-              searchField='name'
+              filter={filter}
+              setFilter={setFilter}
+              initialFilterField={filterableFields[0]!}
+              filterableFields={filterableFields}
             />
             <Table isLoading={isLoading}>
               <Table.SortableHeader headers={clientTableHeaders} sortField={sortField} setSortField={setSortField} sortDirection={sortDirection} setSortDirection={setSortDirection} />
               <Table.Body>
-                {clients.map((c: IClient, index: number) => (
+                {clients.map((c: IClientListResponse, index: number) => (
                   <ClientTableRow client={c} key={index} />
                 ))}
               </Table.Body>

@@ -1,12 +1,13 @@
 import { Dispatch, SetStateAction } from "react"
-import { IClient, IFilter, ISortable, ILoadable, IPageable } from '../../models'
+import { IFilter, ISortable, ILoadable, IPageable, IClientListResponse } from '../../models'
 
 export interface IClientContext extends ISortable, ILoadable, IPageable {
-  clients: IClient[]
-  setClients: Dispatch<SetStateAction<IClient[]>>
+  clients: IClientListResponse[]
+  setClients: Dispatch<SetStateAction<IClientListResponse[]>>
   count: number
   setCount: Dispatch<SetStateAction<number>>
-  filters: IFilter,
-  setFilters: (filters: IFilter) => void,
+  filter: IFilter,
+  setFilter: Dispatch<SetStateAction<IFilter>>,
+  buildQueryString: () => void
   error: any | undefined
 }

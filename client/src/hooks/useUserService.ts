@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { IGroup, IUser } from "../models"
 import { UserContext } from "../contexts"
 import { IUserService } from "./interfaces"
-import { useAsyncHandler, useRequestBuilder, useResolutionService, useRoleService } from "."
+import { useAsyncHandler, useRequestBuilderService, useResolutionService, useRoleService } from "."
 import { endpoints } from "../config"
 
 const useUserService = (): IUserService => {
@@ -10,7 +10,7 @@ const useUserService = (): IUserService => {
   const { users, setUsers, setIsLoading } = userContext
 
   const { asyncHandler } = useAsyncHandler(setIsLoading)
-  const { requestBuilder } = useRequestBuilder()
+  const { buildRequest } = useRequestBuilderService()
   const { handleResolution } = useResolutionService()
   const { getRole } = useRoleService()
 
@@ -21,7 +21,7 @@ const useUserService = (): IUserService => {
   const updateUser = asyncHandler(async (userId: string | undefined, values: IUser) => {
     if (!userId) throw new Error()
 
-    const res = await fetch(endpoints.user(userId), requestBuilder('PUT', undefined, values))
+    const res = await fetch(endpoints.user(userId), buildRequest('PUT', undefined, values))
     const json = await res.json()
 
     handleResolution(res, json, 'update', 'user', [() => updateUserInContext(userId, values)])

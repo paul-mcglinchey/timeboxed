@@ -9,7 +9,7 @@ namespace Timeboxed.Api.Services.Interfaces
 {
     public interface IClientService
     {
-        public Task<ListResponse<ClientResponse>> GetClientsAsync(GetClientsRequest requestParameters, CancellationToken cancellationToken);
+        public Task<ListResponse<ClientListResponse>> GetClientsAsync(GetClientsRequest requestParameters, CancellationToken cancellationToken);
 
         public Task<ClientResponse> GetClientByIdAsync(Guid clientId, CancellationToken cancellationToken);
 

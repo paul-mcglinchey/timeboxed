@@ -4,7 +4,7 @@ import { IScheduleService } from "./interfaces";
 import { ScheduleContext } from "../contexts";
 import { endpoints } from '../config'
 import { addDays, subDays } from "date-fns";
-import { useAsyncHandler, useResolutionService, useGroupService, useRequestBuilder } from "../hooks";
+import { useAsyncHandler, useResolutionService, useGroupService, useRequestBuilderService } from "../hooks";
 import { getDateOnly } from "../services";
 
 const useScheduleService = (): IScheduleService => {
@@ -13,7 +13,7 @@ const useScheduleService = (): IScheduleService => {
   const { getSchedules, setSchedules, setIsLoading } = scheduleContext
   
   const { asyncReturnHandler } = useAsyncHandler(setIsLoading)
-  const { requestBuilder } = useRequestBuilder()
+  const { buildRequest } = useRequestBuilderService()
   const { handleResolution } = useResolutionService()
   
   const { currentGroup } = useGroupService()
@@ -23,7 +23,7 @@ const useScheduleService = (): IScheduleService => {
   const updateSchedule = asyncReturnHandler<ISchedule>(async (values: IScheduleRequest, scheduleId: string,  rotaId: string): Promise<ISchedule> => {
     if (!currentGroup) throw new Error("Group not set")
 
-    const res = await fetch(endpoints.schedule(rotaId, currentGroup.id, scheduleId), requestBuilder("PUT", undefined, values))
+    const res = await fetch(endpoints.schedule(rotaId, currentGroup.id, scheduleId), buildRequest("PUT", undefined, values))
     const json: ISchedule = await res.json()
 
     handleResolution(res, json, 'update', 'schedule', [() => updateSchedulesInContext(json, scheduleId)])
@@ -34,7 +34,7 @@ const useScheduleService = (): IScheduleService => {
   const createSchedule = asyncReturnHandler<ISchedule>(async (values: IScheduleRequest, rotaId: string): Promise<ISchedule> => {
     if (!currentGroup?.id) throw new Error()
 
-    const res = await fetch(endpoints.schedules(rotaId, currentGroup.id), requestBuilder('POST', undefined, values))
+    const res = await fetch(endpoints.schedules(rotaId, currentGroup.id), buildRequest('POST', undefined, values))
     const json: ISchedule = await res.json()
 
     handleResolution(res, json, 'create', 'schedule', [() => updateSchedulesInContext(json)])

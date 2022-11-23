@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { IChildrenProps, IGroup, IGroupsResponse } from "../models";
-import { useAsyncHandler, useAuthService, useIsMounted, useRequestBuilder } from "../hooks";
+import { useAsyncHandler, useAuthService, useIsMounted, useRequestBuilderService } from "../hooks";
 import { endpoints } from "../config";
 import { getItemInLocalStorage, setItemInLocalStorage } from "../services";
 import { IGroupContext } from "./interfaces";
@@ -26,14 +26,14 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
   const [error, setError] = useState<any>()
   const [currentGroup, setCurrentGroup] = useState<IGroup | undefined>(groups && groups.find(g => g.id === getItemInLocalStorage('group-id')))
   
-  const { requestBuilder } = useRequestBuilder()
+  const { buildRequest } = useRequestBuilderService()
   const { user } = useAuthService()
   const { asyncHandler } = useAsyncHandler(setIsLoading)
   const isMounted = useIsMounted()
   
   useEffect(() => {
     const _fetch = asyncHandler(async () => {
-      var res = await fetch(endpoints.groups, requestBuilder())
+      var res = await fetch(endpoints.groups, buildRequest())
       var json: IGroupsResponse = await res.json()
 
       setGroups(json.items)

@@ -38,7 +38,7 @@ namespace Timeboxed.Api.Controllers
         }
 
         [FunctionName("GetClients")]
-        public async Task<ActionResult<ListResponse<ClientResponse>>> GetClients(
+        public async Task<ActionResult<ListResponse<ClientListResponse>>> GetClients(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups/{groupId}/clients")] HttpRequest req,
             string groupId,
             ILogger logger,
@@ -81,7 +81,7 @@ namespace Timeboxed.Api.Controllers
                 cancellationToken);
 
         [FunctionName("AddClient")]
-        public async Task<ActionResult<ClientResponse>> AddClient(
+        public async Task<ActionResult<ListResponse<ClientListResponse>>> AddClient(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "groups/{groupId}/clients")] HttpRequest req,
             string groupId,
             ILogger logger,
@@ -91,14 +91,20 @@ namespace Timeboxed.Api.Controllers
                 groupId,
                 async () =>
                 {
-                    var requestBody = await ConstructRequestModelAsync<AddClientRequest>(req);
+                    var requestBody = await req.ConstructRequestModelAsync<AddClientRequest>();
+                    var requestParameters = req.DeserializeQueryParams<GetClientsRequest>();
 
                     if (requestBody.FirstName == null || requestBody.LastName == null || requestBody.PrimaryEmailAddress == null)
                     {
                         return new BadRequestObjectResult(new { message = "Fields missing from request" });
                     }
 
-                    return new CreatedAtRouteResult("clients", await this.clientService.AddClientAsync(requestBody, cancellationToken));
+                    var client = await this.clientService.AddClientAsync(requestBody, cancellationToken);
+
+                    return new CreatedAtRouteResult(
+                        nameof(this.GetClientById),
+                        new { groupId = client.GroupId.ToString(), clientId = client.Id.ToString() },
+                        await this.clientService.GetClientsAsync(requestParameters, cancellationToken));
                 },
                 cancellationToken);
 
@@ -126,7 +132,7 @@ namespace Timeboxed.Api.Controllers
                 cancellationToken);
 
         [FunctionName("DeleteClient")]
-        public async Task<ActionResult<Guid>> DeleteClient(
+        public async Task<ActionResult<ListResponse<ClientResponse>>> DeleteClient(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "groups/{groupId}/clients/{clientId}")] HttpRequest req,
             string groupId,
             string clientId,
@@ -137,12 +143,16 @@ namespace Timeboxed.Api.Controllers
                 groupId,
                 async () =>
                 {
+                    var requestParameters = req.DeserializeQueryParams<GetClientsRequest>();
+
                     if (clientId == null || !Guid.TryParse(clientId, out Guid clientIdGuid))
                     {
                         return new BadRequestObjectResult(new { message = "Client ID supplied is not a valid GUID" });
                     }
 
-                    return new OkObjectResult(new { clientId = await this.clientService.DeleteClientAsync(clientIdGuid, cancellationToken) });
+                    await this.clientService.DeleteClientAsync(clientIdGuid, cancellationToken);
+
+                    return new OkObjectResult(await this.clientService.GetClientsAsync(requestParameters, cancellationToken));
                 },
                 cancellationToken);
 

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { FieldArray, Form, Formik } from "formik"
 import { PlusIcon } from "@heroicons/react/solid"
-import { useFetch, useRequestBuilder, useListCollectionService } from "../../hooks"
+import { useFetch, useRequestBuilderService, useListCollectionService } from "../../hooks"
 import { IFetch, IList, IListCollection, IListValue } from "../../models"
 import { generateColour } from "../../services"
 import { endpoints } from "../../config"
@@ -12,14 +12,14 @@ const SystemListCollectionPanel = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<any>()
-  const { requestBuilder } = useRequestBuilder()
+  const { buildRequest } = useRequestBuilderService()
   const { init, update } = useListCollectionService()
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   return (
     <Fetch
-      fetchOutput={useFetch(endpoints.systemlistcollections, requestBuilder(), [], setIsLoading, setError)}
+      fetchOutput={useFetch(endpoints.systemlistcollections, buildRequest(), [], setIsLoading, setError)}
       render={({ response }: IFetch<IListCollection>) => (
         <>
           {!isLoading && response && response.lists ? (

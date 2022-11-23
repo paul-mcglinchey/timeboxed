@@ -5,7 +5,7 @@ export { default as useDelayedRendering } from './useDelayedRendering';
 export { default as useNotification } from './useNotification';
 export { default as useStateCallback } from './useStateCallback';
 export { default as useIsMounted } from './useIsMounted';
-export { default as useRequestBuilder } from './useRequestBuilder';
+export { default as useRequestBuilderService } from './useRequestBuilderService';
 export { default as useAsyncHandler } from './useAsyncHandler'
 export { default as useTheme } from './useTheme'
 

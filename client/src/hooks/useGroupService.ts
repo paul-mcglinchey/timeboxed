@@ -2,14 +2,14 @@ import { useContext } from "react"
 import { IGroup, IGroupRequest } from "../models"
 import { GroupContext } from "../contexts"
 import { endpoints } from '../config'
-import { useRequestBuilder, useAsyncHandler, useResolutionService } from '.'
+import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '.'
 import { IGroupService } from "./interfaces"
 
 const useGroupService = (): IGroupService => {
   const groupContext = useContext(GroupContext)
   const { groups, setGroups, setCount, setIsLoading } = groupContext
   
-  const { requestBuilder } = useRequestBuilder()
+  const { buildRequest } = useRequestBuilderService()
   const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { handleResolution } = useResolutionService()
 
@@ -18,7 +18,7 @@ const useGroupService = (): IGroupService => {
   }
 
   const addGroup = asyncHandler(async (values: IGroupRequest) => {
-    const res = await fetch(endpoints.groups, requestBuilder('POST', undefined, values))
+    const res = await fetch(endpoints.groups, buildRequest('POST', undefined, values))
     const json = await res.json()
 
     handleResolution(res, json, 'create', 'group', [() => addGroupInContext(json)])
@@ -27,7 +27,7 @@ const useGroupService = (): IGroupService => {
   const updateGroup = asyncHandler(async (values: IGroupRequest, groupId: string | undefined) => {
     if (!groupId) throw new Error('Group ID not set')
 
-    const res = await fetch(endpoints.group(groupId), requestBuilder('PUT', undefined, values))
+    const res = await fetch(endpoints.group(groupId), buildRequest('PUT', undefined, values))
     const json = await res.json()
 
     console.log(groupId === json.id)
@@ -38,7 +38,7 @@ const useGroupService = (): IGroupService => {
   const deleteGroup = asyncHandler(async (groupId: string | undefined) => {
     if (!groupId) throw new Error('Group ID not set')
     
-    const res = await fetch(endpoints.group(groupId), requestBuilder("DELETE"))
+    const res = await fetch(endpoints.group(groupId), buildRequest("DELETE"))
     const json = await res.json()
 
     handleResolution(res, json, 'delete', 'group', [() => deleteGroupInContext(groupId)])

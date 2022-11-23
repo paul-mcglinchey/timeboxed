@@ -1,4 +1,4 @@
-  import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Navigate,
   Route,
@@ -17,7 +17,13 @@ const ClientPage = () => {
   const { getClient } = useClientService()
 
   useEffect(() => {
-    clientId && setClient(getClient(clientId))
+    const _fetch = async () => {
+      if (clientId) {
+        setClient(await getClient(clientId))
+      }
+    }
+    
+    _fetch()
   }, [clientId, getClient])
 
   return (

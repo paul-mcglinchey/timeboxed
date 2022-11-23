@@ -1,5 +1,5 @@
 import { IGroupUserService } from "./interfaces"
-import { useAsyncHandler, useGroupService, useRequestBuilder, useResolutionService } from "."
+import { useAsyncHandler, useGroupService, useRequestBuilderService, useResolutionService } from "."
 import { endpoints } from "../config"
 import { useState } from "react"
 import { IGroupUser, IGroupUserRequest } from "../models"
@@ -10,13 +10,13 @@ const useGroupUserService = (): IGroupUserService => {
 
   const { setGroups } = useGroupService()
   const { asyncHandler } = useAsyncHandler(setIsLoading)
-  const { requestBuilder } = useRequestBuilder()
+  const { buildRequest } = useRequestBuilderService()
   const { handleResolution } = useResolutionService()
 
   const updateGroupUser = asyncHandler(async (groupId: string | undefined, userId: string | undefined, values: IGroupUserRequest) => {
     if (!groupId || !userId) throw new Error('Something went wrong...')
 
-    const res = await fetch(endpoints.groupuser(groupId, userId), requestBuilder('PUT', undefined, values))
+    const res = await fetch(endpoints.groupuser(groupId, userId), buildRequest('PUT', undefined, values))
     const json = await res.json()
 
     handleResolution(res, json, 'update', 'group user', [() => updateGroupUserInContext(groupId, userId, json)])
@@ -25,7 +25,7 @@ const useGroupUserService = (): IGroupUserService => {
   const joinGroup = asyncHandler(async (groupId: string | undefined) => {
     if (!groupId) throw new Error('Group ID not set')
 
-    const res = await fetch(endpoints.joingroup(groupId), requestBuilder('PUT'));
+    const res = await fetch(endpoints.joingroup(groupId), buildRequest('PUT'));
     const json = await res.json()
 
     handleResolution(res, json, 'join', 'group')

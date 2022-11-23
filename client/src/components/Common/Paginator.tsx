@@ -1,4 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/solid";
+import { useEffect } from "react";
 import { SquareIconButton } from "..";
 
 interface IPaginatorProps {
@@ -12,8 +13,8 @@ interface IPaginatorProps {
 
 const Paginator = ({ pageSize, pageNumber, setPageNumber, setPageSize, totalItems, itemType = 'item' }: IPaginatorProps) => {
 
-  const isMinPage: boolean = pageNumber <= 1;
-  const isMaxPage: boolean = pageNumber >= Math.ceil(totalItems / pageSize);
+  const isMinPage: boolean = pageNumber <= 1
+  const isMaxPage: boolean = pageNumber >= Math.ceil(totalItems / pageSize)
   const totalPages: number = Math.ceil(totalItems / pageSize)
 
   const decrementPageNumber = () => {
@@ -30,6 +31,10 @@ const Paginator = ({ pageSize, pageNumber, setPageNumber, setPageSize, totalItem
     }
     setPageSize(ps);
   }
+
+  useEffect(() => {
+    if (pageNumber > totalPages && pageNumber !== 1) setPageNumber(totalPages)
+  }, [totalPages, pageNumber, setPageNumber])
 
   const pageSizes = [
     5, 10, 15, 30

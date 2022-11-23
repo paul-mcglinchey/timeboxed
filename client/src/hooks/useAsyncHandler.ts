@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, SetStateAction, useCallback } from "react"
 import { useNotification } from "."
 import { Notification } from "../enums"
 import { IAsyncHandler } from "./interfaces"
@@ -6,7 +6,7 @@ import { IAsyncHandler } from "./interfaces"
 const useAsyncHandler = (setIsLoading: Dispatch<SetStateAction<boolean>>): IAsyncHandler => {
   const { addNotification } = useNotification()
   
-  const asyncHandler = (fn: (...args: any[]) => any, failureActions: (() => void)[] = [], notify: boolean = true) => async (...args: any) => {
+  const asyncHandler = useCallback((fn: (...args: any[]) => any, failureActions: (() => void)[] = [], notify: boolean = true) => async (...args: any) => {
     try {
       setIsLoading(true)
       await fn(...args)
@@ -17,7 +17,7 @@ const useAsyncHandler = (setIsLoading: Dispatch<SetStateAction<boolean>>): IAsyn
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [addNotification, setIsLoading])
   
   const asyncReturnHandler = <T>(fn: (...args: any[]) => any) => async (...args: any): Promise<T | void> => {
     try {

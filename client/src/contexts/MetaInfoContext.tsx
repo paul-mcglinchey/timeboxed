@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { IChildrenProps, IFetch, IMetaInfo } from "../models";
-import { useFetch, useGroupService, useRequestBuilder } from "../hooks";
+import { useFetch, useGroupService, useRequestBuilderService } from "../hooks";
 import { endpoints } from "../config";
 import { IMetaInfoContext } from "./interfaces";
 
@@ -19,9 +19,9 @@ export const MetaInfoProvider = ({ children }: IChildrenProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<any>()
 
-  const { requestBuilder } = useRequestBuilder()
+  const { buildRequest } = useRequestBuilderService()
   const { currentGroup } = useGroupService()
-  const { response }: IFetch<IMetaInfo> = useFetch(endpoints.metainfo(currentGroup?.id), requestBuilder(), [currentGroup], setIsLoading, setError)
+  const { response }: IFetch<IMetaInfo> = useFetch(endpoints.metainfo(currentGroup?.id), buildRequest(), [currentGroup], setIsLoading, setError)
 
   useEffect(() => {
     if (response) {

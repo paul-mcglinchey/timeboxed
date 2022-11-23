@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Formik, Form } from 'formik';
 import { sessionValidationSchema } from '../../schema';
-import { IClient, IContextualFormProps, ITag } from '../../models';
+import { IClientListResponse, IContextualFormProps, ITag } from '../../models';
 import { useClientService } from '../../hooks';
 import { CustomDate, StyledField, StyledTagField } from '..';
 
@@ -9,7 +9,7 @@ const currentDate = new Date();
 const currentDateAsString = currentDate.toISOString().split('T')[0];
 
 interface IAddSessionProps {
-  client: IClient
+  client: IClientListResponse
 }
 
 const AddSessionForm = ({ client, ContextualSubmissionButton }: IAddSessionProps & IContextualFormProps) => {

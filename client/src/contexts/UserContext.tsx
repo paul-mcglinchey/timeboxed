@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { endpoints } from "../config";
-import { useGroupService, useIsMounted, useRequestBuilder } from "../hooks";
+import { useGroupService, useIsMounted, useRequestBuilderService } from "../hooks";
 import { IChildrenProps, IUser, IUsersResponse } from "../models";
 import { IUserContext } from "./interfaces";
 
@@ -21,7 +21,7 @@ export const UserProvider = ({ children }: IChildrenProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<any>()
 
-  const { requestBuilder } = useRequestBuilder()
+  const { buildRequest } = useRequestBuilderService()
   const { currentGroup } = useGroupService()
   const isMounted = useIsMounted()
 
@@ -30,7 +30,7 @@ export const UserProvider = ({ children }: IChildrenProps) => {
       const _fetch = async () => {
         setIsLoading(true)
 
-        const res = await fetch(endpoints.groupusers(currentGroup.id), requestBuilder())
+        const res = await fetch(endpoints.groupusers(currentGroup.id), buildRequest())
         const json: IUsersResponse = await res.json()
 
         setIsLoading(false)

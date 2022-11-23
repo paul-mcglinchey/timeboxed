@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { IChildrenProps, IUser } from "../models";
 import { useCookies } from 'react-cookie'
-import { useAsyncHandler, useRequestBuilder } from "../hooks";
+import { useAsyncHandler, useRequestBuilderService } from "../hooks";
 import { endpoints } from "../config";
 import { IAuthContext } from "./interfaces";
 import { useNavigate } from "react-router";
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
   const [error, setError] = useState<any>()
 
   const { asyncHandler } = useAsyncHandler(setIsLoading);
-  const { requestBuilder } = useRequestBuilder()
+  const { buildRequest } = useRequestBuilderService()
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
     if (['/login', '/signup', '/passwordreset'].includes(location.pathname)) return
     if (!user) throw new Error('Unable to re-authenticate user')
 
-    const res = await fetch(endpoints.authenticate, requestBuilder('GET', user?.token))
+    const res = await fetch(endpoints.authenticate, buildRequest('GET', user?.token))
 
     if (!res.ok) throw new Error("Unable to authenticate user")
 

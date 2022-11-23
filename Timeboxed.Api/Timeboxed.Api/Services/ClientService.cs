@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Models;
@@ -31,14 +32,9 @@ namespace Timeboxed.Api.Services
             this.groupContextProvider = groupContextProvider;
         }
 
-        public async Task<ListResponse<ClientResponse>> GetClientsAsync(GetClientsRequest requestParameters, CancellationToken cancellationToken)
+        public async Task<ListResponse<ClientListResponse>> GetClientsAsync(GetClientsRequest requestParameters, CancellationToken cancellationToken)
         {
-            var clientQuery = this.context.Clients
-                .Where(c => this.groupContextProvider.GroupId == c.GroupId)
-                .Include(c => c.Emails)
-                .Include(c => c.PhoneNumbers)
-                .Include(c => c.Sessions)
-                .AsSplitQuery();
+            var clientQuery = this.context.Clients.Where(c => this.groupContextProvider.GroupId == c.GroupId);
 
             clientQuery = ApplyFilter(clientQuery, requestParameters);
             clientQuery = ApplySort(clientQuery, requestParameters);
@@ -46,9 +42,9 @@ namespace Timeboxed.Api.Services
             var count = clientQuery.Count();
             clientQuery = clientQuery.Paginate(requestParameters.PageNumber ?? 1, requestParameters.PageSize ?? 10);
 
-            return new ListResponse<ClientResponse>
+            return new ListResponse<ClientListResponse>
             {
-                Items = await clientQuery.Select<Client, ClientResponse>(c => c).ToListAsync(cancellationToken),
+                Items = await clientQuery.Select(EFClientToClientListResponse).ToListAsync(cancellationToken),
                 Count = count,
             };
         }
@@ -127,7 +123,12 @@ namespace Timeboxed.Api.Services
         {
             if (request.Name?.Trim() != null)
             {
-                query = query.Where(q => q.FullName.Contains(request.Name));
+                query = query.Where(q => (q.FirstName + " " + q.LastName).Contains(request.Name));
+            }
+
+            if (request.Email?.Trim() != null)
+            {
+                query = query.Where(q => q.PrimaryEmailAddress.Contains(request.Email));
             }
 
             return query;
@@ -151,5 +152,19 @@ namespace Timeboxed.Api.Services
 
             };
         }
+
+        private static Expression<Func<Client, ClientListResponse>> EFClientToClientListResponse => (Client c) => new ClientListResponse
+        {
+            Id = c.Id,
+            FirstName = c.FirstName,
+            LastName = c.LastName,
+            PrimaryEmailAddress = c.PrimaryEmailAddress,
+            Sessions = c.Sessions.Select(s => s.Id).ToList(),
+            Colour = c.Colour,
+            UpdatedAt = c.UpdatedAt,
+            UpdatedBy = c.UpdatedBy,
+            CreatedAt = c.CreatedAt,
+            CreatedBy = c.CreatedBy,
+        };
     }
 }

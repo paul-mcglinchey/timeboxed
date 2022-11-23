@@ -3,7 +3,7 @@ import { useNavigate } from "react-router"
 import { IPreferences, IUserRequest } from "../models"
 import { AuthContext } from "../contexts"
 import { endpoints } from '../config'
-import { useRequestBuilder, useAsyncHandler, useResolutionService, useGroupService, useUserService } from '.'
+import { useRequestBuilderService, useAsyncHandler, useResolutionService, useGroupService, useUserService } from '.'
 import { Permission } from "../enums"
 import { IAuthService } from "./interfaces"
 
@@ -12,7 +12,7 @@ const useAuthService = (): IAuthService => {
   const auth = useContext(AuthContext)
   const { user, setUser, setIsLoading } = auth
 
-  const { requestBuilder } = useRequestBuilder()
+  const { buildRequest } = useRequestBuilderService()
   const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { handleResolution } = useResolutionService()
   const { currentGroup } = useGroupService()
@@ -20,7 +20,7 @@ const useAuthService = (): IAuthService => {
   const navigate = useNavigate()
 
   const login = asyncHandler(async (user: IUserRequest) => {
-    const res = await fetch(endpoints.login, requestBuilder('POST', undefined, user))
+    const res = await fetch(endpoints.login, buildRequest('POST', undefined, user))
 
     if (res.status === 401) throw new Error("Invalid user details")
     if (!res.ok) throw new Error(await res.text())
@@ -32,7 +32,7 @@ const useAuthService = (): IAuthService => {
   })
 
   const signup = asyncHandler(async (user: IUserRequest) => {
-    const res = await fetch(endpoints.signup, requestBuilder('POST', undefined, user))
+    const res = await fetch(endpoints.signup, buildRequest('POST', undefined, user))
     
     if (!res.ok) throw new Error(await res.text())
     
@@ -59,7 +59,7 @@ const useAuthService = (): IAuthService => {
     const prevUser = user
     setUser(u => u && ({ ...u, preferences: values }))
 
-    const res = await fetch(endpoints.userpreferences(), requestBuilder('PUT', undefined, values))
+    const res = await fetch(endpoints.userpreferences(), buildRequest('PUT', undefined, values))
     const json = await res.json()
 
     handleResolution(res, json, 'update', 'preferences', [() => setUser(u => u && ({ ...u, preferences: json }))], [() => setUser(prevUser)])
