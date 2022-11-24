@@ -26,14 +26,14 @@ const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
   }
 
   return (
-    <Disclosure as="nav" className="mt-2 mb-4">
+    <Disclosure as="nav" className="mt-2 sm:mb-4">
       {({ open }) => (
         <>
           <div className="mx-auto px-2 sm:px-6 lg:px-8">
             <div className="flex flex-1 items-center justify-between h-16">
               <div className="flex flex-1 items-center justify-between">
                 {/* Mobile menu button */}
-                <Disclosure.Button className="lg:hidden p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                <Disclosure.Button className="lg:hidden rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
                     <XIcon className="block h-8 w-8" aria-hidden="true" />
@@ -42,7 +42,7 @@ const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
                   )}
                 </Disclosure.Button>
                 {/* Brand Logo */}
-                <div className="">
+                <div>
                   <Link to="/" className="flex-shrink-0 flex space-x-2 items-center transform hover:scale-102 transition-transform">
                     <ThumbIcon
                       className="h-10 w-10 dark:text-white"
@@ -156,9 +156,9 @@ const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
             </div>
           </div>
           <FadeInOut>
-            <Disclosure.Panel className="lg:hidden h-screen w-screen inset-0 bg-white dark:bg-black absolute z-50 mx-auto px-2 sm:px-6">
+            <Disclosure.Panel className="lg:hidden h-screen w-screen inset-0 bg-white dark:bg-black fixed z-50 mx-auto px-2 sm:px-6 overflow-y-hidden">
               <div className="flex items-center justify-between h-16 mt-2">
-                <Disclosure.Button className="items-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                <Disclosure.Button className="items-center rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="sr-only">Close main menu</span>
                   <XIcon className="block h-8 w-8" aria-hidden="true" />
                 </Disclosure.Button>
@@ -175,7 +175,7 @@ const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
                   <GroupSelector fillContainer />
                 )}
               </div>
-              <div>
+              <div className="border-b-2 border-gray-800/20 dark:border-gray-200/20 pb-2 mb-6">
                 {links.map((item, i) => (
                   <Disclosure.Button
                     key={i}
@@ -190,7 +190,7 @@ const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
                   </Disclosure.Button>
                 ))}
               </div>
-              <div className="bottom-2 left-2 absolute">
+              <div className="flex justify-end">
                 {/* Dark Mode toggle */}
                 <Switch enabled={theme === 'dark'} setEnabled={() => toggleDarkTheme()} description="theme" IconEnabled={MoonIcon} IconDisabled={SunIcon} />
               </div>

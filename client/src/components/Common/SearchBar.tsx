@@ -60,12 +60,12 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backg
           value={filterValue ?? ''}
           onChange={(e) => setFilterValue(e.target.value)}
           className={combineClassNames(
-            "flex flex-1 py-2 px-4 pl-20 focus:pl-0 focus-visible:outline-none caret-blue-500 text-gray-400 peer",
+            "flex flex-1 py-2 px-4 sm:pl-20 focus:pl-0 focus-visible:outline-none caret-blue-500 text-gray-400 peer rounded-r-md sm:rounded-none",
             !initialFilterField && filterableFields.length === 0 && "rounded-r-md",
             backgroundColorClasses
           )}
         />
-        <div className="absolute p-1 top-2 font-bold uppercase text-white text-xs rounded-md transform origin-left peer-focus:scale-x-0 transition-transform select-none">
+        <div className="absolute hidden sm:block p-1 top-2 font-bold uppercase text-white text-xs rounded-md transform origin-left peer-focus:scale-x-0 transition-transform select-none">
           Ctrl + K
         </div>
         {filterValue && (
@@ -79,6 +79,7 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backg
           initialSelected={{ value: initialFilterField.name, label: initialFilterField.label }}
           items={filterableFields.map(ff => ({ value: ff.name, label: ff.label }))}
           label="Searchable fields"
+          classes="hidden sm:block"
           buttonClasses="bg-gray-800 hover:bg-gray-700 transition-colors p-4 rounded-none rounded-r-md"
           optionsClasses="w-40"
           onUpdate={(item) => updateFilterField({ label: item.label, name: item.value })}
