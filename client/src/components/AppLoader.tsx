@@ -31,7 +31,7 @@ const AppLoader = ({ children }: { children: any }) => {
       >
         <div className="fixed justify-center items-center flex z-50 w-screen h-screen bg-gray-900 overflow-hidden inset-0">
           <div className="flex flex-col space-y-4 transform -translate-y-12">
-            <WideIcon className="h-24 w-auto" />
+            <WideIcon className="h-16 md:h-24 w-auto" />
             <div className="w-full bg-gray-800 rounded h-3">
               <div className={combineClassNames(
                 "h-full rounded-lg bg-blue-500 transition-all duration-500",

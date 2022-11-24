@@ -1,10 +1,11 @@
 import { Fragment } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { MenuIcon, FireIcon, XIcon, MoonIcon, SunIcon } from '@heroicons/react/solid';
-import { Link, PathMatch } from 'react-router-dom';
+import { Link, PathMatch, resolvePath, matchPath } from 'react-router-dom';
 import { combineClassNames } from '../../services';
 import { useAuthService, useTheme } from '../../hooks';
-import { GroupSelector, SmartLink, Switch, ThumbIcon, WideIcon } from '.';
+import { FadeInOut, GroupSelector, SmartLink, Switch, ThumbIcon, WideIcon } from '.'
+import { useLocation } from 'react-router';
 
 interface INavMenuProps {
   links?: {
@@ -18,6 +19,7 @@ const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
 
   const { user, logout, isAdmin } = useAuthService()
   const { theme, setTheme } = useTheme()
+  const location = useLocation()
 
   const toggleDarkTheme = () => {
     theme === 'dark' ? setTheme('light') : setTheme('dark')
@@ -25,35 +27,36 @@ const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
 
   return (
     <Disclosure as="nav" className="mt-2 mb-4">
-      {({ open, close }) => (
+      {({ open }) => (
         <>
           <div className="mx-auto px-2 sm:px-6 lg:px-8">
-            <div className="relative flex items-center justify-between h-16">
-              <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                {/* Mobile menu button*/}
-                <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+            <div className="flex flex-1 items-center justify-between h-16">
+              <div className="flex flex-1 items-center justify-between">
+                {/* Mobile menu button */}
+                <Disclosure.Button className="lg:hidden p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
-                    <XIcon className="block h-6 w-6" aria-hidden="true" />
+                    <XIcon className="block h-8 w-8" aria-hidden="true" />
                   ) : (
-                    <MenuIcon className="block h-6 w-6" aria-hidden="true" />
+                    <MenuIcon className="block h-8 w-8" aria-hidden="true" />
                   )}
                 </Disclosure.Button>
+                {/* Brand Logo */}
+                <div className="">
+                  <Link to="/" className="flex-shrink-0 flex space-x-2 items-center transform hover:scale-102 transition-transform">
+                    <ThumbIcon
+                      className="h-10 w-10 dark:text-white"
+                      alt="tiebreaker"
+                    />
+                    <WideIcon
+                      className="hidden dark:text-white md:block w-36"
+                      alt="tiebreaker"
+                    />
+                  </Link>
+                </div>
               </div>
-              <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-                <Link to="/" className="flex-shrink-0 flex space-x-2 items-center transform hover:scale-102 transition-transform">
-                  <ThumbIcon
-                    className="h-10 w-10 dark:text-white"
-                    alt="tiebreaker"
-                  />
-                  <WideIcon
-                    className="hidden dark:text-white lg:block w-36"
-                    alt="tiebreaker"
-                  />
-                </Link>
-              </div>
-              <div className="flex items-center divide-x divide-blue-400 dark:divide-gray-700">
-                <div className="hidden sm:block sm:ml-6">
+              <div className="items-center hidden lg:flex divide-x divide-blue-400 dark:divide-gray-700">
+                <div className="sm:ml-6">
                   <div className="flex ">
                     {links.map((item) => (
                       <SmartLink
@@ -72,14 +75,14 @@ const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
                   </div>
                 </div>
 
-                <div>
+                <div className="hidden md:flex">
                   {/* Group selector */}
                   {!hideGroupSelector && (
                     <GroupSelector />
                   )}
                 </div>
 
-                <div className='flex justify-center items-center pl-3 py-1'>
+                <div className='hidden md:flex justify-center items-center pl-3 py-1'>
                   {/* Dark Mode toggle */}
                   <Switch enabled={theme === 'dark'} setEnabled={() => toggleDarkTheme()} description="theme" IconEnabled={MoonIcon} IconDisabled={SunIcon} />
 
@@ -152,28 +155,47 @@ const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
               </div>
             </div>
           </div>
-
-          <Disclosure.Panel className="sm:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {links.map((item) => (
-                <SmartLink
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => close()}
-                  className={(match: PathMatch<string> | null): string =>
-                    combineClassNames(
-                      match
-                        ? 'bg-gray-900 text-white'
-                        : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                      'block px-3 py-2 rounded-md text-base font-medium'
+          <FadeInOut>
+            <Disclosure.Panel className="lg:hidden h-screen w-screen inset-0 bg-white dark:bg-black absolute z-50 mx-auto px-2 sm:px-6">
+              <div className="flex items-center justify-between h-16 mt-2">
+                <Disclosure.Button className="items-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                  <span className="sr-only">Close main menu</span>
+                  <XIcon className="block h-8 w-8" aria-hidden="true" />
+                </Disclosure.Button>
+                <Disclosure.Button as={SmartLink} to="/dashboard">
+                  <WideIcon
+                    className="dark:text-white w-36"
+                    alt="tiebreaker"
+                  />
+                </Disclosure.Button>
+              </div>
+              <div className="flex border-b-2 border-gray-800/20 dark:border-gray-200/20 pb-2 mb-6">
+                {/* Group selector */}
+                {!hideGroupSelector && (
+                  <GroupSelector fillContainer />
+                )}
+              </div>
+              <div>
+                {links.map((item, i) => (
+                  <Disclosure.Button
+                    key={i}
+                    as={Link}
+                    to={item.href}
+                    className={combineClassNames(
+                      "flex px-3 py-2 mb-2 text-xl font-bold tracking-wide justify-between items-center",
+                      matchPath(resolvePath(item.href).pathname, location.pathname) !== null && "text-blue-500 after:w-3 after:h-3 after:bg-blue-500 after:rounded-full",
                     )}
-                  aria-current={(match: PathMatch<string> | null): string | undefined => match ? 'page' : undefined}
-                >
-                  {item.name}
-                </SmartLink>
-              ))}
-            </div>
-          </Disclosure.Panel>
+                  >
+                    {item.name}
+                  </Disclosure.Button>
+                ))}
+              </div>
+              <div className="bottom-2 left-2 absolute">
+                {/* Dark Mode toggle */}
+                <Switch enabled={theme === 'dark'} setEnabled={() => toggleDarkTheme()} description="theme" IconEnabled={MoonIcon} IconDisabled={SunIcon} />
+              </div>
+            </Disclosure.Panel>
+          </FadeInOut>
         </>
       )
       }

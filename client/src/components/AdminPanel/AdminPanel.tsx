@@ -1,6 +1,6 @@
 import { NavMenu, SmartLink, Toolbar } from "../Common";
 import { SystemListCollectionPanel, ApplicationPanel, PermissionPanel } from ".";
-import { Navigate, Route, Routes } from "react-router";
+import { Navigate, PathMatch, Route, Routes } from "react-router";
 import { IChildrenProps } from "../../models";
 import { combineClassNames } from "../../services";
 
@@ -30,7 +30,7 @@ const TabLink = ({ to, children }: { to: string } & IChildrenProps) => {
   return (
     <SmartLink
       to={to}
-      className={(match) => combineClassNames(
+      className={(match: PathMatch<string> | null) => combineClassNames(
         match ? "border-blue-500" : "border-transparent", "py-1 px-2 text-xl transition-all border-b-2"
       )}
     >
