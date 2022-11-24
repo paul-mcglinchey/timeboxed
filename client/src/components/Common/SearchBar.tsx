@@ -60,7 +60,7 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backg
           value={filterValue ?? ''}
           onChange={(e) => setFilterValue(e.target.value)}
           className={combineClassNames(
-            "flex flex-1 py-2 px-4 sm:pl-20 focus:pl-0 focus-visible:outline-none caret-blue-500 text-gray-400 peer rounded-r-md sm:rounded-none",
+            "flex flex-1 py-2 px-4 pl-0 sm:pl-20 focus:sm:pl-0 focus-visible:outline-none caret-blue-500 text-gray-400 peer rounded-r-md sm:rounded-none",
             !initialFilterField && filterableFields.length === 0 && "rounded-r-md",
             backgroundColorClasses
           )}

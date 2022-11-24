@@ -23,8 +23,8 @@ const Login = () => {
       >
         {({ errors, touched }) => (
           <Form>
-            <div className="flex flex-col space-y-4">
-              <div className="flex-col space-y-2">
+            <div>
+              <div className="mb-4">
                 <FormikInput name="usernameOrEmail" label="Email or Username" errors={errors.usernameOrEmail} touched={touched.usernameOrEmail} />
                 <FormikInput name="password" type="password" label="Password" errors={errors.password} touched={touched.password} />
               </div>
