@@ -88,7 +88,7 @@ const UpdateEmployeeForm = ({ employee, ContextualSubmissionButton }: IUpdateEmp
                 </div>
               </div>
             </FormSection>
-            <FormSection title="Employee address" showExpander expanded={showAddress} expanderAction={toggleShowAddress}>
+            <FormSection title="Employee address" expanded={showAddress} expanderAction={toggleShowAddress}>
               <Transition
                 show={showAddress}
                 enter="transition ease-out duration-200"
@@ -109,7 +109,7 @@ const UpdateEmployeeForm = ({ employee, ContextualSubmissionButton }: IUpdateEmp
                 </div>
               </Transition>
             </FormSection>
-            <FormSection title="Scheduling requirements" showExpander expanded={showRequirements} expanderAction={toggleShowRequirements}>
+            <FormSection title="Scheduling requirements" expanded={showRequirements} expanderAction={toggleShowRequirements}>
               <Transition
                 show={showRequirements}
                 enter="transition ease-out duration-200"

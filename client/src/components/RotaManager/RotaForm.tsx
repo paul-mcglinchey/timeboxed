@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Formik, Form } from 'formik';
 import { ExternalLinkIcon } from '@heroicons/react/solid';
-import { useEmployeeService, useRotaService } from '../../hooks';
+import { useRotaService } from '../../hooks';
 import { IContextualFormProps, IRota } from '../../models';
 import { rotaValidationSchema } from '../../schema';
 import { FormikInput, FormSection } from '../Common';
@@ -17,8 +17,6 @@ const RotaForm = ({ rota, ContextualSubmissionButton }: IRotaFormProps & IContex
   const [addEmployeesOpen, setAddEmployeesOpen] = useState(false)
 
   const { addRota, updateRota } = useRotaService()
-
-  const { employees } = useEmployeeService()
 
   return (
     <>
@@ -45,7 +43,7 @@ const RotaForm = ({ rota, ContextualSubmissionButton }: IRotaFormProps & IContex
             <FormikInput as="textarea" name="description" label="Description" errors={errors.description} touched={touched.description} />
             </FormSection>
             <div className="flex flex-col space-y-4">
-              <FormSection title="Employees" state={values.employees.length > 0} setState={() => setFieldValue("employees", values.employees?.length > 0 ? [] : employees.map(e => e.id))}>
+              <FormSection title="Employees">
                 <div className="flex flex-col space-y-4 flex-grow rounded">
                   <EmployeeMultiSelector formValues={values.employees} setFieldValue={(e) => setFieldValue('employees', e)} />
                 </div>

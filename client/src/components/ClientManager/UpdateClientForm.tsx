@@ -61,7 +61,7 @@ const UpdateClientForm = ({ clientId, ContextualSubmissionButton }: IUpdateClien
                 <FormikInput name="primaryPhoneNumber" label="Phone number" errors={errors.primaryPhoneNumber} touched={touched.primaryPhoneNumber} />
                 <FormikInput type="date" name="birthDate" label="Date of Birth" component={CustomDate} errors={errors.birthDate} touched={touched.birthDate} />
               </FormSection>
-              <FormSection title="Address" state={addressExpanded} setState={setAddressExpanded}>
+              <FormSection title="Address" expanded={addressExpanded} expanderAction={() => setAddressExpanded(!addressExpanded)}>
                 <Transition
                   show={addressExpanded}
                   enter="transition ease-out duration-200"

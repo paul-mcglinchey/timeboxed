@@ -3,6 +3,7 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 const autofill = require("tailwindcss-autofill");
 const textFill = require("tailwindcss-text-fill");
 const shadowFill = require("tailwindcss-shadow-fill");
+const forms = require('@tailwindcss/forms');
 
 module.exports = {
   darkMode: 'class',
@@ -63,5 +64,5 @@ module.exports = {
       fill: ['hover']
     },
   },
-  plugins: [autofill, textFill, shadowFill],
+  plugins: [forms, autofill, textFill, shadowFill],
 }

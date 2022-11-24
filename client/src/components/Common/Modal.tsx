@@ -17,9 +17,10 @@ interface IModalProps {
   close: () => void
   allowAddMultiple?: boolean
   level?: 1 | 2 | 3
+  wide?: boolean
 }
 
-const Modal = ({ children, title, description, isOpen, close, level = 1, allowAddMultiple = false }: IModalProps) => {
+const Modal = ({ children, title, description, isOpen, close, level = 1, allowAddMultiple = false, wide = false }: IModalProps) => {
 
   const [keepOpen, setKeepOpen] = useState<boolean>(false)
 
@@ -42,8 +43,11 @@ const Modal = ({ children, title, description, isOpen, close, level = 1, allowAd
             >
               <Dialog.Panel className={
                 combineClassNames(
-                  "w-full max-w-7xl rounded-t-2xl md:rounded-2xl bg-slate-200 dark:bg-gray-800 p-2 py-6 md:p-6 text-left align-middle transition-all",
-                  level === 1 && "mt-16 max-w-7xl", level === 2 && "mt-32 max-w-5xl"
+                  "w-full rounded-t-2xl md:rounded-2xl bg-slate-200 dark:bg-gray-800 p-2 py-6 md:p-6 text-left align-middle transition-all",
+                  level === 1 && "mt-16", level === 2 && "mt-32", level === 3 && "mt-40",
+                  level === 1 && (wide ? "max-w-7xl" : "max-w-4xl"),
+                  level === 2 && (wide ? "max-w-4xl" : "max-w-2xl"),
+                  level === 3 && (wide ? "max-w-2xl" : "max-w-xl")
                 )}
               >
                 <div className="flex justify-between mb-2 items-center">

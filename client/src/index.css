@@ -2,11 +2,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@tailwindcss/forms;
 
 body {
   margin: 0;
   top: 0;
+}
+
+@layer base {
+  [type="text"],
+  [type="email"],
+  [type="url"],
+  [type="password"],
+  [type="number"],
+  [type="date"],
+  [type="datetime-local"],
+  [type="month"],
+  [type="search"],
+  [type="tel"],
+  [type="time"],
+  [type="week"],
+  [multiple],
+  textarea,
+  select {
+    @apply w-full text-gray-100 bg-slate-600 border-gray-300/20 font-semibold rounded ring-0 focus:ring-1 focus:border-blue-500;
+  }
+  [type="checkbox"],
+  [type="radio"] {
+    @apply border-gray-300 rounded text-indigo-600 focus:ring-indigo-500;
+  }
 }
 
 @layer components {
