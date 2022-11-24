@@ -37,8 +37,8 @@ const MultiSelector = <TValue extends unknown>({ fieldName, values, totalValuesL
                 key={index}
                 className={
                   (itemStyles && itemStyles(formValues.includes(value))) || combineClassNames(
-                    "flex flex-grow p-4 transition-colors justify-between items-center rounded",
-                    formValues.includes(value) ? 'bg-blue-500 text-gray-800' : 'bg-white dark:bg-gray-900'
+                    "flex flex-grow p-4 transition-colors justify-between items-center border-2 rounded",
+                    formValues.includes(value) ? 'text-blue-500 border-blue-500' : 'bg-white dark:bg-gray-900 border-transparent'
                   )}
                 onClick={() => setFieldValue(toggleValue(value))}
               >

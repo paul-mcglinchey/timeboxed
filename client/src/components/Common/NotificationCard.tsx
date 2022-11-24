@@ -36,9 +36,8 @@ const NotificationCard = ({ notification, removeNotification }: INotificationCar
       leaveFrom="transform translate-x-0"
       leaveTo="transform translate-x-full"
       className={combineClassNames(
-        "relative sm:w-96 box-border p-4 m-2 bg-gray-900 border rounded-md drop-shadow-md flex flex-col",
-        notification.type === Notification.Success ? "text-green-500" : notification.type === Notification.Error ? "text-red-500" : "text-gray-200",
-        notification.type === Notification.Success ? "border-green-500" : notification.type === Notification.Error ? "border-red-500" : "border-gray-200"
+        "relative sm:w-96 box-border p-4 m-2 bg-gray-100 dark:bg-gray-900 border rounded-md drop-shadow-md flex flex-col",
+        notification.type === Notification.Success ? "text-green-500 border-green-500" : notification.type === Notification.Error ? "text-red-500 border-red-500" : "text-gray-200 border-gray-200"
       )}
     >
       <div className="flex justify-between space-x-2 items-center">

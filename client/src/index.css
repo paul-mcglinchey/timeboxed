@@ -24,7 +24,7 @@ body {
   [multiple],
   textarea,
   select {
-    @apply w-full text-gray-100 bg-slate-600 border-gray-300/20 font-semibold rounded ring-0 focus:ring-1 focus:border-blue-500;
+    @apply w-full dark:text-gray-100 dark:bg-slate-800 border-gray-300/20 font-semibold rounded ring-0 focus:ring-1 focus:border-blue-500;
   }
   [type="checkbox"],
   [type="radio"] {
