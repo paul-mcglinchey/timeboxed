@@ -11,6 +11,7 @@ export interface IButtonProps {
   Icon?: any,
   iconSide?: "left" | "right"
   XL?: boolean
+  disabled?: boolean
 }
 
 const getButtonClasses = (buttonType: string): string => {
@@ -45,7 +46,8 @@ const Button = ({
   hideText,
   Icon,
   iconSide = "right",
-  XL = false
+  XL = false,
+  disabled = false
 }: IButtonProps) => {
   return (
     <button className={
@@ -53,9 +55,11 @@ const Button = ({
         getButtonClasses(buttonType),
         content ? "px-3" : "px-1",
         "py-1 transition-all font-bold rounded flex items-center justify-center tracking-wider",
-        XL && "text-xl"
+        XL && "text-xl",
+        "disabled:pointer-events-none disabled:text-gray-800/40 select-none"
       )}
       onClick={action}
+      disabled={disabled}
       type={type}
     >
       {Icon && (

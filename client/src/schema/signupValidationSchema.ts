@@ -12,7 +12,10 @@ const signupValidationSchema = Yup.object().shape({
   password: Yup.string()
     .min(8, 'Minimum 8 Characters in Length')
     .max(100, 'Too Long')
+    .required('Required'),
+  repeatPassword: Yup.string()
     .required('Required')
+    .oneOf([Yup.ref('password')], 'Passwords don\'t match')
 });
 
 export default signupValidationSchema;

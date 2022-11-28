@@ -1,7 +1,7 @@
 import { Transition } from "@headlessui/react"
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
 import { GroupProvider, MetaInfoContext, MetaInfoProvider, UserProvider } from "../contexts"
-import { useAuthService, useGroupService, useUserService } from "../hooks"
+import { useAuthService, useGroupService } from "../hooks"
 import { IChildrenProps } from "../models"
 import { combineClassNames } from "../services"
 import { WideIcon } from "./Common"
@@ -65,12 +65,11 @@ interface ISubLoaderProps {
 const SubLoader = ({ children, setAppLoading, loadingCompleted, setLoadingCompleted }: ISubLoaderProps & IChildrenProps) => {
   
   const { isLoading: isGroupsLoading } = useGroupService()
-  const { isLoading: isUsersLoading } = useUserService()
   const { isLoading: isMetaInfoLoading } = useContext(MetaInfoContext)
   
   useEffect(() => {
-    if (!isGroupsLoading && !isUsersLoading && !isMetaInfoLoading) setLoadingCompleted(true)
-  }, [isGroupsLoading, isUsersLoading, isMetaInfoLoading, setLoadingCompleted])
+    if (!isGroupsLoading && !isMetaInfoLoading) setLoadingCompleted(true)
+  }, [isGroupsLoading, isMetaInfoLoading, setLoadingCompleted])
 
   useEffect(() => {
     loadingCompleted && setTimeout(() => setAppLoading(false), 500)
