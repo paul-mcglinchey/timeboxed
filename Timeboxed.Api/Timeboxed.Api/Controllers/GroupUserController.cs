@@ -11,8 +11,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Controllers.Base;
 using Timeboxed.Api.Models;
-using Timeboxed.Api.Models.DTOs;
 using Timeboxed.Api.Models.Requests;
+using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Extensions;
@@ -40,7 +40,7 @@ namespace Timeboxed.Api.Controllers
         }
 
         [FunctionName("GetGroupUsers")]
-        public async Task<ActionResult<ListResponse<UserDto>>> GetGroupUsers(
+        public async Task<ActionResult<ListResponse<UserListResponse>>> GetGroupUsers(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups/{groupId}/users")] HttpRequest req,
             string groupId,
             ILogger logger,
@@ -74,11 +74,10 @@ namespace Timeboxed.Api.Controllers
                 },
                 cancellationToken);
 
-        [FunctionName("AddGroupUser")]
-        public async Task<ActionResult> AddGroupUser(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "groups/{groupId}/users/{userId}")] HttpRequest req,
+        [FunctionName("InviteGroupUser")]
+        public async Task<ActionResult<ListResponse<UserListResponse>>> InviteGroupUser(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "groups/{groupId}/users/invite")] HttpRequest req,
             string groupId,
-            string userId,
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
@@ -86,12 +85,9 @@ namespace Timeboxed.Api.Controllers
                 groupId,
                 async () =>
                 {
-                    if (!this.userValidator.TryValidate(userId, out var userIdGuid))
-                    {
-                        return new BadRequestObjectResult(new { message = "Invalid user ID supplied." });
-                    };
+                    var request = await req.ConstructRequestModelAsync<InviteGroupUserRequest>();
 
-                    return new OkObjectResult(new { groupUserId = await this.groupUserService.AddUserAsync(userIdGuid, cancellationToken) });
+                    return new OkObjectResult(await this.groupUserService.InviteGroupUserAsync(request.UsernameOrEmail, cancellationToken));
                 },
                 cancellationToken);
 

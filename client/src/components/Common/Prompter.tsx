@@ -1,17 +1,13 @@
 import { Transition } from '@headlessui/react';
 import { useDelayedRendering } from '../../hooks';
 import { Button } from '.';
-
-interface IconProps {
-  childComp?: React.ReactNode
-  className: any
-}
+import { IProps } from '../../models';
 
 interface IPrompterProps {
   title: string,
   subtitle?: string,
   action?: () => void,
-  Icon?: React.FC<IconProps>
+  Icon?: React.FC<IProps>
 }
 
 const Prompter = ({ Icon, title, subtitle, action }: IPrompterProps) => {

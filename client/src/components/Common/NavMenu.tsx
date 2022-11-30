@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { MenuIcon, FireIcon, XIcon, MoonIcon, SunIcon } from '@heroicons/react/solid';
-import { Link, PathMatch, resolvePath, matchPath } from 'react-router-dom';
+import { Link, resolvePath, matchPath } from 'react-router-dom';
 import { combineClassNames } from '../../services';
 import { useAuthService, useTheme } from '../../hooks';
 import { FadeInOut, GroupSelector, SmartLink, Switch, ThumbIcon, WideIcon } from '.'
@@ -59,18 +59,17 @@ const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
                 <div className="sm:ml-6">
                   <div className="flex ">
                     {links.map((item) => (
-                      <SmartLink
+                      <Link
                         key={item.name}
                         to={item.href}
-                        className={(match: PathMatch<string> | null): string => (
-                          combineClassNames(match ? 'text-blue-500' : '',
-                            'px-3 rounded-md font-bold tracking-wide hover:text-blue-500 transition-colors'
-                          )
+                        className={combineClassNames(
+                          matchPath(resolvePath(item.href).pathname, location.pathname) !== null && 'text-blue-500',
+                          'px-3 rounded-md font-bold tracking-wide hover:text-blue-500 transition-colors'
                         )}
-                        aria-current={(match: PathMatch<string> | null): string | undefined => match ? 'page' : undefined}
+                        aria-current={matchPath(resolvePath(item.href).pathname, location.pathname) !== null && 'page'}
                       >
                         {item.name}
-                      </SmartLink>
+                      </Link>
                     ))}
                   </div>
                 </div>

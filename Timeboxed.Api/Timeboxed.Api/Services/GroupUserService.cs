@@ -7,7 +7,6 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Models;
-using Timeboxed.Api.Models.DTOs;
 using Timeboxed.Api.Models.Requests;
 using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Services.Interfaces;
@@ -41,17 +40,24 @@ namespace Timeboxed.Api.Services
                 .SingleOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<ListResponse<UserDto>> GetGroupUsersAsync(CancellationToken cancellationToken)
+        public async Task<ListResponse<UserListResponse>> GetGroupUsersAsync(CancellationToken cancellationToken)
         {
             var users = await this.context.Users
                 .Where(u => this.context.GroupUsers
                     .Where(gu => gu.GroupId.Equals(this.groupContextProvider.GroupId))
                     .Any(gu => gu.UserId.Equals(u.Id)))
+                .Select(u => new UserListResponse
+                {
+                    Id = u.Id,
+                    Username = u.Username,
+                    Email = u.Email,
+                    IsAdmin = u.IsAdmin,
+                })
                 .ToListAsync(cancellationToken);
 
-            return new ListResponse<UserDto>
+            return new ListResponse<UserListResponse>
             {
-                Items = this.mapper.Map<List<UserDto>>(users),
+                Items = this.mapper.Map<List<UserListResponse>>(users),
                 Count = users.Count,
             };
         }
@@ -76,13 +82,37 @@ namespace Timeboxed.Api.Services
             return groupUser;
         }
 
-        public async Task<Guid> AddUserAsync(Guid userId, CancellationToken cancellationToken)
+        public async Task<ListResponse<UserListResponse>> InviteGroupUserAsync(string usernameOrEmail, CancellationToken cancellationToken)
         {
-            var groupUser = new GroupUser { GroupId = this.groupContextProvider.GroupId, UserId = userId };
-            this.context.GroupUsers.Add(groupUser);
+            var groupId = this.groupContextProvider.GroupId;
+
+            var user = await this.context.Users
+                .Where(u => u.Email == usernameOrEmail || u.Username == usernameOrEmail)
+                .SingleOrDefaultAsync(cancellationToken)
+            ?? throw new EntityNotFoundException($"User with identity {usernameOrEmail} not found");
+
+            var group = await this.context.Groups
+                .Where(g => g.Id == groupId)
+                .Include(g => g.GroupUsers)
+                .SingleOrDefaultAsync(cancellationToken)
+            ?? throw new EntityNotFoundException($"Group {groupId} not found");
+
+            var groupUser = group.GroupUsers.Where(gu => gu.UserId == user.Id).SingleOrDefault();
+
+            if (groupUser != null)
+            {
+                throw new BadRequestException(groupUser.HasJoined ? $"User {usernameOrEmail} is already a member of the group" : $"User {usernameOrEmail} has already been invited to the group");
+            }
+
+            group.GroupUsers.Add(new GroupUser
+            {
+                UserId = user.Id,
+                HasJoined = false,
+            });
+
             await this.context.SaveChangesAsync(cancellationToken);
 
-            return groupUser.Id;
+            return await this.GetGroupUsersAsync(cancellationToken);
         }
 
         public async Task<Guid> DeleteUserAsync(Guid userId, CancellationToken cancellationToken)

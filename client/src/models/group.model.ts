@@ -32,6 +32,10 @@ export interface IGroupUserRequest {
   applications: number[]
 }
 
+export interface IGroupUserInviteRequest {
+  usernameOrEmail: string
+}
+
 export interface IGroupsResponse {
   count: number,
   items: IGroup[]

@@ -10,10 +10,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Models;
-using Timeboxed.Api.Models.DTOs;
+using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Cryptography;
+using Timeboxed.Core.Exceptions;
 using Timeboxed.Data;
 using Timeboxed.Domain.Models;
 
@@ -46,23 +47,32 @@ namespace Timeboxed.Api.Services
         public async Task<bool> UserExistsAsync(Guid userId, CancellationToken cancellationToken) =>
             await this.context.Users.Where(u => u.Id.Equals(userId)).SingleOrDefaultAsync(cancellationToken) != null;
 
-        public async Task<UserDto> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
+        public async Task<UserResponse> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
         {
             var user = await this.context.Users
                 .Where(u => u.Id == userId)
                 .Include(u => u.Preferences)
-                .FirstOrDefaultAsync(cancellationToken);
+                .SingleOrDefaultAsync(cancellationToken)
+            ?? throw new EntityNotFoundException($"User {userId} not found");
 
-            var mappedUser = this.mapper.Map<User, UserDto>(user);
-            mappedUser.Token = GenerateToken(user);
-
-            return mappedUser;
+            return new UserResponse
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                IsAdmin = user.IsAdmin,
+                Token = GenerateToken(user),
+                Preferences = new UserPreferencesResponse
+                {
+                    DefaultGroup = user.Preferences.DefaultGroup,
+                },
+            };
         }
 
         public async Task<User> GetUserByUsernameOrEmailAsync(string usernameOrEmail, CancellationToken cancellationToken) =>
             await this.context.Users.Where(u => u.Username == usernameOrEmail || u.Email == usernameOrEmail).SingleOrDefaultAsync(cancellationToken);
 
-        public async Task<UserDto> CreateUserAsync(UserRequest userRequest, CancellationToken cancellationToken)
+        public async Task<UserResponse> CreateUserAsync(UserRequest userRequest, CancellationToken cancellationToken)
         {
             var user = new User
             {
@@ -77,7 +87,7 @@ namespace Timeboxed.Api.Services
             return await this.GetUserByIdAsync(user.Id, cancellationToken);
         }
 
-        public async Task<UserDto?> AuthenticateUserAsync(UserRequest userRequest, CancellationToken cancellationToken)
+        public async Task<UserResponse?> AuthenticateUserAsync(UserRequest userRequest, CancellationToken cancellationToken)
         {
             var user = await this.GetUserByUsernameOrEmailAsync(userRequest.UsernameOrEmail, cancellationToken);
 
@@ -86,7 +96,7 @@ namespace Timeboxed.Api.Services
                 : null;
         }
 
-        public async Task<UserPreferencesDto> UpdateUserPreferencesAsync(UserPreferencesDto requestBody, CancellationToken cancellationToken)
+        public async Task<UserPreferencesResponse> UpdateUserPreferencesAsync(UserPreferencesResponse requestBody, CancellationToken cancellationToken)
         {
             var user = await this.context.Users
                 .Where(u => u.Id.Equals(this.userContextProvider.UserId))
@@ -99,7 +109,7 @@ namespace Timeboxed.Api.Services
 
             await this.context.SaveChangesAsync(cancellationToken);
 
-            return this.mapper.Map<UserPreferencesDto>(user.Preferences);
+            return this.mapper.Map<UserPreferencesResponse>(user.Preferences);
         }
 
         private string GenerateToken(User user)

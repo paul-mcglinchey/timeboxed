@@ -2,7 +2,7 @@ import { IGroupUserService } from "./interfaces"
 import { useAsyncHandler, useGroupService, useRequestBuilderService, useResolutionService } from "."
 import { endpoints } from "../config"
 import { useState } from "react"
-import { IGroupUser, IGroupUserRequest } from "../models"
+import { IGroupUser, IGroupUserInviteRequest, IGroupUserRequest } from "../models"
 
 const useGroupUserService = (): IGroupUserService => {
   
@@ -20,6 +20,17 @@ const useGroupUserService = (): IGroupUserService => {
     const json = await res.json()
 
     handleResolution(res, json, 'update', 'group user', [() => updateGroupUserInContext(groupId, userId, json)])
+  })
+
+  const inviteGroupUser = asyncHandler(async (groupId: string | undefined, values: IGroupUserInviteRequest) => {
+    if (!groupId) throw new Error('Something went wrong...')
+
+    const res = await fetch(endpoints.invitegroupuser(groupId), buildRequest('POST', undefined, values))
+    if (!res.ok && res.status < 500) throw new Error(await res.text())
+
+    const json = await res.json()
+
+    handleResolution(res, json, 'invite', 'group user')
   })
 
   const joinGroup = asyncHandler(async (groupId: string | undefined) => {
@@ -43,7 +54,7 @@ const useGroupUserService = (): IGroupUserService => {
       ))
   }
 
-  return { updateGroupUser, joinGroup, isLoading }
+  return { updateGroupUser, inviteGroupUser, joinGroup, isLoading }
 }
 
 export default useGroupUserService

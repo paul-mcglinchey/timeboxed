@@ -1,5 +1,6 @@
 import { combineClassNames } from '../../services';
-import { INotification } from '../../models';
+import { INotification, IProps } from '../../models';
+import { FC } from 'react';
 
 export interface IButtonProps {
   status?: INotification[],
@@ -8,7 +9,7 @@ export interface IButtonProps {
   type?: "button" | "submit" | "reset",
   action?: () => void,
   hideText?: boolean,
-  Icon?: any,
+  Icon?: FC<IProps> | null | undefined,
   iconSide?: "left" | "right"
   XL?: boolean
   disabled?: boolean
@@ -21,7 +22,7 @@ const getButtonClasses = (buttonType: string): string => {
     case "Secondary":
       return "text-blue-500 bg-transparent border-blue-500 hover:text-gray-300 hover:bg-blue-500 focus:text-gray-300 focus:bg-blue-500"
     case "Tertiary":
-      return "border border-transparent text-blue-500 bg-transparent hover:border-blue-600"
+      return "border border-transparent text-blue-500 bg-transparent hover:text-blue-400"
     case "Cancel":
       return "border border-transparent text-red-500 bg-transparent hover:border-red-700"
     case "Confirm":
@@ -54,7 +55,7 @@ const Button = ({
       combineClassNames(
         getButtonClasses(buttonType),
         content ? "px-3" : "px-1",
-        "py-1 transition-all font-bold rounded flex items-center justify-center tracking-wider",
+        "py-1 transition-all font-bold rounded-md flex items-center justify-center tracking-wider",
         XL && "text-xl",
         "disabled:pointer-events-none disabled:text-gray-800/40 select-none"
       )}
@@ -64,7 +65,7 @@ const Button = ({
     >
       {Icon && (
         <div className={`self-center ${content && (iconSide === "left" ? "order-first mr-2" : "order-last ml-2")}`}>
-          <Icon className="w-5 h-5" />
+          {<Icon className="w-5 h-5" />}
         </div>
       )}
       {!hideText && (

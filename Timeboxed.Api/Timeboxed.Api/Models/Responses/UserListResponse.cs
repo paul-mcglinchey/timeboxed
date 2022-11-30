@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Timeboxed.Api.Models.DTOs
+namespace Timeboxed.Api.Models.Responses
 {
-    public class UserDto
+    public class UserListResponse
     {
         public Guid Id { get; set; }
 
@@ -11,9 +11,5 @@ namespace Timeboxed.Api.Models.DTOs
         public string Email { get; set; }
 
         public bool? IsAdmin { get; set; }
-
-        public string Token { get; set; }
-
-        public UserPreferencesDto? Preferences { get; set; }
     }
 }

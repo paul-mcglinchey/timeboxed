@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Models;
-using Timeboxed.Api.Models.DTOs;
+using Timeboxed.Api.Models.Responses;
 
 namespace Timeboxed.Api.Services.Interfaces
 {
@@ -12,12 +12,12 @@ namespace Timeboxed.Api.Services.Interfaces
 
         public Task<bool> UserExistsAsync(Guid userId, CancellationToken cancellationToken);
 
-        public Task<UserDto> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken);
+        public Task<UserResponse> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken);
 
-        public Task<UserDto> CreateUserAsync(UserRequest user, CancellationToken cancellationToken);
+        public Task<UserResponse> CreateUserAsync(UserRequest user, CancellationToken cancellationToken);
 
-        public Task<UserDto> AuthenticateUserAsync(UserRequest user, CancellationToken cancellationToken);
+        public Task<UserResponse> AuthenticateUserAsync(UserRequest user, CancellationToken cancellationToken);
 
-        public Task<UserPreferencesDto> UpdateUserPreferencesAsync(UserPreferencesDto requestBody, CancellationToken cancellationToken);
+        public Task<UserPreferencesResponse> UpdateUserPreferencesAsync(UserPreferencesResponse requestBody, CancellationToken cancellationToken);
     }
 }

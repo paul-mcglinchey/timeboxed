@@ -17,9 +17,6 @@ namespace Timeboxed.Api.Models.Maps
 
         private async Task CreateDTOMaps()
         {
-            this.CreateMap<User, UserDto>().ReverseMap();
-            this.CreateMap<User, UserRequest>().ReverseMap();
-            this.CreateMap<UserPreferences, UserPreferencesDto>().ReverseMap();
             this.CreateMap<Application, ApplicationDto>().ReverseMap();
 
             this.CreateMap<Role, RoleDto>()

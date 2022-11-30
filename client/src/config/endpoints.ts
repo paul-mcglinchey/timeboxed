@@ -38,7 +38,8 @@ export const endpoints = {
     "user"              : (userId: string) => DOTNET_API_URL + `users/${userId}`,
     "userpreferences"   : (userId?: string) => DOTNET_API_URL + `users/${userId ? `${userId}/` : ''}preferences`,
     "groupusers"        : (groupId: string) => DOTNET_API_URL + `groups/${groupId}/users`,
-    "groupuser"        : (groupId: string, userId: string) => DOTNET_API_URL + `groups/${groupId}/users/${userId}`,
+    "groupuser"         : (groupId: string, userId: string) => DOTNET_API_URL + `groups/${groupId}/users/${userId}`,
+    "invitegroupuser"   : (groupId: string) => DOTNET_API_URL + `groups/${groupId}/users/invite`,
     "currentuser"       : DOTNET_API_URL + "users/current",
     
     "systemlistcollection"  : (listcollectionId: string) => BASE_API_URL + `listcollections/system/${listcollectionId}`,

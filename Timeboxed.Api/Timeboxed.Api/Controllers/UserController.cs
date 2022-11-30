@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Models;
-using Timeboxed.Api.Models.DTOs;
+using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Extensions;
@@ -122,7 +122,7 @@ namespace Timeboxed.Api.Controllers
                 new List<TimeboxedPermission> { TimeboxedPermission.ApplicationAccess },
                 async () =>
                 {
-                    var requestBody = await req.ConstructRequestModelAsync<UserPreferencesDto>();
+                    var requestBody = await req.ConstructRequestModelAsync<UserPreferencesResponse>();
 
                     return new OkObjectResult(await this.userService.UpdateUserPreferencesAsync(requestBody, cancellationToken));
                 },

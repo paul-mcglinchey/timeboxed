@@ -8,5 +8,6 @@ export { default as GroupPrompter } from './GroupPrompter'
 export { default as GroupList } from './GroupList'
 
 export { default as ApplicationMultiSelector } from './ApplicationMultiSelector'
+export { default as UserInvites } from './UserInvites'
 export { default as UserRoleSelector } from './UserRoleSelector'
 export { default as UserRoleGroup } from './UserRoleGroup'

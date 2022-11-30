@@ -51,19 +51,14 @@ const Modal = ({ children, title, description, isOpen, close, level = 1, allowAd
                 )}
               >
                 <div className="flex justify-between mb-2 items-center">
-                  <Dialog.Title
-                    as="h2"
-                    className="text-2xl font-semibold leading-6 text-color-header"
-                  >
+                  <Dialog.Title as="h2" className="text-2xl font-semibold leading-6 text-color-header">
                     {title}
                   </Dialog.Title>
                   <DialogButton actions={[close]}>
                     Cancel
                   </DialogButton>
                 </div>
-                <Dialog.Description
-                  className="sr-only"
-                >
+                <Dialog.Description className="sr-only">
                   {description}
                 </Dialog.Description>
 

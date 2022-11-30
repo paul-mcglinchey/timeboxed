@@ -1,4 +1,5 @@
 import { ChevronUpIcon } from "@heroicons/react/solid";
+import { ReactNode } from "react";
 import { IChildrenProps } from "../../models";
 import { combineClassNames } from "../../services";
 
@@ -7,9 +8,10 @@ interface IFormSectionProps extends IChildrenProps {
   classes?: string
   expanded?: boolean
   expanderAction?: () => void
+  titleActionComponent?: ReactNode
 }
 
-const FormSection = ({ children, title, classes, expanded, expanderAction }: IFormSectionProps) => {
+const FormSection = ({ children, title, classes, expanded, expanderAction, titleActionComponent }: IFormSectionProps) => {
   return (
     <div className={combineClassNames("flex flex-col mb-4", classes)}>
       {expanderAction ? (
@@ -20,7 +22,10 @@ const FormSection = ({ children, title, classes, expanded, expanderAction }: IFo
           </div>
         </button>
       ) : (
-        <FormSectionTitle title={title} />
+        <div className="flex justify-between items-center">
+          <FormSectionTitle title={title} />
+          {titleActionComponent}
+        </div>
       )}
       <hr className="border-gray-700 mb-2" />
       {children}
