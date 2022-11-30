@@ -8,10 +8,10 @@ namespace Timeboxed.Domain.Models
 
         public Session(string title, DateTime sessionDate, Guid clientId, Guid userId)
         {
-            Id = Guid.NewGuid();
-            Title = title;
+            this.Id = Guid.NewGuid();
+            this.Title = title;
             this.ClientId = clientId;
-            SessionDate = sessionDate;
+            this.SessionDate = sessionDate;
 
             this.AddTracking(userId, true);
         }
@@ -26,18 +26,33 @@ namespace Timeboxed.Domain.Models
 
         public string? Description { get; set; }
 
-        public ICollection<Tag> Tags { get; set; } = new List<Tag>();
+        public ICollection<SessionTag> Tags { get; set; } = new List<SessionTag>();
 
         public DateTime SessionDate { get; set; }
     }
 
-    public class Tag
+    public class SessionTag
     {
         public Guid Id { get; set; }
 
         public Guid SessionId { get; set; }
 
         public Session Session { get; set; }
+
+        public Guid GroupClientTagId { get; set; }
+
+        public GroupClientTag GroupClientTag { get; set; }
+    }
+
+    public class GroupClientTag
+    {
+        public Guid Id { get; set; }
+
+        public Guid GroupId { get; set; }
+
+        public Group Group { get; set; }
+
+        public ICollection<SessionTag> Tags { get; set; } = new List<SessionTag>();
 
         public string Value { get; set; }
     }

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -11,9 +10,9 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Controllers.Base;
-using Timeboxed.Api.Models;
 using Timeboxed.Api.Models.Requests;
 using Timeboxed.Api.Models.Responses;
+using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.FunctionWrappers;
@@ -21,17 +20,16 @@ using Timeboxed.Data.Enums;
 
 namespace Timeboxed.Api.Controllers
 {
-    public class SessionController : GroupControllerBase<SessionController>
+    public class SessionController : GroupControllerWrapper<SessionController>
     {
         private readonly ISessionService sessionService;
 
         public SessionController(
             ILogger<SessionController> logger,
             IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper,
-            IMapper mapper,
             ISessionService sessionService,
             IGroupValidator groupValidator)
-            : base(logger, httpRequestWrapper, mapper, groupValidator)
+            : base(logger, httpRequestWrapper, groupValidator)
         {
             this.sessionService = sessionService;
         }
@@ -57,6 +55,33 @@ namespace Timeboxed.Api.Controllers
                 },
                 cancellationToken);
 
+        [FunctionName("GetClientSessionById")]
+        public async Task<ActionResult<ListResponse<SessionResponse>>> GetClientSessionById(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups/{groupId}/clients/{clientId}/sessions/{sessionId}")] HttpRequest req,
+            string groupId,
+            string clientId,
+            string sessionId,
+            ILogger logger,
+            CancellationToken cancellationToken) =>
+            await this.ExecuteAsync(
+                new List<TimeboxedPermission> { TimeboxedPermission.ViewClients },
+                groupId,
+                async () =>
+                {
+                    if (clientId == null || !Guid.TryParse(clientId, out Guid clientIdGuid))
+                    {
+                        return new BadRequestObjectResult(new { message = "Client ID supplied is not a valid GUID" });
+                    }
+
+                    if (sessionId == null || !Guid.TryParse(sessionId, out Guid sessionIdGuid))
+                    {
+                        return new BadRequestObjectResult(new { message = "Session ID supplied is not a valid GUID" });
+                    }
+
+                    return new OkObjectResult(await this.sessionService.GetClientSessionByIdAsync(sessionIdGuid, cancellationToken));
+                },
+                cancellationToken);
+
         [FunctionName("AddClientSession")]
         public async Task<ActionResult<SessionResponse>> AddClientSession(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "groups/{groupId}/clients/{clientId}/sessions")] HttpRequest req,
@@ -76,7 +101,9 @@ namespace Timeboxed.Api.Controllers
                         return new BadRequestObjectResult(new { message = "Client ID supplied is not a valid GUID" });
                     }
 
-                    return new CreatedAtRouteResult("sessions", await this.sessionService.AddClientSessionAsync(clientIdGuid, request, cancellationToken));
+                    var session = await this.sessionService.AddClientSessionAsync(clientIdGuid, request, cancellationToken);
+
+                    return new CreatedAtRouteResult(nameof(this.GetClientSessionById), session.Id, await this.sessionService.GetClientSessionsAsync(clientIdGuid, cancellationToken));
                 },
                 cancellationToken);
 

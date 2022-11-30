@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Timeboxed.Api.Models
+namespace Timeboxed.Api.Models.Responses.Common
 {
     public class ListResponse<T>
     {

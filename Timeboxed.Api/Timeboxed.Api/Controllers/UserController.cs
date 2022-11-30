@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -7,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Timeboxed.Api.Models;
+using Timeboxed.Api.Models.Requests;
 using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
@@ -25,7 +24,6 @@ namespace Timeboxed.Api.Controllers
         private readonly IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper;
         private readonly TimeboxedContext context;
         private readonly IUserService userService;
-        private readonly IMapper mapper;
         private readonly IUserContextProvider userContextProvider;
 
         public UserController(
@@ -34,7 +32,6 @@ namespace Timeboxed.Api.Controllers
             IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper,
             TimeboxedContext context,
             IUserService userService,
-            IMapper mapper,
             IUserContextProvider userContextProvider)
         {
             this.logger = logger;
@@ -42,7 +39,6 @@ namespace Timeboxed.Api.Controllers
             this.httpRequestWrapper = httpRequestWrapper;
             this.context = context;
             this.userService = userService;
-            this.mapper = mapper;
             this.userContextProvider = userContextProvider;
         }
 

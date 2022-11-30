@@ -1,13 +1,12 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Timeboxed.Api.Models;
 using Timeboxed.Api.Models.Requests;
 using Timeboxed.Api.Models.Responses;
+using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Exceptions;
@@ -19,14 +18,12 @@ namespace Timeboxed.Api.Services
 {
     public class ClientService : IClientService
     {
-        private readonly IMapper mapper;
         private readonly TimeboxedContext context;
         private readonly IUserContextProvider userContextProvider;
         private readonly IGroupContextProvider groupContextProvider;
 
-        public ClientService(IMapper mapper, TimeboxedContext context, IUserContextProvider userContextProvider, IGroupContextProvider groupContextProvider)
+        public ClientService(TimeboxedContext context, IUserContextProvider userContextProvider, IGroupContextProvider groupContextProvider)
         {
-            this.mapper = mapper;
             this.context = context;
             this.userContextProvider = userContextProvider;
             this.groupContextProvider = groupContextProvider;

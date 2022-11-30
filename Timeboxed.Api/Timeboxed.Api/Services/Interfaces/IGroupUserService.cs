@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Timeboxed.Api.Models;
 using Timeboxed.Api.Models.Requests;
 using Timeboxed.Api.Models.Responses;
+using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Domain.Models;
 
 namespace Timeboxed.Api.Services.Interfaces

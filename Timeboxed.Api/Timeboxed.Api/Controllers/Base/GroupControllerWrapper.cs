@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,18 +11,16 @@ using Timeboxed.Data.Enums;
 
 namespace Timeboxed.Api.Controllers.Base
 {
-    public abstract class GroupControllerBase<TController>
+    public abstract class GroupControllerWrapper<TController>
     {
         protected readonly ILogger<TController> logger;
         protected readonly IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper;
-        protected readonly IMapper mapper;
         private readonly IGroupValidator groupValidator;
 
-        public GroupControllerBase(ILogger<TController> logger, IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper, IMapper mapper, IGroupValidator groupValidator)
+        public GroupControllerWrapper(ILogger<TController> logger, IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper, IGroupValidator groupValidator)
         {
             this.logger = logger;
             this.httpRequestWrapper = httpRequestWrapper;
-            this.mapper = mapper;
             this.groupValidator = groupValidator;
         }
 

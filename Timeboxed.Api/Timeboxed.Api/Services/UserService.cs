@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -9,7 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Timeboxed.Api.Models;
+using Timeboxed.Api.Models.Requests;
 using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
@@ -25,14 +24,12 @@ namespace Timeboxed.Api.Services
         private HashingManager hashing = new();
 
         private TimeboxedContext context;
-        private IMapper mapper;
         private IConfiguration configuration;
         private IUserContextProvider userContextProvider;
 
-        public UserService(TimeboxedContext context, IMapper mapper, IConfiguration configuration, IUserContextProvider userContextProvider)
+        public UserService(TimeboxedContext context, IConfiguration configuration, IUserContextProvider userContextProvider)
         {
             this.context = context;
-            this.mapper = mapper;
             this.configuration = configuration;
             this.userContextProvider = userContextProvider;
         }
@@ -103,13 +100,14 @@ namespace Timeboxed.Api.Services
                 .Include(u => u.Preferences)
                 .SingleOrDefaultAsync(cancellationToken);
 
-            var userPreferences = this.mapper.Map<UserPreferences>(requestBody);
-
-            user.Preferences = userPreferences;
+            user.Preferences = new UserPreferences
+            {
+                DefaultGroup = requestBody.DefaultGroup,
+            };
 
             await this.context.SaveChangesAsync(cancellationToken);
 
-            return this.mapper.Map<UserPreferencesResponse>(user.Preferences);
+            return new UserPreferencesResponse { Id = user.Preferences.Id, DefaultGroup = user.Preferences.DefaultGroup };
         }
 
         private string GenerateToken(User user)

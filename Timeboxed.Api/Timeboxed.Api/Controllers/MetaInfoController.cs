@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Timeboxed.Api.Models;
+using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.FunctionWrappers;
 using Timeboxed.Data.Enums;
@@ -37,7 +37,7 @@ namespace Timeboxed.Api.Controllers
         }
 
         [FunctionName("GetMetaInfo")]
-        public async Task<ActionResult<MetaInfo>> GetMetaInfo(
+        public async Task<ActionResult<MetaInfoResponse>> GetMetaInfo(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "metainfo")] HttpRequest req,
             ILogger logger,
             CancellationToken cancellationToken) =>
@@ -47,11 +47,9 @@ namespace Timeboxed.Api.Controllers
                 {
                     var applications = await this.applicationService.GetApplicationsAsync(cancellationToken);
                     var permissions = await this.permissionService.GetPermissionsAsync(cancellationToken);
-                    var roles = req.Query.TryGetValue("groupId", out var groupId) && Guid.TryParse(groupId, out var groupIdGuid)
-                        ? await this.roleService.GetRolesAsync(groupIdGuid, cancellationToken)
-                        : await this.roleService.GetRolesAsync(cancellationToken);
+                    var roles = await this.roleService.GetRolesAsync(req.Query.TryGetValue("groupId", out var groupId) && Guid.TryParse(groupId, out var groupIdGuid) ? groupIdGuid : null, cancellationToken);
 
-                    return new OkObjectResult(new MetaInfo
+                    return new OkObjectResult(new MetaInfoResponse
                     {
                         Applications = applications.Items,
                         Roles = roles.Items,

@@ -1,14 +1,12 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Timeboxed.Api.Models;
 using Timeboxed.Api.Models.Requests;
 using Timeboxed.Api.Models.Responses;
+using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Exceptions;
@@ -22,14 +20,12 @@ namespace Timeboxed.Api.Services
         private readonly IUserContextProvider userContextProvider;
         private readonly IGroupContextProvider groupContextProvider;
         private readonly TimeboxedContext context;
-        private readonly IMapper mapper;
 
-        public GroupUserService(IUserContextProvider userContextProvider, IGroupContextProvider groupContextProvider, TimeboxedContext context, IMapper mapper)
+        public GroupUserService(IUserContextProvider userContextProvider, IGroupContextProvider groupContextProvider, TimeboxedContext context)
         {
             this.userContextProvider = userContextProvider;
             this.groupContextProvider = groupContextProvider;
             this.context = context;
-            this.mapper = mapper;
         }
 
         public async Task<GroupUser?> GetGroupUserAsync(Guid groupId, Guid userId, CancellationToken cancellationToken)
@@ -57,7 +53,7 @@ namespace Timeboxed.Api.Services
 
             return new ListResponse<UserListResponse>
             {
-                Items = this.mapper.Map<List<UserListResponse>>(users),
+                Items = users,
                 Count = users.Count,
             };
         }

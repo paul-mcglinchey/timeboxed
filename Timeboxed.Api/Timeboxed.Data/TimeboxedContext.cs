@@ -47,6 +47,10 @@ namespace Timeboxed.Data
 
         public DbSet<Session>? Sessions { get; set; }
 
+        public DbSet<SessionTag>? SessionTags { get; set; }
+
+        public DbSet<GroupClientTag>? GroupClientTags { get; set; }
+
         public DbSet<Rota>? Rotas { get; set; }
 
         public DbSet<RotaEmployee>? RotaEmployees { get; set; }
@@ -64,8 +68,6 @@ namespace Timeboxed.Data
         public DbSet<EmployeeUnavailableDays>? EmployeeUnavailableDays { get; set; }
 
         public DbSet<EmployeeHoliday>? EmployeeHolidays { get; set; }
-
-        public DbSet<Tag>? Tags { get; set; }
 
         public DbSet<Email>? Emails { get; set; }
 
@@ -113,6 +115,19 @@ namespace Timeboxed.Data
                 .HasMany<Application>(gu => gu.Applications)
                 .WithMany(a => a.GroupUsers)
                 .UsingEntity<GroupUserApplication>();
+
+            modelBuilder.Entity<Session>()
+                .HasMany<SessionTag>(s => s.Tags)
+                .WithOne(st => st.Session);
+
+            modelBuilder.Entity<SessionTag>()
+                .HasOne<GroupClientTag>(st => st.GroupClientTag)
+                .WithMany(gct => gct.Tags)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<GroupClientTag>()
+                .HasOne<Group>(gct => gct.Group)
+                .WithMany();
 
             modelBuilder.Entity<Role>()
                 .HasMany<Permission>(r => r.Permissions)

@@ -1,6 +1,6 @@
-﻿namespace Timeboxed.Api.Models.DTOs
+﻿namespace Timeboxed.Api.Models.Responses
 {
-    public class ApplicationDto
+    public class ApplicationListResponse
     {
         public int Id { get; set; }
 

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -10,9 +9,9 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Controllers.Base;
-using Timeboxed.Api.Models;
 using Timeboxed.Api.Models.Requests;
 using Timeboxed.Api.Models.Responses;
+using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.FunctionWrappers;
@@ -20,7 +19,7 @@ using Timeboxed.Data.Enums;
 
 namespace Timeboxed.Api.Controllers
 {
-    public class GroupController : GroupControllerBase<GroupController>
+    public class GroupController : GroupControllerWrapper<GroupController>
     {
         private readonly IGroupService groupService;
         private readonly IGroupContextProvider groupContextProvider;
@@ -28,11 +27,10 @@ namespace Timeboxed.Api.Controllers
         public GroupController(
             ILogger<GroupController> logger,
             IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper,
-            IMapper mapper,
             IGroupService groupService,
             IGroupContextProvider groupContextProvider,
             IGroupValidator groupValidator)
-            : base(logger, httpRequestWrapper, mapper, groupValidator)
+            : base(logger, httpRequestWrapper, groupValidator)
         {
             this.groupService = groupService;
             this.groupContextProvider = groupContextProvider;

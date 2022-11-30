@@ -59,8 +59,6 @@ namespace Timeboxed.Api
 
             builder.Services.AddTransient<IGroupContextProvider, GroupContextProvider>();
             builder.Services.AddTransient<IUserContextProvider, UserContextProvider>();
-
-            builder.Services.AddAutoMapper(typeof(Startup));
         }
 
         private void ConfigureNewtonsoft()

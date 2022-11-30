@@ -1,6 +1,6 @@
 ﻿using Timeboxed.Api.Models.Enums;
 
-namespace Timeboxed.Api.Models
+namespace Timeboxed.Api.Models.Requests.Common
 {
     public class PageableSortableRequest
     {
@@ -8,10 +8,10 @@ namespace Timeboxed.Api.Models
 
         public int? PageSize { get; set; }
 
-        public string? SortField { get; set; }
+        public string SortField { get; set; }
 
         public SortDirection? SortDirection { get; set; }
 
-        public bool IsAscending => (this.SortDirection ?? Enums.SortDirection.Descending) == Enums.SortDirection.Ascending;
+        public bool IsAscending => (SortDirection ?? Enums.SortDirection.Descending) == Enums.SortDirection.Ascending;
     }
 }
