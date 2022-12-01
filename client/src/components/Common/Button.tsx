@@ -57,7 +57,7 @@ const Button = ({
         content ? "px-3" : "px-1",
         "py-1 transition-all font-bold rounded-md flex items-center justify-center tracking-wider",
         XL && "text-xl",
-        "disabled:pointer-events-none disabled:text-gray-800/40 select-none"
+        "disabled:pointer-events-none disabled:text-opacity-50 select-none"
       )}
       onClick={action}
       disabled={disabled}
