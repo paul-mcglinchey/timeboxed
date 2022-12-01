@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useCallback, useContext } from "react"
 import { IGroup, IUser } from "../models"
 import { UserContext } from "../contexts"
 import { IUserService } from "./interfaces"
@@ -14,9 +14,9 @@ const useUserService = (): IUserService => {
   const { handleResolution } = useResolutionService()
   const { getRole } = useRoleService()
 
-  const getUser = (userId: string | undefined): IUser | undefined => {
+  const getUser = useCallback((userId: string | undefined): IUser | undefined => {
     return users.find((user: IUser) => user.id === userId)
-  }
+  }, [users])
 
   const updateUser = asyncHandler(async (userId: string | undefined, values: IUser) => {
     if (!userId) throw new Error()

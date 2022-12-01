@@ -81,14 +81,18 @@ namespace Timeboxed.Api.Services
 
             var group = await this.context.Groups
                 .Where(g => g.Id == groupId)
-                .Select(Group_FromEF)
+                .Include(g => g.Applications)
+                .Include(g => g.GroupUsers)
+                    .ThenInclude(gu => gu.Applications)
+                .Include(g => g.GroupUsers)
+                    .ThenInclude(gu => gu.Roles)
                 .SingleOrDefaultAsync(cancellationToken)
             ?? throw new EntityNotFoundException($"Group {groupId} not found");
 
             group.Name = request.Name;
             group.Description = request.Description;
             group.Colour = request.Colour;
-            group.Applications = request.Applications.Select(a => new Application { Id = a }).ToList();
+            group.Applications = this.context.Applications.Where(a => request.Applications.Contains(a.Id)).ToList();
 
             group.AddTracking(this.userContextProvider.UserId);
 
