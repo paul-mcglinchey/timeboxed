@@ -4,5 +4,8 @@
     {
         public BadRequestException(string message)
             : base(message) { }
+
+        public BadRequestException(object message)
+            : base(message.ToString()) { }
     }
 }

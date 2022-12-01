@@ -12,6 +12,6 @@
 
         public bool IsAdmin { get; set; } = false;
 
-        public virtual UserPreferences? Preferences { get; set; }
+        public UserPreferences? Preferences { get; set; }
     }
 }

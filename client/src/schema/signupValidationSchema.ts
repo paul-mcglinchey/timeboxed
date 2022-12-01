@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 
 const signupValidationSchema = Yup.object().shape({
   email: Yup.string()
+    .email('Invalid email format')
     .min(8, 'Too Short!')
     .max(100, 'Too Long!')
     .required('Required'),
@@ -15,7 +16,9 @@ const signupValidationSchema = Yup.object().shape({
     .required('Required'),
   repeatPassword: Yup.string()
     .required('Required')
-    .oneOf([Yup.ref('password')], 'Passwords don\'t match')
+    .oneOf([Yup.ref('password')], 'Passwords don\'t match'),
+  accessKey: Yup.string()
+    .required('Required')
 });
 
 export default signupValidationSchema;

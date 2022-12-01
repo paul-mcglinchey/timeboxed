@@ -34,12 +34,17 @@ namespace Timeboxed.Api.Services
             this.userContextProvider = userContextProvider;
         }
 
-        public async Task<bool> UserExistsAsync(UserRequest user, CancellationToken cancellationToken) =>
-            await this.context.Users.Where(u =>
-                u.Username.Equals(user.Username) ||
-                u.Email.Equals(user.Email) ||
-                (u.Username.Equals(user.UsernameOrEmail) || u.Email.Equals(user.UsernameOrEmail)))
-            .SingleOrDefaultAsync(cancellationToken) != null;
+        public async Task<bool> UserExistsAsync(string usernameOrEmail, CancellationToken cancellationToken) =>
+            await this.context.Users
+                .Where(u => u.Username == usernameOrEmail || u.Email == usernameOrEmail)
+                .SingleOrDefaultAsync(cancellationToken) 
+            != null;
+
+        public async Task<bool> UserExistsAsync(string email, string username, CancellationToken cancellationToken) =>
+            await this.context.Users
+                .Where(u => u.Email == email || u.Username == username)
+                .SingleOrDefaultAsync(cancellationToken)
+            != null;
 
         public async Task<bool> UserExistsAsync(Guid userId, CancellationToken cancellationToken) =>
             await this.context.Users.Where(u => u.Id.Equals(userId)).SingleOrDefaultAsync(cancellationToken) != null;
@@ -66,16 +71,36 @@ namespace Timeboxed.Api.Services
             };
         }
 
-        public async Task<User> GetUserByUsernameOrEmailAsync(string usernameOrEmail, CancellationToken cancellationToken) =>
-            await this.context.Users.Where(u => u.Username == usernameOrEmail || u.Email == usernameOrEmail).SingleOrDefaultAsync(cancellationToken);
-
-        public async Task<UserResponse> CreateUserAsync(UserRequest userRequest, CancellationToken cancellationToken)
+        public async Task<UserResponse> LoginAsync(LoginRequest request, CancellationToken cancellationToken)
         {
+            var user = await this.context.Users
+                .Where(u => u.Username == request.UsernameOrEmail || u.Email == request.UsernameOrEmail)
+                .SingleOrDefaultAsync(cancellationToken)
+            ?? throw new EntityNotFoundException($"User {request.UsernameOrEmail} not found");
+
+            return hashing.Verify(request.Password, user.Password)
+                ? await this.GetUserByIdAsync(user.Id, cancellationToken)
+                : null;
+        }
+
+        public async Task<UserResponse> SignupAsync(SignupRequest request, CancellationToken cancellationToken)
+        {
+            var alphaAccessKey = await this.context.UserAccessControl
+                .Where(ua => ua.UserEmail == request.Email)
+                .Select(ua => ua.AlphaAccessKey)
+                .SingleOrDefaultAsync(cancellationToken)
+            ?? throw new BadRequestException(new { message = $"No access key found for user {request.Email}" });
+
+            if (alphaAccessKey == null || alphaAccessKey != request.AccessKey)
+            {
+                throw new BadRequestException(new { message = $"Invalid access key" });
+            }
+
             var user = new User
             {
-                Username = userRequest.Username,
-                Email = userRequest.Email,
-                Password = hashing.HashToString(userRequest.Password),
+                Username = request.Username,
+                Email = request.Email,
+                Password = hashing.HashToString(request.Password),
             };
 
             await this.context.Users.AddAsync(user, cancellationToken);
@@ -84,16 +109,7 @@ namespace Timeboxed.Api.Services
             return await this.GetUserByIdAsync(user.Id, cancellationToken);
         }
 
-        public async Task<UserResponse?> AuthenticateUserAsync(UserRequest userRequest, CancellationToken cancellationToken)
-        {
-            var user = await this.GetUserByUsernameOrEmailAsync(userRequest.UsernameOrEmail, cancellationToken);
-
-            return hashing.Verify(userRequest.Password, user.Password)
-                ? await this.GetUserByIdAsync(user.Id, cancellationToken)
-                : null;
-        }
-
-        public async Task<UserPreferencesResponse> UpdateUserPreferencesAsync(UserPreferencesResponse requestBody, CancellationToken cancellationToken)
+        public async Task<UserPreferencesResponse> UpdateUserPreferencesAsync(UpdateUserPreferencesRequest request, CancellationToken cancellationToken)
         {
             var user = await this.context.Users
                 .Where(u => u.Id.Equals(this.userContextProvider.UserId))
@@ -102,7 +118,7 @@ namespace Timeboxed.Api.Services
 
             user.Preferences = new UserPreferences
             {
-                DefaultGroup = requestBody.DefaultGroup,
+                DefaultGroup = request.DefaultGroup,
             };
 
             await this.context.SaveChangesAsync(cancellationToken);

@@ -34,7 +34,7 @@ const useAuthService = (): IAuthService => {
   const signup = asyncHandler(async (user: IUserRequest) => {
     const res = await fetch(endpoints.signup, buildRequest('POST', undefined, user))
     
-    if (!res.ok) throw new Error(await res.text())
+    if (!res.ok) throw new Error(await res.json())
     
     const json = await res.json()
 

@@ -43,52 +43,50 @@ namespace Timeboxed.Api.Controllers
         }
 
         [FunctionName("Signup")]
-        public async Task<ActionResult<string>> Signup(
+        public async Task<ActionResult> Signup(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users/signup")] HttpRequest req,
             ILogger logger,
             CancellationToken cancellationToken) =>
-            await this.functionWrapper.ExecuteAsync<ActionResult>(
+            await this.functionWrapper.ExecuteAsync(
                 async () =>
                 {
-                    var userRequest = await req.ConstructRequestModelAsync<UserRequest>();
+                    var request = await req.ConstructRequestModelAsync<SignupRequest>();
 
-                    if (userRequest.Username == null || userRequest.Email == null || userRequest.Password == null)
+                    if (request.Username == null || request.Email == null || request.Password == null)
                     {
                         return new BadRequestObjectResult(new { message = "Fields missing from request." });
                     }
 
-                    if (await this.userService.UserExistsAsync(userRequest, cancellationToken))
+                    if (await this.userService.UserExistsAsync(request.Email, request.Username, cancellationToken))
                     {
-                        return new BadRequestObjectResult(new { message = "User already exists." });
+                        return new BadRequestObjectResult(new { message = "Username or email is already in use." });
                     }
 
-                    var user = await this.userService.CreateUserAsync(userRequest, cancellationToken);
-
-                    return new OkObjectResult(user);
+                    return new OkObjectResult(await this.userService.SignupAsync(request, cancellationToken));
                 },
                 cancellationToken);
 
         [FunctionName("Login")]
-        public async Task<ActionResult<string>> Login(
+        public async Task<ActionResult> Login(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "users/login")] HttpRequest req,
             ILogger logger,
             CancellationToken cancellationToken) =>
-            await this.functionWrapper.ExecuteAsync<ActionResult>(
+            await this.functionWrapper.ExecuteAsync(
                 async () =>
                 {
-                    var userRequest = await req.ConstructRequestModelAsync<UserRequest>();
+                    var request = await req.ConstructRequestModelAsync<LoginRequest>();
 
-                    if (userRequest?.UsernameOrEmail == null || userRequest?.Password == null)
+                    if (request?.UsernameOrEmail == null || request?.Password == null)
                     {
                         return new BadRequestObjectResult("Fields missing from request.");
                     }
 
-                    if (!await this.userService.UserExistsAsync(userRequest, cancellationToken))
+                    if (!await this.userService.UserExistsAsync(request.UsernameOrEmail, cancellationToken))
                     {
                         return new BadRequestObjectResult("Incorrect email or username.");
                     }
 
-                    var user = await this.userService.AuthenticateUserAsync(userRequest, cancellationToken);
+                    var user = await this.userService.LoginAsync(request, cancellationToken);
 
                     return user != null
                         ? new OkObjectResult(user)
@@ -97,11 +95,11 @@ namespace Timeboxed.Api.Controllers
                 cancellationToken);
 
         [FunctionName("AuthenticateUser")]
-        public async Task<ActionResult> Authenticate(
+        public async Task<ActionResult<UserResponse>> Authenticate(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "users/authenticate")] HttpRequest req,
             ILogger logger,
             CancellationToken cancellationToken) =>
-            await this.httpRequestWrapper.ExecuteAsync(
+            await this.httpRequestWrapper.ExecuteAsync<UserResponse>(
                 new List<TimeboxedPermission> { TimeboxedPermission.ApplicationAccess },
                 async () =>
                 {
@@ -110,17 +108,17 @@ namespace Timeboxed.Api.Controllers
                 cancellationToken);
 
         [FunctionName("UpdateUserPreferences")]
-        public async Task<ActionResult> UpdateUserPreferences(
+        public async Task<ActionResult<UserPreferencesResponse>> UpdateUserPreferences(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "users/preferences")] HttpRequest req,
             ILogger logger,
             CancellationToken cancellationToken) =>
-            await this.httpRequestWrapper.ExecuteAsync(
+            await this.httpRequestWrapper.ExecuteAsync<UserPreferencesResponse>(
                 new List<TimeboxedPermission> { TimeboxedPermission.ApplicationAccess },
                 async () =>
                 {
-                    var requestBody = await req.ConstructRequestModelAsync<UserPreferencesResponse>();
+                    var request = await req.ConstructRequestModelAsync<UpdateUserPreferencesRequest>();
 
-                    return new OkObjectResult(await this.userService.UpdateUserPreferencesAsync(requestBody, cancellationToken));
+                    return new OkObjectResult(await this.userService.UpdateUserPreferencesAsync(request, cancellationToken));
                 },
                 cancellationToken);
     }

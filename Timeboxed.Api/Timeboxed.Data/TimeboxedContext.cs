@@ -43,6 +43,8 @@ namespace Timeboxed.Data
 
         public DbSet<UserPreferences>? UserPreferences { get; set; }
 
+        public DbSet<UserAccessControl>? UserAccessControl { get; set; }
+
         public DbSet<Client>? Clients { get; set; }
 
         public DbSet<Session>? Sessions { get; set; }

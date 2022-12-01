@@ -148,7 +148,7 @@ namespace Timeboxed.Api.Controllers
 
         [FunctionName("UnlockRota")]
         public async Task<ActionResult> UnlockRota(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "groups/{groupId}/rotas/{rotaId}/lock")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "groups/{groupId}/rotas/{rotaId}/unlock")] HttpRequest req,
             string groupId,
             string rotaId,
             ILogger logger,
