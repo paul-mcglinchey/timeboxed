@@ -16,7 +16,8 @@ namespace Timeboxed.Data
                     options => 
                     { 
                         options.MigrationsAssembly("Timeboxed.Data"); 
-                        options.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery); 
+                        options.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+                        options.EnableRetryOnFailure();
                     })
                 .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name },
                        LogLevel.Information);
