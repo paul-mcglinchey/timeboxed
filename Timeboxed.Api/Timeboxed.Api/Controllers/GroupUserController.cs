@@ -16,7 +16,7 @@ using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Extensions;
 using Timeboxed.Core.FunctionWrappers;
-using Timeboxed.Data.Enums;
+using Timeboxed.Data.Constants;
 
 namespace Timeboxed.Api.Controllers
 {
@@ -27,7 +27,7 @@ namespace Timeboxed.Api.Controllers
 
         public GroupUserController(
             ILogger<GroupUserController> logger,
-            IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper,
+            IHttpRequestWrapper<int> httpRequestWrapper,
             IGroupUserService groupUserService,
             IGroupValidator groupValidator,
             IUserValidator userValidator)
@@ -44,7 +44,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.GroupAccess },
+                new List<int> { TimeboxedPermissions.GroupAccess },
                 groupId,
                 async () => new OkObjectResult(await this.groupUserService.GetGroupUsersAsync(cancellationToken)),
                 cancellationToken);
@@ -57,7 +57,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.GroupAdminAccess },
+                new List<int> { TimeboxedPermissions.GroupAdminAccess },
                 groupId,
                 async () =>
                 {
@@ -79,7 +79,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.GroupAdminAccess },
+                new List<int> { TimeboxedPermissions.GroupAdminAccess },
                 groupId,
                 async () =>
                 {
@@ -97,7 +97,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.GroupAdminAccess },
+                new List<int> { TimeboxedPermissions.GroupAdminAccess },
                 groupId,
                 async () =>
                 {
@@ -117,7 +117,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.GroupAdminAccess },
+                new List<int> { TimeboxedPermissions.GroupAdminAccess },
                 groupId,
                 async () => new OkObjectResult(new { groupUserId = await this.groupUserService.JoinGroupAsync(cancellationToken) }),
                 cancellationToken);
@@ -129,7 +129,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.GroupAdminAccess },
+                new List<int> { TimeboxedPermissions.GroupAdminAccess },
                 groupId,
                 async () => new OkObjectResult(new { groupUserId = await this.groupUserService.LeaveGroupAsync(cancellationToken) }),
                 cancellationToken);

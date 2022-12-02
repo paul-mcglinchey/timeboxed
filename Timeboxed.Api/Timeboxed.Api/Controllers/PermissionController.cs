@@ -10,19 +10,18 @@ using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.FunctionWrappers;
-using Timeboxed.Data.Enums;
 
 namespace Timeboxed.Api.Controllers
 {
     public class PermissionController
     {
         private readonly ILogger<PermissionController> logger;
-        private readonly IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper;
+        private readonly IHttpRequestWrapper<int> httpRequestWrapper;
         private readonly IPermissionService permissionService;
 
         public PermissionController(
             ILogger<PermissionController> logger,
-            IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper,
+            IHttpRequestWrapper<int> httpRequestWrapper,
             IPermissionService permissionService)
         {
             this.logger = logger;
@@ -36,7 +35,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.httpRequestWrapper.ExecuteAsync(
-                new List<TimeboxedPermission> { },
+                new List<int> { },
                 async () => new OkObjectResult(await this.permissionService.GetPermissionsAsync(cancellationToken)),
                 cancellationToken);
     }

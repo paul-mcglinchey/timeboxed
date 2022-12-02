@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.FunctionWrappers;
-using Timeboxed.Data.Enums;
+using Timeboxed.Data.Constants;
 
 namespace Timeboxed.Api.Controllers
 {
     public class MetaInfoController
     {
         private readonly ILogger<MetaInfoController> logger;
-        private readonly IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper;
+        private readonly IHttpRequestWrapper<int> httpRequestWrapper;
         private readonly IApplicationService applicationService;
         private readonly IRoleService roleService;
         private readonly IPermissionService permissionService;
@@ -26,7 +26,7 @@ namespace Timeboxed.Api.Controllers
             IApplicationService applicationService,
             IPermissionService permissionService,
             IRoleService roleService,
-            IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper,
+            IHttpRequestWrapper<int> httpRequestWrapper,
             ILogger<MetaInfoController> logger)
         {
             this.applicationService = applicationService;
@@ -42,7 +42,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.httpRequestWrapper.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.ApplicationAccess },
+                new List<int> { TimeboxedPermissions.ApplicationAccess },
                 async () =>
                 {
                     var applications = await this.applicationService.GetApplicationsAsync(cancellationToken);

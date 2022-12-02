@@ -17,7 +17,7 @@ using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Extensions;
 using Timeboxed.Core.FunctionWrappers;
-using Timeboxed.Data.Enums;
+using Timeboxed.Data.Constants;
 
 namespace Timeboxed.Api.Controllers
 {
@@ -27,7 +27,7 @@ namespace Timeboxed.Api.Controllers
 
         public EmployeeController(
             ILogger<EmployeeController> logger,
-            IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper,
+            IHttpRequestWrapper<int> httpRequestWrapper,
             IEmployeeService employeeService,
             IGroupValidator groupValidator)
             : base(logger, httpRequestWrapper, groupValidator)
@@ -42,7 +42,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.ViewRotas },
+                new List<int> { TimeboxedPermissions.ViewRotas },
                 groupId,
                 async () =>
                 {
@@ -64,7 +64,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.AddEditDeleteRotas },
+                new List<int> { TimeboxedPermissions.AddEditDeleteRotas },
                 groupId,
                 async () =>
                 {
@@ -87,7 +87,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.AddEditDeleteRotas },
+                new List<int> { TimeboxedPermissions.AddEditDeleteRotas },
                 groupId,
                 async () =>
                 {
@@ -110,7 +110,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.AddEditDeleteRotas },
+                new List<int> { TimeboxedPermissions.AddEditDeleteRotas },
                 groupId,
                 async () =>
                 {

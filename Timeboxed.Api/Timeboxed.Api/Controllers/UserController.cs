@@ -13,7 +13,7 @@ using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Extensions;
 using Timeboxed.Core.FunctionWrappers;
 using Timeboxed.Data;
-using Timeboxed.Data.Enums;
+using Timeboxed.Data.Constants;
 
 namespace Timeboxed.Api.Controllers
 {
@@ -21,7 +21,7 @@ namespace Timeboxed.Api.Controllers
     {
         private readonly ILogger<UserController> logger;
         private readonly IFunctionWrapper functionWrapper;
-        private readonly IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper;
+        private readonly IHttpRequestWrapper<int> httpRequestWrapper;
         private readonly TimeboxedContext context;
         private readonly IUserService userService;
         private readonly IUserContextProvider userContextProvider;
@@ -29,7 +29,7 @@ namespace Timeboxed.Api.Controllers
         public UserController(
             ILogger<UserController> logger,
             IFunctionWrapper functionWrapper,
-            IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper,
+            IHttpRequestWrapper<int> httpRequestWrapper,
             TimeboxedContext context,
             IUserService userService,
             IUserContextProvider userContextProvider)
@@ -100,7 +100,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.httpRequestWrapper.ExecuteAsync<UserResponse>(
-                new List<TimeboxedPermission> { TimeboxedPermission.ApplicationAccess },
+                new List<int> { TimeboxedPermissions.ApplicationAccess },
                 async () =>
                 {
                     return new OkObjectResult(await this.userService.GetUserByIdAsync(this.userContextProvider.UserId, cancellationToken));
@@ -113,7 +113,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.httpRequestWrapper.ExecuteAsync<UserPreferencesResponse>(
-                new List<TimeboxedPermission> { TimeboxedPermission.ApplicationAccess },
+                new List<int> { TimeboxedPermissions.ApplicationAccess },
                 async () =>
                 {
                     var request = await req.ConstructRequestModelAsync<UpdateUserPreferencesRequest>();

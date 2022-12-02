@@ -16,7 +16,7 @@ using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.FunctionWrappers;
-using Timeboxed.Data.Enums;
+using Timeboxed.Data.Constants;
 
 namespace Timeboxed.Api.Controllers
 {
@@ -26,7 +26,7 @@ namespace Timeboxed.Api.Controllers
 
         public SessionController(
             ILogger<SessionController> logger,
-            IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper,
+            IHttpRequestWrapper<int> httpRequestWrapper,
             ISessionService sessionService,
             IGroupValidator groupValidator)
             : base(logger, httpRequestWrapper, groupValidator)
@@ -42,7 +42,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.ViewClients },
+                new List<int> { TimeboxedPermissions.ViewClients },
                 groupId,
                 async () =>
                 {
@@ -64,7 +64,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.ViewClients },
+                new List<int> { TimeboxedPermissions.ViewClients },
                 groupId,
                 async () =>
                 {
@@ -90,7 +90,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.AddEditDeleteClients },
+                new List<int> { TimeboxedPermissions.AddEditDeleteClients },
                 groupId,
                 async () =>
                 {
@@ -116,7 +116,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.AddEditDeleteClients },
+                new List<int> { TimeboxedPermissions.AddEditDeleteClients },
                 groupId,
                 async () =>
                 {
@@ -145,7 +145,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.AddEditDeleteClients },
+                new List<int> { TimeboxedPermissions.AddEditDeleteClients },
                 groupId,
                 async () =>
                 {

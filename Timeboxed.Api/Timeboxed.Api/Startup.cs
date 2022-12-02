@@ -14,7 +14,7 @@ using Timeboxed.Core.AccessControl.Services;
 using Timeboxed.Core.Converters;
 using Timeboxed.Core.Extensions;
 using Timeboxed.Data;
-using Timeboxed.Data.Enums;
+using Timeboxed.Data.Constants;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -26,9 +26,9 @@ namespace Timeboxed.Api
 
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.Services.AddTransient<IUserAuthorisationService<TimeboxedPermission>, UserAuthorizationService>();
+            builder.Services.AddTransient<IUserAuthorisationService<TimeboxedPermissions>, UserAuthorizationService>();
 
-            builder.Services.AddAccessControl<TimeboxedPermission, UserAuthorizationService>();
+            builder.Services.AddAccessControl<TimeboxedPermissions, UserAuthorizationService>();
 
             this.ConfigureServices(builder, builder.GetContext().Configuration);
             this.ConfigureNewtonsoft();
@@ -39,7 +39,11 @@ namespace Timeboxed.Api
             builder.Services.AddSingleton<JwtSecurityTokenHandler>();
 
             builder.Services.AddDbContext<TimeboxedContext>(options =>
-                options.UseSqlServer(configuration["TimeboxedConnectionString"], options => options.EnableRetryOnFailure(3)));
+                options.UseSqlServer(configuration["TimeboxedConnectionString"], options => 
+                {
+                    options.EnableRetryOnFailure(3);
+                    options.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+                }));
 
             builder.Services.AddTransient<IUserValidator, UserValidator>();
 

@@ -1,12 +1,13 @@
 import { Form, Formik } from "formik";
 import { useGroupService, useUserService } from "../../hooks";
-import { IContextualFormProps, IGroup, IUser } from "../../models";
-import { generateColour } from "../../services";
+import { IContextualFormProps, IGroup, IGroupUser, IUser } from "../../models";
+import { combineClassNames, generateColour } from "../../services";
 import { groupValidationSchema } from "../../schema";
 import { ColourPicker, FormSection, Modal, FormikInput, Button, SpinnerLoader } from "../Common";
 import { ApplicationMultiSelector, UserInvites, UserRoleSelector } from '.'
 import { useState } from "react";
 import { PencilIcon } from "@heroicons/react/solid";
+import { Role } from "../../enums";
 
 interface IUpdateGroupFormProps {
   group: IGroup
@@ -14,11 +15,14 @@ interface IUpdateGroupFormProps {
 
 const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupFormProps & IContextualFormProps) => {
 
-  const [editGroupUsersOpen, setEditGroupUsersOpen] = useState<boolean>(false);
+  const [editGroupUsersOpen, setEditGroupUsersOpen] = useState<boolean>(false)
+  const toggleEditGroupUsersOpen = () => setEditGroupUsersOpen(!editGroupUsersOpen)
+
   const [inviteUserOpen, setInviteUserOpen] = useState<boolean>(false)
+  const toggleInviteUserOpen = () => setInviteUserOpen(!inviteUserOpen)
 
   const { updateGroup } = useGroupService()
-  const { getUser, isLoading } = useUserService()
+  const { getUser, userHasRole, isLoading } = useUserService()
 
   return (
     <Formik
@@ -48,31 +52,41 @@ const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupForm
               setFieldValue={(a) => setFieldValue('applications', a)}
             />
           </FormSection>
-          <FormSection title="Users" titleActionComponent={<Button action={() => setInviteUserOpen(true)} content="Invite" type="button" />}>
+          <FormSection title="Users" titleActionComponent={<Button action={toggleInviteUserOpen} content="Invite" type="button" />}>
             {isLoading ? (
               <SpinnerLoader />
             ) : (
               <>
-                {group.groupUsers.map(gu => getUser(gu.userId)).filter((u): u is IUser => !!u).map((u, j) => (
-                  <div key={j} className="flex">
-                    <button type="button" onClick={() => setEditGroupUsersOpen(true)} className="flex flex-1 justify-between items-center group" key={j}>
-                      <div className="flex flex-col">
-                        <span className="uppercase font-bold text-lg text-left tracking-wider">{u.username}</span>
-                        <span className="text-sm tracking-wide dark:text-gray-500 text-gray-500">{u.email}</span>
-                      </div>
-                      <div className="flex items-center pr-2">
-                        <PencilIcon className="w-6 h-6 group-hover:text-blue-500 transition-colors" />
+                {group.groupUsers.filter((gu): gu is IGroupUser => !!getUser(gu.userId)).map(gu => (
+                  <div key={gu.userId} className="flex">
+                    <button type="button" onClick={toggleEditGroupUsersOpen} className="w-full grid grid-cols-8 items-center group hover:bg-gray-300 dark:hover:bg-gray-900 rounded-md p-2">
+                      <UserDetails user={getUser(gu.userId)!} />
+                      <div className="col-span-2 grid grid-cols-6 items-center">
+                        <div className={combineClassNames(
+                          "col-span-5 font-bold px-2 py-0.5 border border-current rounded-md",
+                          gu.hasJoined ? userHasRole(group, gu.userId, Role.GroupAdmin) ? "text-orange-500" : "text-blue-500" : "text-emerald-500"
+                        )}>
+                          {gu.hasJoined
+                            ? userHasRole(group, gu.userId, Role.GroupAdmin)
+                              ? 'Admin'
+                              : 'Member'
+                            : 'Pending'
+                          }
+                        </div>
+                        <div className="col-span-1 flex flex-1 justify-end">
+                          <PencilIcon className="w-6 h-6 group-hover:text-blue-500 transition-colors" />
+                        </div>
                       </div>
                     </button>
                     <Modal
                       title="Edit group users"
                       description="This dialog can be used to edit and update an existing user's roles within the currently selected group."
                       isOpen={editGroupUsersOpen}
-                      close={() => setEditGroupUsersOpen(false)}
+                      close={toggleEditGroupUsersOpen}
                       level={2}
                     >
                       {(ConfirmationButton) => (
-                        <UserRoleSelector group={group} userId={u.id} ContextualSubmissionButton={ConfirmationButton} />
+                        <UserRoleSelector group={group} userId={gu.userId} ContextualSubmissionButton={ConfirmationButton} />
                       )}
                     </Modal>
                   </div>
@@ -83,7 +97,7 @@ const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupForm
               title="Invite user"
               description="This dialog can be used to invite existing users to the currently selected group."
               isOpen={inviteUserOpen}
-              close={() => setInviteUserOpen(false)}
+              close={toggleInviteUserOpen}
               level={2}
             >
               {() => (
@@ -97,6 +111,19 @@ const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupForm
         </Form>
       )}
     </Formik >
+  )
+}
+
+interface IUserDetails {
+  user: IUser
+}
+
+const UserDetails = ({ user }: IUserDetails) => {
+  return (
+    <div className="col-span-6 flex flex-col text-left">
+      <span className="uppercase font-bold text-lg tracking-wider">{user.username}</span>
+      <span className="text-sm tracking-wide dark:text-gray-500 text-gray-500">{user.email}</span>
+    </div>
   )
 }
 

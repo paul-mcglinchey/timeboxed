@@ -14,20 +14,20 @@ using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.FunctionWrappers;
-using Timeboxed.Data.Enums;
+using Timeboxed.Data.Constants;
 
 namespace Timeboxed.Api.Controllers
 {
     public class RoleController
     {
         private readonly ILogger<RoleController> logger;
-        private readonly IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper;
+        private readonly IHttpRequestWrapper<int> httpRequestWrapper;
         private readonly IGroupValidator groupValidationWrapper;
         private readonly IRoleService roleService;
 
         public RoleController(
             ILogger<RoleController> logger,
-            IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper,
+            IHttpRequestWrapper<int> httpRequestWrapper,
             IGroupValidator groupValidationWrapper,
             IRoleService roleService)
         {
@@ -43,7 +43,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.httpRequestWrapper.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.ApplicationAccess },
+                new List<int> { TimeboxedPermissions.ApplicationAccess },
                 async () => new OkObjectResult(await this.roleService.GetRolesAsync(
                     req.Query.TryGetValue("groupId", out var groupId) && Guid.TryParse(groupId, out var groupIdGuid) 
                         ? groupIdGuid 
@@ -58,7 +58,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.httpRequestWrapper.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.ApplicationAccess },
+                new List<int> { TimeboxedPermissions.ApplicationAccess },
                 async () => Guid.TryParse(roleId, out Guid roleIdGuid) 
                     ? new OkObjectResult(await this.roleService.GetRoleByIdAsync(roleIdGuid, cancellationToken))
                     : new BadRequestObjectResult(new { message = "Role ID supplied is not a valid GUID"}),
@@ -70,7 +70,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.httpRequestWrapper.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.ApplicationAccess },
+                new List<int> { TimeboxedPermissions.ApplicationAccess },
                 async () =>
                 {
                     var requestBody = await ConstructRequestModelAsync<AddRoleRequest>(req);
@@ -98,7 +98,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.httpRequestWrapper.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.ApplicationAccess },
+                new List<int> { TimeboxedPermissions.ApplicationAccess },
                 async () =>
                 {
                     if (!Guid.TryParse(roleId, out var roleIdGuid))

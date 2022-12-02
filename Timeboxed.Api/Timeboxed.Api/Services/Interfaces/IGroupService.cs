@@ -11,6 +11,8 @@ namespace Timeboxed.Api.Services.Interfaces
     {
         public Task<ListResponse<GroupResponse>> GetGroupsAsync(CancellationToken cancellationToken);
 
+        public Task<GroupResponse> GetGroupByIdAsync(Guid groupId, CancellationToken cancellationToken);
+
         public Task<GroupResponse> AddGroupAsync(AddGroupRequest request, CancellationToken cancellationToken);
 
         public Task<GroupResponse> UpdateGroupAsync(UpdateGroupRequest request, CancellationToken cancellationToken);

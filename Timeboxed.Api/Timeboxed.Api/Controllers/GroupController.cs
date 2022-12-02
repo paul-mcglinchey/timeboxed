@@ -15,7 +15,7 @@ using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.FunctionWrappers;
-using Timeboxed.Data.Enums;
+using Timeboxed.Data.Constants;
 
 namespace Timeboxed.Api.Controllers
 {
@@ -26,7 +26,7 @@ namespace Timeboxed.Api.Controllers
 
         public GroupController(
             ILogger<GroupController> logger,
-            IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper,
+            IHttpRequestWrapper<int> httpRequestWrapper,
             IGroupService groupService,
             IGroupContextProvider groupContextProvider,
             IGroupValidator groupValidator)
@@ -42,7 +42,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.httpRequestWrapper.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.ApplicationAccess },
+                new List<int> { TimeboxedPermissions.ApplicationAccess },
                 async () => new OkObjectResult(await this.groupService.GetGroupsAsync(cancellationToken)),
                 cancellationToken);
 
@@ -52,7 +52,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.httpRequestWrapper.ExecuteAsync(
-                new List<TimeboxedPermission> { },
+                new List<int> { },
                 async () =>
                 {
                     var request = await ConstructRequestModelAsync<AddGroupRequest>(req);
@@ -73,7 +73,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.GroupAdminAccess },
+                new List<int> { TimeboxedPermissions.GroupAdminAccess },
                 groupId,
                 async () =>
                 {
@@ -95,7 +95,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.GroupAdminAccess },
+                new List<int> { TimeboxedPermissions.GroupAdminAccess },
                 groupId,
                 async () =>
                 {

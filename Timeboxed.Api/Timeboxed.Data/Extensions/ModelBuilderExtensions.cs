@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Timeboxed.Data.Enums;
+using Timeboxed.Data.Constants;
 using Timeboxed.Domain.Models;
 
 namespace Timeboxed.Data.Extensions
@@ -8,17 +8,10 @@ namespace Timeboxed.Data.Extensions
     {
         public static void Seed(this ModelBuilder modelBuilder)
         {
-            var groupAdminRoleId = Guid.Parse("1BA0C5A2-00A5-4B37-9E97-CC354AD6D9E2");
-            var groupMemberRoleId = Guid.Parse("39A759E0-4991-498F-8612-4E2FC709A9B2");
-            var rotaManagerAdminRoleId = Guid.Parse("78114707-A61A-46E7-9914-F918DE3F89FA");
-            var rotaManagerUserRoleId = Guid.Parse("24CDA806-3A28-45F8-9F6D-D64A613385CB");
-            var clientManagerAdminRoleId = Guid.Parse("DCD622B3-400C-45E2-9451-23AF77B7F835");
-            var clientManagerUserRoleId = Guid.Parse("16BEFBF9-1ADE-4FAD-B0ED-0080F82E8230");
-
             modelBuilder.Entity<Application>().HasData(
                 new Application
                 {
-                    Id = 1,
+                    Id = TimeboxedApplications.RotaManager,
                     Name = "Rota Manager",
                     Description = "A first class environment for managing rotas & employees in your business.",
                     Url = "/rotas/dashboard",
@@ -28,7 +21,7 @@ namespace Timeboxed.Data.Extensions
                 },
                 new Application
                 {
-                    Id = 2,
+                    Id = TimeboxedApplications.ClientManager,
                     Name = "Client Manager",
                     Description = "A complete package for managing clients allowing you to spend more time where it really matters.",
                     Url = "/clients/dashboard",
@@ -40,49 +33,49 @@ namespace Timeboxed.Data.Extensions
             modelBuilder.Entity<Permission>().HasData(
                 new Permission
                 {
-                    Id = (int)TimeboxedPermission.GroupAccess,
+                    Id = TimeboxedPermissions.GroupAccess,
                     Name = "Group Access",
                     Description = "Grants access to a group.",
                 },
                 new Permission
                 {
-                    Id = (int)TimeboxedPermission.GroupAdminAccess,
+                    Id = TimeboxedPermissions.GroupAdminAccess,
                     Name = "Group Admin Access",
                     Description = "Grants admin access to a group.",
                 },
                 new Permission
                 {
-                    Id = (int)TimeboxedPermission.ApplicationAccess,
+                    Id = TimeboxedPermissions.ApplicationAccess,
                     Name = "Application Access",
                     Description = "Grants access to an application."
                 },
                 new Permission
                 {
-                    Id = (int)TimeboxedPermission.ApplicationAdminAccess,
+                    Id = TimeboxedPermissions.ApplicationAdminAccess,
                     Name = "Application Admin",
                     Description = "Grants admin access to an application.",
                 },
                 new Permission
                 {
-                    Id = (int)TimeboxedPermission.ViewRotas,
+                    Id = TimeboxedPermissions.ViewRotas,
                     Name = "View Rotas",
                     Description = "Grants view access to rotas in the group.",
                 },
                 new Permission
                 {
-                    Id = (int)TimeboxedPermission.AddEditDeleteRotas,
+                    Id = TimeboxedPermissions.AddEditDeleteRotas,
                     Name = "Add, Edit & Delete Rotas",
                     Description = "Grants add, edit & delete access to rotas in a group.",
                 },
                 new Permission
                 {
-                    Id = (int)TimeboxedPermission.ViewClients,
+                    Id = TimeboxedPermissions.ViewClients,
                     Name = "View Clients",
                     Description = "Grants view access to clients in a group."
                 },
                 new Permission
                 {
-                    Id = (int)TimeboxedPermission.AddEditDeleteClients,
+                    Id = TimeboxedPermissions.AddEditDeleteClients,
                     Name = "Add, Edit & Delete Clients",
                     Description = "Grants add, edit & delete access to clients in a group",
                 });
@@ -90,158 +83,158 @@ namespace Timeboxed.Data.Extensions
             modelBuilder.Entity<ApplicationPermission>().HasData(
                 new ApplicationPermission
                 {
-                    ApplicationId = (int)ApplicationType.RotaManager,
-                    PermissionId = (int)TimeboxedPermission.ApplicationAccess,
+                    ApplicationId = TimeboxedApplications.RotaManager,
+                    PermissionId = TimeboxedPermissions.ApplicationAccess,
                 },
                 new ApplicationPermission
                 {
-                    ApplicationId = (int)ApplicationType.RotaManager,
-                    PermissionId = (int)TimeboxedPermission.ApplicationAdminAccess,
+                    ApplicationId = TimeboxedApplications.RotaManager,
+                    PermissionId = TimeboxedPermissions.ApplicationAdminAccess,
                 },
                 new ApplicationPermission
                 {
-                    ApplicationId = (int)ApplicationType.RotaManager,
-                    PermissionId = (int)TimeboxedPermission.ViewRotas,
+                    ApplicationId = TimeboxedApplications.RotaManager,
+                    PermissionId = TimeboxedPermissions.ViewRotas,
                 },
                 new ApplicationPermission
                 {
-                    ApplicationId = (int)ApplicationType.RotaManager,
-                    PermissionId = (int)TimeboxedPermission.AddEditDeleteRotas,
+                    ApplicationId = TimeboxedApplications.RotaManager,
+                    PermissionId = TimeboxedPermissions.AddEditDeleteRotas,
                 },
                 new ApplicationPermission
                 {
-                    ApplicationId = (int)ApplicationType.ClientManager,
-                    PermissionId = (int)TimeboxedPermission.ApplicationAccess,
+                    ApplicationId = TimeboxedApplications.ClientManager,
+                    PermissionId = TimeboxedPermissions.ApplicationAccess,
                 },
                 new ApplicationPermission
                 {
-                    ApplicationId = (int)ApplicationType.ClientManager,
-                    PermissionId = (int)TimeboxedPermission.ApplicationAdminAccess,
+                    ApplicationId = TimeboxedApplications.ClientManager,
+                    PermissionId = TimeboxedPermissions.ApplicationAdminAccess,
                 },
                 new ApplicationPermission
                 {
-                    ApplicationId = (int)ApplicationType.ClientManager,
-                    PermissionId = (int)TimeboxedPermission.ViewClients,
+                    ApplicationId = TimeboxedApplications.ClientManager,
+                    PermissionId = TimeboxedPermissions.ViewClients,
                 },
                 new ApplicationPermission
                 {
-                    ApplicationId = (int)ApplicationType.ClientManager,
-                    PermissionId = (int)TimeboxedPermission.AddEditDeleteClients,
+                    ApplicationId = TimeboxedApplications.ClientManager,
+                    PermissionId = TimeboxedPermissions.AddEditDeleteClients,
                 });
 
             modelBuilder.Entity<Role>().HasData(
                 new Role
                 {
-                    Id = groupAdminRoleId,
+                    Id = Guid.Parse(TimeboxedRoles.GroupAdmin),
                     Name = "Group Admin",
                     Description = "Intended to be assigned to highest level group members."
                 },
                 new Role
                 {
-                    Id = groupMemberRoleId,
+                    Id = Guid.Parse(TimeboxedRoles.GroupMember),
                     Name = "Group Member",
                     Description = "Intended to be assigned to base level group members."
                 },
                 new Role
                 {
-                    Id = rotaManagerUserRoleId,
+                    Id = Guid.Parse(TimeboxedRoles.RotaManagerUser),
                     Name = "Rota Manager User",
                     Description = "Intended to be assigned to base level rota manager users.",
-                    ApplicationId = (int)ApplicationType.RotaManager,
+                    ApplicationId = TimeboxedApplications.RotaManager,
                 },
                 new Role
                 {
-                    Id = rotaManagerAdminRoleId,
+                    Id = Guid.Parse(TimeboxedRoles.RotaManagerAdmin),
                     Name = "Rota Manager Admin",
                     Description = "Intended to be assigned to highest level rota manager users.",
-                    ApplicationId = (int)ApplicationType.RotaManager,
+                    ApplicationId = TimeboxedApplications.RotaManager,
                 },
                 new Role
                 {
-                    Id = clientManagerUserRoleId,
+                    Id = Guid.Parse(TimeboxedRoles.ClientManagerUser),
                     Name = "Client Manager User",
                     Description = "Intended to be assigned to base level client manager users.",
-                    ApplicationId = (int)ApplicationType.ClientManager,
+                    ApplicationId = TimeboxedApplications.ClientManager,
                 },
                 new Role
                 {
-                    Id = clientManagerAdminRoleId,
+                    Id = Guid.Parse(TimeboxedRoles.ClientManagerAdmin),
                     Name = "Client Manager Admin",
                     Description = "Intended to be assigned to highest level client manager users.",
-                    ApplicationId = (int)ApplicationType.ClientManager,
+                    ApplicationId = TimeboxedApplications.ClientManager,
                 });
 
             modelBuilder.Entity<RolePermission>().HasData(
                 // Group Admin Permissions
                 new RolePermission
                 {
-                    RoleId = groupAdminRoleId,
-                    PermissionId = (int)TimeboxedPermission.GroupAccess
+                    RoleId = Guid.Parse(TimeboxedRoles.GroupAdmin),
+                    PermissionId = TimeboxedPermissions.GroupAccess
                 }, 
                 new RolePermission
                 {
-                    RoleId = groupAdminRoleId,
-                    PermissionId = (int)TimeboxedPermission.GroupAdminAccess
+                    RoleId = Guid.Parse(TimeboxedRoles.GroupAdmin),
+                    PermissionId = TimeboxedPermissions.GroupAdminAccess
                 },
                 // Group Member Permissions
                 new RolePermission
                 {
-                    RoleId = groupMemberRoleId,
-                    PermissionId = (int)TimeboxedPermission.GroupAccess
+                    RoleId = Guid.Parse(TimeboxedRoles.GroupMember),
+                    PermissionId = TimeboxedPermissions.GroupAccess
                 },
                 // Rota Manager User Permissions
                 new RolePermission
                 {
-                    RoleId = rotaManagerUserRoleId,
-                    PermissionId = (int)TimeboxedPermission.ApplicationAccess
+                    RoleId = Guid.Parse(TimeboxedRoles.RotaManagerUser),
+                    PermissionId = TimeboxedPermissions.ApplicationAccess
                 },
                 new RolePermission
                 {
-                    RoleId = rotaManagerUserRoleId,
-                    PermissionId = (int)TimeboxedPermission.ViewRotas
+                    RoleId = Guid.Parse(TimeboxedRoles.RotaManagerUser),
+                    PermissionId = TimeboxedPermissions.ViewRotas
                 },
                 // Rota Manager Admin Permissions
                 new RolePermission
                 {
-                    RoleId = rotaManagerAdminRoleId,
-                    PermissionId = (int)TimeboxedPermission.ApplicationAccess
+                    RoleId = Guid.Parse(TimeboxedRoles.RotaManagerAdmin),
+                    PermissionId = TimeboxedPermissions.ApplicationAccess
                 },
                 new RolePermission
                 {
-                    RoleId = rotaManagerAdminRoleId,
-                    PermissionId = (int)TimeboxedPermission.ViewRotas
+                    RoleId = Guid.Parse(TimeboxedRoles.RotaManagerAdmin),
+                    PermissionId = TimeboxedPermissions.ViewRotas
                 },
                 new RolePermission
                 {
-                    RoleId = rotaManagerAdminRoleId,
-                    PermissionId = (int)TimeboxedPermission.AddEditDeleteRotas
+                    RoleId = Guid.Parse(TimeboxedRoles.RotaManagerAdmin),
+                    PermissionId = TimeboxedPermissions.AddEditDeleteRotas
                 },
                 // Client Manager User Permissions
                 new RolePermission
                 {
-                    RoleId = clientManagerUserRoleId,
-                    PermissionId = (int)TimeboxedPermission.ApplicationAccess
+                    RoleId = Guid.Parse(TimeboxedRoles.ClientManagerUser),
+                    PermissionId = TimeboxedPermissions.ApplicationAccess
                 },
                 new RolePermission
                 {
-                    RoleId = clientManagerUserRoleId,
-                    PermissionId = (int)TimeboxedPermission.ViewClients
+                    RoleId = Guid.Parse(TimeboxedRoles.ClientManagerUser),
+                    PermissionId = TimeboxedPermissions.ViewClients
                 },
                 // Client Manager Admin Permissions
                 new RolePermission
                 {
-                    RoleId = clientManagerAdminRoleId,
-                    PermissionId = (int)TimeboxedPermission.ApplicationAccess
+                    RoleId = Guid.Parse(TimeboxedRoles.ClientManagerAdmin),
+                    PermissionId = TimeboxedPermissions.ApplicationAccess
                 },
                 new RolePermission
                 {
-                    RoleId = clientManagerAdminRoleId,
-                    PermissionId = (int)TimeboxedPermission.ViewClients
+                    RoleId = Guid.Parse(TimeboxedRoles.ClientManagerAdmin),
+                    PermissionId = TimeboxedPermissions.ViewClients
                 },
                 new RolePermission
                 {
-                    RoleId = clientManagerAdminRoleId,
-                    PermissionId = (int)TimeboxedPermission.AddEditDeleteClients
+                    RoleId = Guid.Parse(TimeboxedRoles.ClientManagerAdmin),
+                    PermissionId = TimeboxedPermissions.AddEditDeleteClients
                 });
         }
     }

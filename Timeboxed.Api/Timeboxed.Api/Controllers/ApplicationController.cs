@@ -10,19 +10,19 @@ using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.FunctionWrappers;
-using Timeboxed.Data.Enums;
+using Timeboxed.Data.Constants;
 
 namespace Timeboxed.Api.Controllers
 {
     public class ApplicationController
     {
         private readonly ILogger<ApplicationController> logger;
-        private readonly IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper;
+        private readonly IHttpRequestWrapper<int> httpRequestWrapper;
         private readonly IApplicationService applicationService;
 
         public ApplicationController(
             ILogger<ApplicationController> logger,
-            IHttpRequestWrapper<TimeboxedPermission> httpRequestWrapper,
+            IHttpRequestWrapper<int> httpRequestWrapper,
             IApplicationService applicationService)
         {
             this.logger = logger;
@@ -36,7 +36,7 @@ namespace Timeboxed.Api.Controllers
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.httpRequestWrapper.ExecuteAsync(
-                new List<TimeboxedPermission> { TimeboxedPermission.ApplicationAccess },
+                new List<int> { TimeboxedPermissions.ApplicationAccess },
                 async () => new OkObjectResult(await this.applicationService.GetApplicationsAsync(cancellationToken)),
                 cancellationToken);
     }

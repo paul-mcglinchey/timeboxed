@@ -58,7 +58,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Applications");
+                    b.ToTable("Applications", (string)null);
 
                     b.HasData(
                         new
@@ -97,7 +97,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("ApplicationPermissions");
+                    b.ToTable("ApplicationPermissions", (string)null);
 
                     b.HasData(
                         new
@@ -156,7 +156,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Audits");
+                    b.ToTable("Audits", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.Client", b =>
@@ -229,7 +229,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("Clients");
+                    b.ToTable("Clients", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.Common.Email", b =>
@@ -261,7 +261,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("Emails");
+                    b.ToTable("Emails", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.Common.PhoneNumber", b =>
@@ -293,7 +293,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("PhoneNumbers");
+                    b.ToTable("PhoneNumbers", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.Employee", b =>
@@ -391,7 +391,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("ReportsToId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.EmployeeHoliday", b =>
@@ -419,7 +419,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("EmployeeHolidays");
+                    b.ToTable("EmployeeHolidays", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.EmployeePreferences", b =>
@@ -439,7 +439,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EmployeePreferences");
+                    b.ToTable("EmployeePreferences", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.EmployeeSchedule", b =>
@@ -458,7 +458,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("ScheduleId");
 
-                    b.ToTable("EmployeeSchedules");
+                    b.ToTable("EmployeeSchedules", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.EmployeeScheduleShift", b =>
@@ -486,7 +486,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("EmployeeScheduleId");
 
-                    b.ToTable("EmployeeScheduleShifts");
+                    b.ToTable("EmployeeScheduleShifts", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.EmployeeUnavailableDays", b =>
@@ -510,7 +510,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("EmployeePreferencesId");
 
-                    b.ToTable("EmployeeUnavailableDays");
+                    b.ToTable("EmployeeUnavailableDays", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.Group", b =>
@@ -543,7 +543,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Groups");
+                    b.ToTable("Groups", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.GroupApplication", b =>
@@ -558,7 +558,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("GroupApplications");
+                    b.ToTable("GroupApplications", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.GroupClientTag", b =>
@@ -578,7 +578,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("GroupClientTags");
+                    b.ToTable("GroupClientTags", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.GroupUser", b =>
@@ -602,7 +602,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("GroupUsers");
+                    b.ToTable("GroupUsers", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.GroupUserApplication", b =>
@@ -617,7 +617,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("GroupUserId");
 
-                    b.ToTable("GroupUserApplications");
+                    b.ToTable("GroupUserApplications", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.GroupUserRole", b =>
@@ -632,7 +632,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("GroupUserRoles");
+                    b.ToTable("GroupUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.Permission", b =>
@@ -659,7 +659,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permissions");
+                    b.ToTable("Permissions", (string)null);
 
                     b.HasData(
                         new
@@ -754,7 +754,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
@@ -811,7 +811,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RolePermissions");
+                    b.ToTable("RolePermissions", (string)null);
 
                     b.HasData(
                         new
@@ -922,7 +922,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("Rotas");
+                    b.ToTable("Rotas", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.RotaEmployee", b =>
@@ -943,7 +943,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("RotaId");
 
-                    b.ToTable("RotaEmployees");
+                    b.ToTable("RotaEmployees", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.Schedule", b =>
@@ -965,7 +965,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("RotaId");
 
-                    b.ToTable("Schedules");
+                    b.ToTable("Schedules", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.Session", b =>
@@ -1003,7 +1003,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("Sessions");
+                    b.ToTable("Sessions", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.SessionTag", b =>
@@ -1024,7 +1024,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasIndex("SessionId");
 
-                    b.ToTable("SessionTags");
+                    b.ToTable("SessionTags", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.User", b =>
@@ -1050,7 +1050,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.UserAccessControl", b =>
@@ -1068,7 +1068,7 @@ namespace Timeboxed.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserAccessControl");
+                    b.ToTable("UserAccessControl", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.UserPreferences", b =>
@@ -1088,7 +1088,7 @@ namespace Timeboxed.Data.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserPreferences");
+                    b.ToTable("UserPreferences", (string)null);
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.ApplicationPermission", b =>
