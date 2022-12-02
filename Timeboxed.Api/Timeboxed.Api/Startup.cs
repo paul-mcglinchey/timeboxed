@@ -14,7 +14,6 @@ using Timeboxed.Core.AccessControl.Services;
 using Timeboxed.Core.Converters;
 using Timeboxed.Core.Extensions;
 using Timeboxed.Data;
-using Timeboxed.Data.Constants;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -26,9 +25,7 @@ namespace Timeboxed.Api
 
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.Services.AddTransient<IUserAuthorisationService<TimeboxedPermissions>, UserAuthorizationService>();
-
-            builder.Services.AddAccessControl<TimeboxedPermissions, UserAuthorizationService>();
+            builder.Services.AddAccessControl<int, UserAuthorizationService>();
 
             this.ConfigureServices(builder, builder.GetContext().Configuration);
             this.ConfigureNewtonsoft();

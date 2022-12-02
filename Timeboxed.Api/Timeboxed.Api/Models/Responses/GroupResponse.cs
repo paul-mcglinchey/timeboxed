@@ -32,7 +32,11 @@ namespace Timeboxed.Api.Models.Responses
 
     public class GroupUserResponse
     {
+        public Guid Id { get; set; }
+
         public Guid UserId { get; set; }
+
+        public Guid GroupId { get; set; }
 
         public bool HasJoined { get; set; }
 
@@ -42,7 +46,9 @@ namespace Timeboxed.Api.Models.Responses
 
         public static implicit operator GroupUserResponse(GroupUser gu) => new GroupUserResponse
         {
+            Id = gu.Id,
             UserId = gu.UserId,
+            GroupId = gu.GroupId,
             HasJoined = gu.HasJoined,
             Roles = gu.Roles.Select(r => r.Id).ToList(),
             Applications = gu.Applications.Select(gua => gua.Id).ToList()

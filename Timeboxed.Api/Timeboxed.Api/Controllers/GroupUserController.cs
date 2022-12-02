@@ -4,6 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -86,6 +87,29 @@ namespace Timeboxed.Api.Controllers
                     var request = await req.ConstructRequestModelAsync<InviteGroupUserRequest>();
 
                     return new OkObjectResult(await this.groupUserService.InviteGroupUserAsync(request.UsernameOrEmail, cancellationToken));
+                },
+                cancellationToken);
+
+        [FunctionName("UninviteGroupUser")]
+        public async Task<ActionResult> UninviteGroupUser(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "groups/{groupId}/users/{userId}/uninvite")] HttpRequest req,
+            string groupId,
+            string userId,
+            ILogger logger,
+            CancellationToken cancellationToken) =>
+            await this.ExecuteAsync(
+                new List<int> { TimeboxedPermissions.GroupAdminAccess },
+                groupId,
+                async () =>
+                {
+                    if (!Guid.TryParse(userId, out var userIdGuid))
+                    {
+                        return new BadRequestObjectResult(new { message = "Invalid user ID supplied" });
+                    }
+
+                    await this.groupUserService.UninviteGroupUserAsync(userIdGuid, cancellationToken);
+
+                    return new OkResult();
                 },
                 cancellationToken);
 

@@ -1,3 +1,5 @@
+import { IUser } from "."
+
 export interface IGroupUserApplication {
   applicationId: number
   roles: string[]
@@ -5,6 +7,7 @@ export interface IGroupUserApplication {
 
 export interface IGroupUser {
   id: string
+  groupId: string
   userId: string
   hasJoined: boolean
   applications: number[]
@@ -39,4 +42,9 @@ export interface IGroupUserInviteRequest {
 export interface IGroupsResponse {
   count: number,
   items: IGroup[]
+}
+
+export interface IMappableGroupUser {
+  gu: IGroupUser
+  user: IUser | undefined
 }

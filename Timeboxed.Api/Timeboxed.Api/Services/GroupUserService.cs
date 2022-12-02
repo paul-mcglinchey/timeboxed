@@ -11,6 +11,7 @@ using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Exceptions;
 using Timeboxed.Data;
+using Timeboxed.Data.Constants;
 using Timeboxed.Domain.Models;
 
 namespace Timeboxed.Api.Services
@@ -104,11 +105,32 @@ namespace Timeboxed.Api.Services
             {
                 UserId = user.Id,
                 HasJoined = false,
+                Roles = await this.context.Roles.Where(r => r.Id == Guid.Parse(TimeboxedRoles.GroupMember)).ToListAsync(cancellationToken),
             });
 
             await this.context.SaveChangesAsync(cancellationToken);
 
             return await this.GetGroupUsersAsync(cancellationToken);
+        }
+
+        public async Task UninviteGroupUserAsync(Guid userId, CancellationToken cancellationToken)
+        {
+            var groupId = this.groupContextProvider.GroupId;
+
+            var group = await this.context.Groups
+                .Where(g => g.Id == groupId)
+                .Include(g => g.GroupUsers)
+                .SingleOrDefaultAsync(cancellationToken) 
+            ?? throw new EntityNotFoundException($"Group {groupId} not found");
+
+            if (!group.GroupUsers.Any(gu => gu.UserId == userId))
+            {
+                throw new BadRequestException($"User {userId} has not been invited to group {groupId}");
+            }
+
+            group.GroupUsers = group.GroupUsers.Where(gu => gu.UserId != userId).ToList();
+
+            await this.context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<Guid> DeleteUserAsync(Guid userId, CancellationToken cancellationToken)

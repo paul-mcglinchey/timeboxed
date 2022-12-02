@@ -20,7 +20,7 @@ const getButtonClasses = (buttonType: string): string => {
     case "Primary":
       return "border-2 border-blue-600 text-blue-600 bg-transparent hover:text-gray-900 hover:bg-blue-600 hover:border-transparent focus:text-gray-900 focus:bg-blue-600"
     case "Secondary":
-      return "text-blue-500 bg-transparent border-blue-500 hover:text-gray-300 hover:bg-blue-500 focus:text-gray-300 focus:bg-blue-500"
+      return "text-blue-500 bg-transparent border border-transparent hover:text-gray-300 hover:border-blue-500 focus:text-gray-300 focus:bg-blue-500"
     case "Tertiary":
       return "border border-transparent text-blue-500 bg-transparent hover:text-blue-400"
     case "Cancel":

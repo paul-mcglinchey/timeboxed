@@ -32,6 +32,11 @@ namespace Timeboxed.Api.Services
         {
             var groups = this.context.Groups
                 .Where(g => g.GroupUsers.Any(gu => gu.UserId.Equals(this.userContextProvider.UserId)))
+                .Include(g => g.Applications)
+                .Include(g => g.GroupUsers)
+                .ThenInclude(gu => gu.Applications)
+                .Include(g => g.GroupUsers)
+                .ThenInclude(gu => gu.Roles)
                 .Select<Group, GroupResponse>(g => g);
 
             return new ListResponse<GroupResponse>

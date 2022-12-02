@@ -1,5 +1,5 @@
 import { useCallback, useContext } from "react"
-import { IGroup, IUser } from "../models"
+import { IGroup, IGroupUser, IUser } from "../models"
 import { UserContext } from "../contexts"
 import { IUserService } from "./interfaces"
 import { useAsyncHandler, useRequestBuilderService, useResolutionService, useRoleService } from "."
@@ -33,12 +33,10 @@ const useUserService = (): IUserService => {
     }))
   }
 
-  const userHasRole = (group: IGroup, userId: string | undefined, roleId: string | undefined): boolean => {
-    if (!userId || !roleId) return false
+  const userHasRole = (groupUser: IGroupUser, roleId: string | undefined): boolean => {
+    if (!roleId) return false
 
-    const gu = group.groupUsers.find(gu => gu.userId === userId)
-
-    return gu?.roles.includes(roleId) ?? false
+    return groupUser.roles.includes(roleId) ?? false
   }
 
   const userHasPermission = (group: IGroup, userId: string | undefined, permissionId: number | undefined): boolean => {

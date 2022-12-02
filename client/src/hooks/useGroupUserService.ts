@@ -33,6 +33,17 @@ const useGroupUserService = (): IGroupUserService => {
     handleResolution(res, json, 'invite', 'group user')
   })
 
+  const uninviteGroupUser = asyncHandler(async (groupId: string | undefined, userId: string | undefined) => {
+    if (!groupId || !userId) throw new Error('Something went wrong...')
+
+    const res = await fetch(endpoints.uninvitegroupuser(groupId, userId), buildRequest('POST'))
+    if (!res.ok && res.status < 500) throw new Error(await res.text())
+
+    const json = await res.json()
+
+    handleResolution(res, json, 'uninvite', 'group user')
+  })
+
   const joinGroup = asyncHandler(async (groupId: string | undefined) => {
     if (!groupId) throw new Error('Group ID not set')
 
@@ -54,7 +65,7 @@ const useGroupUserService = (): IGroupUserService => {
       ))
   }
 
-  return { updateGroupUser, inviteGroupUser, joinGroup, isLoading }
+  return { updateGroupUser, inviteGroupUser, uninviteGroupUser, joinGroup, isLoading }
 }
 
 export default useGroupUserService

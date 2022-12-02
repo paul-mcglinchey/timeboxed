@@ -1,11 +1,10 @@
 ﻿using Timeboxed.Core.AccessControl.Interfaces;
-using Timeboxed.Data.Constants;
 
 namespace Timeboxed.Core.AccessControl.Services
 {
-    public class UserAuthorizationService : IUserAuthorisationService<TimeboxedPermissions>
+    public class UserAuthorizationService : IUserAuthorisationService<int>
     {
-        public async Task<bool> IsAuthorised(List<TimeboxedPermissions> requiredPermissions)
+        public async Task<bool> IsAuthorised(List<int> requiredPermissions)
         {
             return true;
         }

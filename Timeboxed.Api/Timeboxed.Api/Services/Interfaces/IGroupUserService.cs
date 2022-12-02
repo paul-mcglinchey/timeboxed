@@ -18,6 +18,8 @@ namespace Timeboxed.Api.Services.Interfaces
 
         public Task<ListResponse<UserListResponse>> InviteGroupUserAsync(string usernameOrEmail, CancellationToken cancellationToken);
 
+        public Task UninviteGroupUserAsync(Guid userId, CancellationToken cancellationToken);
+
         public Task<Guid> DeleteUserAsync(Guid userId, CancellationToken cancellationToken);
 
         public Task<Guid?> JoinGroupAsync(CancellationToken cancellationToken);

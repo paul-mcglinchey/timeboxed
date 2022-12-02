@@ -1,6 +1,6 @@
 import { Form, Formik } from "formik";
 import { useGroupService, useUserService } from "../../hooks";
-import { IContextualFormProps, IGroup, IGroupUser, IUser } from "../../models";
+import { IContextualFormProps, IGroup, IMappableGroupUser } from "../../models";
 import { combineClassNames, generateColour } from "../../services";
 import { groupValidationSchema } from "../../schema";
 import { ColourPicker, FormSection, Modal, FormikInput, Button, SpinnerLoader } from "../Common";
@@ -15,14 +15,11 @@ interface IUpdateGroupFormProps {
 
 const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupFormProps & IContextualFormProps) => {
 
-  const [editGroupUsersOpen, setEditGroupUsersOpen] = useState<boolean>(false)
-  const toggleEditGroupUsersOpen = () => setEditGroupUsersOpen(!editGroupUsersOpen)
-
   const [inviteUserOpen, setInviteUserOpen] = useState<boolean>(false)
   const toggleInviteUserOpen = () => setInviteUserOpen(!inviteUserOpen)
 
   const { updateGroup } = useGroupService()
-  const { getUser, userHasRole, isLoading } = useUserService()
+  const { getUser, isLoading } = useUserService()
 
   return (
     <Formik
@@ -57,40 +54,12 @@ const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupForm
               <SpinnerLoader />
             ) : (
               <>
-                {group.groupUsers.filter((gu): gu is IGroupUser => !!getUser(gu.userId)).map(gu => (
-                  <div key={gu.userId} className="flex">
-                    <button type="button" onClick={toggleEditGroupUsersOpen} className="w-full grid grid-cols-8 items-center group hover:bg-gray-300 dark:hover:bg-gray-900 rounded-md p-2">
-                      <UserDetails user={getUser(gu.userId)!} />
-                      <div className="col-span-2 grid grid-cols-6 items-center">
-                        <div className={combineClassNames(
-                          "col-span-5 font-bold px-2 py-0.5 border border-current rounded-md",
-                          gu.hasJoined ? userHasRole(group, gu.userId, Role.GroupAdmin) ? "text-orange-500" : "text-blue-500" : "text-emerald-500"
-                        )}>
-                          {gu.hasJoined
-                            ? userHasRole(group, gu.userId, Role.GroupAdmin)
-                              ? 'Admin'
-                              : 'Member'
-                            : 'Pending'
-                          }
-                        </div>
-                        <div className="col-span-1 flex flex-1 justify-end">
-                          <PencilIcon className="w-6 h-6 group-hover:text-blue-500 transition-colors" />
-                        </div>
-                      </div>
-                    </button>
-                    <Modal
-                      title="Edit group users"
-                      description="This dialog can be used to edit and update an existing user's roles within the currently selected group."
-                      isOpen={editGroupUsersOpen}
-                      close={toggleEditGroupUsersOpen}
-                      level={2}
-                    >
-                      {(ConfirmationButton) => (
-                        <UserRoleSelector group={group} userId={gu.userId} ContextualSubmissionButton={ConfirmationButton} />
-                      )}
-                    </Modal>
-                  </div>
-                ))}
+                {group.groupUsers
+                  .map<IMappableGroupUser>(gu => ({ gu: gu, user: getUser(gu.userId) }))
+                  .filter(gu => !!gu.user)
+                  .map(u => (
+                    <GroupUserRow u={u} key={u.gu.userId}/>
+                  ))}
               </>
             )}
             <Modal
@@ -114,15 +83,52 @@ const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupForm
   )
 }
 
-interface IUserDetails {
-  user: IUser
+interface IGroupUserRowProps {
+  u: IMappableGroupUser
 }
 
-const UserDetails = ({ user }: IUserDetails) => {
+const GroupUserRow = ({ u }: IGroupUserRowProps) => {
+
+  const [editGroupUsersOpen, setEditGroupUsersOpen] = useState<boolean>(false)
+  const toggleEditGroupUsersOpen = () => setEditGroupUsersOpen(!editGroupUsersOpen)
+
+  const { userHasRole } = useUserService()
+
   return (
-    <div className="col-span-6 flex flex-col text-left">
-      <span className="uppercase font-bold text-lg tracking-wider">{user.username}</span>
-      <span className="text-sm tracking-wide dark:text-gray-500 text-gray-500">{user.email}</span>
+    <div key={u.gu.userId} className="flex">
+      <button type="button" onClick={toggleEditGroupUsersOpen} className="w-full grid grid-cols-8 items-center group hover:bg-gray-300 dark:hover:bg-gray-900 rounded-md p-2">
+        <div className="col-span-6 flex flex-col text-left">
+          <span className="uppercase font-bold text-lg tracking-wider">{u.user?.username}</span>
+          <span className="text-sm tracking-wide dark:text-gray-500 text-gray-500">{u.user?.email}</span>
+        </div>
+        <div className="col-span-2 grid grid-cols-6 items-center">
+          <div className={combineClassNames(
+            "col-span-5 font-bold px-2 py-0.5 border border-current rounded-md",
+            u.gu.hasJoined ? userHasRole(u.gu, Role.GroupAdmin) ? "text-orange-500" : "text-blue-500" : "text-emerald-500"
+          )}>
+            {u.gu.hasJoined
+              ? userHasRole(u.gu, Role.GroupAdmin)
+                ? 'Admin'
+                : 'Member'
+              : 'Pending'
+            }
+          </div>
+          <div className="col-span-1 flex flex-1 justify-end">
+            <PencilIcon className="w-6 h-6 group-hover:text-blue-500 transition-colors" />
+          </div>
+        </div>
+      </button>
+      <Modal
+        title="Edit group users"
+        description="This dialog can be used to edit and update an existing user's roles within the currently selected group."
+        isOpen={editGroupUsersOpen}
+        close={toggleEditGroupUsersOpen}
+        level={2}
+      >
+        {(ConfirmationButton) => (
+          <UserRoleSelector groupUser={u.gu} ContextualSubmissionButton={ConfirmationButton} />
+        )}
+      </Modal>
     </div>
   )
 }

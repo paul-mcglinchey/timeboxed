@@ -2,7 +2,6 @@
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.AccessControl.Services;
 using Timeboxed.Core.FunctionWrappers;
-using Timeboxed.Data.Constants;
 
 namespace Timeboxed.Core.Extensions
 {
@@ -13,7 +12,7 @@ namespace Timeboxed.Core.Extensions
                     .AddHttpContextAccessor();
 
         public static IServiceCollection AddAccessControl(this IServiceCollection services) =>
-            services.AddAccessControl<TimeboxedPermissions, UserAuthorizationService>();
+            services.AddAccessControl<int, UserAuthorizationService>();
 
         public static IServiceCollection AddAccessControl<TPermission, TUserAuthorizationService>(this IServiceCollection services)
             where TUserAuthorizationService : class, IUserAuthorisationService<TPermission>

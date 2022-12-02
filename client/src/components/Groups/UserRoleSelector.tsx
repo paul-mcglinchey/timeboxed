@@ -1,33 +1,34 @@
-import { useApplicationService, useGroupUserService, useRoleService } from "../../hooks"
+import { useApplicationService, useGroupService, useGroupUserService, useRoleService } from "../../hooks"
 import { IApplication, IContextualFormProps, IGroup, IGroupUser } from "../../models"
 import { UserRoleGroup } from '.'
 import { Form, Formik } from "formik"
 
 interface IUserRoleSelectorProps {
-  group: IGroup
-  userId: string
+  groupUser: IGroupUser
 }
 
-const UserRoleSelector = ({ group, userId, ContextualSubmissionButton }: IUserRoleSelectorProps & IContextualFormProps) => {
+const UserRoleSelector = ({ groupUser, ContextualSubmissionButton }: IUserRoleSelectorProps & IContextualFormProps) => {
 
+  const { getGroup } = useGroupService()
   const { roles } = useRoleService()
   const { getApplication } = useApplicationService()
   const { updateGroupUser } = useGroupUserService()
 
-  const groupUser: IGroupUser | undefined = group.groupUsers.find(gu => gu.userId === userId)
+  const group: IGroup | undefined = getGroup(groupUser.groupId)
 
   return (
     <Formik
       initialValues={{
-        roles: groupUser?.roles || [],
-        applications: groupUser?.applications || []
+        roles: groupUser.roles || [],
+        applications: groupUser.applications || []
       }}
       onSubmit={(values) => {
-        updateGroupUser(group.id, userId, values)
+        updateGroupUser(groupUser.groupId, groupUser.userId, values)
       }}
     >
       {({ values, setFieldValue, isValid }) => (
         <Form>
+          {console.log(values, roles)}
           <div className="mt-4 grid grid-cols-1 gap-4">
             <UserRoleGroup
               values={values}
@@ -37,7 +38,7 @@ const UserRoleSelector = ({ group, userId, ContextualSubmissionButton }: IUserRo
               roles={roles.filter(r => !r.applicationId)}
               label="Group Roles"
             />
-            {group.applications.map(ga => getApplication(ga)).filter((a): a is IApplication => !!a).map((a, j) => (
+            {group?.applications.map(ga => getApplication(ga)).filter((a): a is IApplication => !!a).map((a, j) => (
               <UserRoleGroup
                 key={j}
                 values={values}
