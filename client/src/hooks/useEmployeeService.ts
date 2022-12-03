@@ -10,10 +10,10 @@ import { IEmployeeService } from "./interfaces";
 const useEmployeeService = (): IEmployeeService => {
 
   const employeeContext = useContext(EmployeeContext)
-  const { employees, setEmployees, setIsLoading } = employeeContext
+  const { employees, setEmployees, setIsLoading, setError } = employeeContext
   
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
   const { handleResolution } = useResolutionService()
 
   const { currentGroup } = useGroupService()

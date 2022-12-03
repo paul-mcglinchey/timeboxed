@@ -10,9 +10,9 @@ import { getDateOnly } from "../services";
 const useScheduleService = (): IScheduleService => {
   
   const scheduleContext = useContext(ScheduleContext)
-  const { getSchedules, setSchedules, setIsLoading } = scheduleContext
+  const { getSchedules, setSchedules, setIsLoading, setError } = scheduleContext
   
-  const { asyncReturnHandler } = useAsyncHandler(setIsLoading)
+  const { asyncReturnHandler } = useAsyncHandler(setIsLoading, setError)
   const { buildRequest } = useRequestBuilderService()
   const { handleResolution } = useResolutionService()
   

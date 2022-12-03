@@ -7,9 +7,10 @@ import { IGroupUser, IGroupUserInviteRequest, IGroupUserRequest } from "../model
 const useGroupUserService = (): IGroupUserService => {
   
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<any>()
 
   const { setGroups } = useGroupService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
   const { buildRequest } = useRequestBuilderService()
   const { handleResolution } = useResolutionService()
 
@@ -65,7 +66,7 @@ const useGroupUserService = (): IGroupUserService => {
       ))
   }
 
-  return { updateGroupUser, inviteGroupUser, uninviteGroupUser, joinGroup, isLoading }
+  return { updateGroupUser, inviteGroupUser, uninviteGroupUser, joinGroup, isLoading, error }
 }
 
 export default useGroupUserService

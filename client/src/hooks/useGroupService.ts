@@ -7,10 +7,10 @@ import { IGroupService } from "./interfaces"
 
 const useGroupService = (): IGroupService => {
   const groupContext = useContext(GroupContext)
-  const { groups, setGroups, setCount, setIsLoading } = groupContext
+  const { groups, setGroups, setCount, setIsLoading, setError } = groupContext
   
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
   const { handleResolution } = useResolutionService()
 
   const getGroup = (groupId: string | undefined): IGroup | undefined => {

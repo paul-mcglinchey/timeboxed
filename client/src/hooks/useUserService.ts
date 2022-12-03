@@ -7,9 +7,9 @@ import { endpoints } from "../config"
 
 const useUserService = (): IUserService => {
   const userContext = useContext(UserContext)
-  const { users, setUsers, setIsLoading } = userContext
+  const { users, setUsers, setIsLoading, setError } = userContext
 
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
   const { buildRequest } = useRequestBuilderService()
   const { handleResolution } = useResolutionService()
   const { getRole } = useRoleService()

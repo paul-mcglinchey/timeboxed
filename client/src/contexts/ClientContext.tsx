@@ -47,7 +47,7 @@ export const ClientProvider = ({ children }: IClientProviderProps) => {
 
   const { currentGroup } = useGroupService()
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
 
   const buildQueryString = useCallback(() => {
     var queryString = "?";

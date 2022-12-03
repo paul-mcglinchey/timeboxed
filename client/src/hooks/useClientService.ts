@@ -8,10 +8,10 @@ import { IClientService } from "./interfaces"
 const useClientService = (): IClientService => {
 
   const clientContext = useContext(ClientContext)
-  const { setClients, setCount, setIsLoading, buildQueryString } = clientContext
+  const { setClients, setCount, setIsLoading, setError, buildQueryString } = clientContext
 
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler, asyncReturnHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler, asyncReturnHandler } = useAsyncHandler(setIsLoading, setError)
   const { handleResolution } = useResolutionService()
   const { currentGroup } = useGroupService()
 

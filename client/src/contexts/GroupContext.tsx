@@ -28,7 +28,7 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
   
   const { buildRequest } = useRequestBuilderService()
   const { user } = useAuthService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
   const isMounted = useIsMounted()
   
   useEffect(() => {

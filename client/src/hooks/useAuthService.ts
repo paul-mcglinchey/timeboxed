@@ -10,10 +10,10 @@ import { IAuthService } from "./interfaces"
 const useAuthService = (): IAuthService => {
   
   const auth = useContext(AuthContext)
-  const { user, setUser, setIsLoading } = auth
+  const { user, setUser, setIsLoading, setError } = auth
 
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
   const { handleResolution } = useResolutionService()
   const { currentGroup } = useGroupService()
   const { userHasPermission } = useUserService()

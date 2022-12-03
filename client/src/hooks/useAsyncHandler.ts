@@ -1,23 +1,20 @@
 import { Dispatch, SetStateAction, useCallback } from "react"
-import { useNotification } from "."
-import { Notification } from "../enums"
 import { IAsyncHandler } from "./interfaces"
 
-const useAsyncHandler = (setIsLoading: Dispatch<SetStateAction<boolean>>): IAsyncHandler => {
-  const { addNotification } = useNotification()
+const useAsyncHandler = (setIsLoading: Dispatch<SetStateAction<boolean>>, setError: Dispatch<SetStateAction<any>>): IAsyncHandler => {
 
-  const asyncHandler = useCallback((fn: (...args: any[]) => any, failureActions: (() => void)[] = [], notify: boolean = true) => async (...args: any) => {
+  const asyncHandler = useCallback((fn: (...args: any[]) => any, failureActions: (() => void)[] = []) => async (...args: any) => {
     try {
       setIsLoading(true)
       await fn(...args)
     } catch (err) {
       console.error(err)
       failureActions.forEach(fa => fa())
-      notify && addNotification(err instanceof Error ? err.message : "Something went wrong...", Notification.Error)
+      setError(err)
     } finally {
       setIsLoading(false)
     }
-  }, [addNotification, setIsLoading])
+  }, [setIsLoading, setError])
   
   const asyncReturnHandler = useCallback(<T>(fn: (...args: any[]) => any) => async (...args: any): Promise<T> => {
     try {
@@ -25,13 +22,12 @@ const useAsyncHandler = (setIsLoading: Dispatch<SetStateAction<boolean>>): IAsyn
       var returnValue = await fn(...args)
     } catch (err) {
       console.error(err)
-      addNotification('Something went wrong...', Notification.Error)
+      setError(err)
     } finally {
       setIsLoading(false)
-
       return returnValue
     }
-  }, [addNotification, setIsLoading])
+  }, [setIsLoading, setError])
   
   return { asyncHandler, asyncReturnHandler }
 }

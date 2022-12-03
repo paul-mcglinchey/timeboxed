@@ -9,7 +9,7 @@ interface IUserInvitesProps {
 
 const UserInvites = ({ g }: IUserInvitesProps) => {
 
-  const { inviteGroupUser, uninviteGroupUser } = useGroupUserService()
+  const { inviteGroupUser, uninviteGroupUser, isLoading } = useGroupUserService()
   const { getUser } = useUserService()
 
   return (
@@ -22,12 +22,12 @@ const UserInvites = ({ g }: IUserInvitesProps) => {
           inviteGroupUser(g.id, values)
         }}
       >
-        {({ errors, touched, isSubmitting }) => (
+        {({ errors, touched }) => (
           <Form>
             <div className="flex items-end space-x-2">
               <FormikInput name="usernameOrEmail" label="Username or Email" errors={errors.usernameOrEmail} touched={touched.usernameOrEmail} classes="flex flex-grow" />
               <div className="pb-1.5">
-                <Button content="Invite" buttonType="Tertiary" Icon={isSubmitting ? SpinnerIcon : null} />
+                <Button content="Invite" buttonType="Tertiary" Icon={isLoading ? SpinnerIcon : null} />
               </div>
             </div>
           </Form>

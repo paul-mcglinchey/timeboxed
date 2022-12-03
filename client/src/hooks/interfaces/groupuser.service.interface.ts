@@ -6,4 +6,5 @@ export interface IGroupUserService {
   uninviteGroupUser: (groupId: string | undefined, userId: string | undefined) => void
   joinGroup: (groupId: string | undefined) => void
   isLoading: boolean
+  error: any
 }

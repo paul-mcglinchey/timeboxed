@@ -9,11 +9,11 @@ import { useAsyncHandler, useResolutionService, useRequestBuilderService, useGro
 const useRotaService = (): IRotaService => {
   
   const rotaContext = useContext(RotaContext)
-  const { rotas, setRotas, setIsLoading } = rotaContext
+  const { rotas, setRotas, setIsLoading, setError } = rotaContext
   
   const navigate = useNavigate();
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
   const { handleResolution } = useResolutionService()
   const { currentGroup } = useGroupService()
   const groupId: string | undefined = currentGroup?.id

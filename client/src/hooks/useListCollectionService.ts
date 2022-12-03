@@ -7,10 +7,11 @@ import { useState } from "react"
 const useListCollectionService = (refresh: () => void = () => {}) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<any>();
 
   const { addNotification } = useNotification()
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
   const { handleResolution } = useResolutionService()
 
   const init = asyncHandler(async () => {
@@ -35,7 +36,7 @@ const useListCollectionService = (refresh: () => void = () => {}) => {
     return addNotification(message, Notification.Error)
   })
 
-  return { init, update, isLoading }
+  return { init, update, isLoading, error }
 }
 
 export default useListCollectionService

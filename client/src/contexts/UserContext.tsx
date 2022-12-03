@@ -27,7 +27,7 @@ export const UserProvider = ({ children, groupId = null }: IChildrenProps & IUse
 
   const { buildRequest } = useRequestBuilderService()
   const { currentGroup } = useGroupService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
   const isMounted = useIsMounted()
 
   useEffect(() => {

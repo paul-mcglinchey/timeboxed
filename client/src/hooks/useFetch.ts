@@ -17,7 +17,7 @@ const useFetch = <T>(
 ): IFetch<T> => {
   const [response, setResponse] = useState<T>();
   
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
 
   const cache = useRef<ICache<T>>({})
   const isMounted = useIsMounted()
