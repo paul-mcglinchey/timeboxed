@@ -1,13 +1,18 @@
-import { Form, Formik } from "formik";
+import { Formik } from "formik";
 import { useGroupService, useUserService } from "../../hooks";
 import { IContextualFormProps, IGroup, IMappableGroupUser } from "../../models";
 import { combineClassNames, generateColour } from "../../services";
 import { groupValidationSchema } from "../../schema";
 import { ColourPicker, FormSection, Modal, FormikInput, Button, SpinnerLoader } from "../Common";
-import { ApplicationMultiSelector, UserInvites, UserRoleSelector } from '.'
 import { useState } from "react";
 import { PencilIcon } from "@heroicons/react/solid";
 import { Role } from "../../enums";
+import { FormikForm } from "../Common/FormikForm";
+
+import ApplicationMultiSelector from "./ApplicationMultiSelector";
+import UserInvites from "./UserInvites";
+import UserRoleSelector from "./UserRoleSelector";
+import { IApiError } from "../../models/error.model";
 
 interface IUpdateGroupFormProps {
   group: IGroup
@@ -15,14 +20,18 @@ interface IUpdateGroupFormProps {
 
 const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupFormProps & IContextualFormProps) => {
 
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError>()
+
   const [inviteUserOpen, setInviteUserOpen] = useState<boolean>(false)
   const toggleInviteUserOpen = () => setInviteUserOpen(!inviteUserOpen)
 
-  const { updateGroup } = useGroupService()
-  const { getUser, isLoading } = useUserService()
+  const { updateGroup } = useGroupService(setIsLoading, setError)
+  const { getUser, isLoading: isUsersLoading } = useUserService()
 
   return (
     <Formik
+      enableReinitialize
       initialValues={{
         name: group.name || '',
         description: group.description || '',
@@ -34,8 +43,8 @@ const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupForm
         updateGroup(values, group.id)
       }}
     >
-      {({ errors, touched, values, setFieldValue, isValid }) => (
-        <Form>
+      {({ errors, touched, values, setFieldValue, isValid, dirty }) => (
+        <FormikForm error={error}>
           <FormSection title="Details">
             <div className="flex items-end space-x-2">
               <FormikInput name="name" label="Groupname" errors={errors.name} touched={touched.name} classes="flex flex-grow" />
@@ -50,7 +59,7 @@ const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupForm
             />
           </FormSection>
           <FormSection title="Users" titleActionComponent={<Button action={toggleInviteUserOpen} content="Invite" type="button" />}>
-            {isLoading ? (
+            {isUsersLoading ? (
               <SpinnerLoader />
             ) : (
               <>
@@ -76,8 +85,8 @@ const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupForm
               )}
             </Modal>
           </FormSection>
-          {ContextualSubmissionButton(group ? 'Update group' : 'Create group', undefined, isValid)}
-        </Form>
+          {ContextualSubmissionButton('Update group', undefined, isValid, dirty, isLoading)}
+        </FormikForm>
       )}
     </Formik >
   )

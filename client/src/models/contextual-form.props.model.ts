@@ -2,8 +2,10 @@ import { ReactNode } from "react";
 
 export interface IContextualFormProps {
   ContextualSubmissionButton: (
-    content?: string | undefined, 
+    content?: string | undefined,
     actions?: (() => void)[] | undefined,
-    submissionGate?: boolean
+    submissionGate?: boolean,
+    shouldClose?: boolean,
+    isLoading?: boolean
   ) => ReactNode
 }

@@ -1,7 +1,7 @@
 import { Transition } from "@headlessui/react"
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
-import { GroupProvider, MetaInfoContext, MetaInfoProvider, UserProvider } from "../contexts"
-import { useAuthService, useGroupService } from "../hooks"
+import { GroupContext, GroupProvider, MetaInfoContext, MetaInfoProvider, UserProvider } from "../contexts"
+import { useAuthService } from "../hooks"
 import { IChildrenProps } from "../models"
 import { combineClassNames } from "../services"
 import { WideIcon } from "./Common"
@@ -64,7 +64,7 @@ interface ISubLoaderProps {
 
 const SubLoader = ({ children, setAppLoading, loadingCompleted, setLoadingCompleted }: ISubLoaderProps & IChildrenProps) => {
   
-  const { isLoading: isGroupsLoading } = useGroupService()
+  const { isLoading: isGroupsLoading } = useContext(GroupContext)
   const { isLoading: isMetaInfoLoading } = useContext(MetaInfoContext)
   
   useEffect(() => {

@@ -1,7 +1,10 @@
 import { useState } from "react"
 import { dashboardLinks } from "../../config"
 import { Toolbar, NavMenu, Button } from "../Common"
-import { GroupModal, GroupInvitesModal, GroupList } from "."
+
+import GroupInvitesModal from "./GroupInvitesModal"
+import GroupList from "./GroupList"
+import GroupModal from "./GroupModal"
 
 const Groups = () => {
 

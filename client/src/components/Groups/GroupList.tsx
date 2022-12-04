@@ -1,8 +1,9 @@
-import { useGroupService } from "../../hooks"
 import { IGroup } from "../../models"
 import { SpinnerIcon } from "../Common"
-import { GroupCard, GroupPrompter } from '.'
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, SetStateAction, useContext } from "react"
+import GroupCard from "./GroupCard"
+import GroupPrompter from "./GroupPrompter"
+import { GroupContext } from "../../contexts"
 
 interface IGroupListProps {
   setAddGroupOpen: Dispatch<SetStateAction<boolean>>
@@ -10,7 +11,7 @@ interface IGroupListProps {
 
 const GroupList = ({ setAddGroupOpen }: IGroupListProps) => {
 
-  const { isLoading, groups = [] } = useGroupService()
+  const { isLoading, groups } = useContext(GroupContext)
   
   return (
     <>

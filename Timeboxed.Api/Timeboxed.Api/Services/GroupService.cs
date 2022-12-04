@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Models.Requests;
@@ -32,12 +33,7 @@ namespace Timeboxed.Api.Services
         {
             var groups = this.context.Groups
                 .Where(g => g.GroupUsers.Any(gu => gu.UserId.Equals(this.userContextProvider.UserId)))
-                .Include(g => g.Applications)
-                .Include(g => g.GroupUsers)
-                .ThenInclude(gu => gu.Applications)
-                .Include(g => g.GroupUsers)
-                .ThenInclude(gu => gu.Roles)
-                .Select<Group, GroupResponse>(g => g);
+                .Select(MapEFGroupToResponse);
 
             return new ListResponse<GroupResponse>
             {
@@ -49,7 +45,7 @@ namespace Timeboxed.Api.Services
         public async Task<GroupResponse> GetGroupByIdAsync(Guid groupId, CancellationToken cancellationToken) =>
             await this.context.Groups
                 .Where(g => g.Id == groupId)
-                .Select<Group, GroupResponse>(g => g)
+                .Select(MapEFGroupToResponse)
                 .SingleOrDefaultAsync(cancellationToken)
             ?? throw new EntityNotFoundException($"Group {groupId} not found");
 
@@ -130,5 +126,23 @@ namespace Timeboxed.Api.Services
 
         public async Task<bool> GroupNameExistsAsync(Guid groupId, string groupName, CancellationToken cancellationToken) =>
             await this.context.Groups.Where(g => !g.Id.Equals(groupId) && g.Name.Equals(groupName)).SingleOrDefaultAsync(cancellationToken) != null;
+
+        private static Expression<Func<Group, GroupResponse>> MapEFGroupToResponse => (Group g) => new GroupResponse
+        {
+            Id = g.Id,
+            Name = g.Name,
+            Description = g.Description,
+            Colour = g.Colour,
+            Applications = g.Applications.Select(a => a.Id).ToList(),
+            GroupUsers = g.GroupUsers.Select(gu => new GroupUserResponse
+            {
+                Id = gu.Id,
+                UserId = gu.UserId,
+                GroupId = gu.GroupId,
+                HasJoined = gu.HasJoined,
+                Roles = gu.Roles.Select(r => r.Id).ToList(),
+                Applications = gu.Applications.Select(gua => gua.Id).ToList()
+            }).ToList(),
+        };
     }
 }

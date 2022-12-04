@@ -1,7 +1,9 @@
 import { Modal } from "../Common";
-import { AddGroupForm, UpdateGroupForm } from ".";
 import { IGroup } from "../../models";
 import { UserProvider } from "../../contexts";
+
+import AddGroupForm from "./AddGroupForm";
+import UpdateGroupForm from "./UpdateGroupForm";
 
 interface IGroupModalProps {
   isOpen: boolean,

@@ -1,22 +1,20 @@
 import { useContext } from "react";
 import { IEmployee } from "../models";
 import { generateColour } from "../services"
-import { EmployeeContext } from "../contexts";
+import { EmployeeContext, GroupContext } from "../contexts";
 import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '../hooks'
 import { endpoints } from '../config'
-import useGroupService from "./useGroupService";
 import { IEmployeeService } from "./interfaces";
 
 const useEmployeeService = (): IEmployeeService => {
 
   const employeeContext = useContext(EmployeeContext)
-  const { employees, setEmployees, setIsLoading, setError } = employeeContext
+  const { employees, setEmployees, setIsLoading } = employeeContext
+  const { currentGroup } = useContext(GroupContext)
   
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
+  const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { handleResolution } = useResolutionService()
-
-  const { currentGroup } = useGroupService()
 
   const getEmployee = (employeeId: string | undefined): IEmployee | undefined => {
     return employees.find((e) => e.id === employeeId)

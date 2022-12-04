@@ -1,14 +1,20 @@
-import { Form, Formik } from "formik";
+import { Formik } from "formik";
 import { useGroupService } from "../../hooks";
 import { IContextualFormProps } from "../../models";
 import { generateColour } from "../../services";
 import { groupValidationSchema } from "../../schema";
 import { ColourPicker, FormSection, FormikInput } from "../Common";
-import { ApplicationMultiSelector } from '.'
+import { FormikForm } from "../Common/FormikForm";
+import ApplicationMultiSelector from "./ApplicationMultiSelector";
+import { useState } from "react";
+import { IApiError } from "../../models/error.model";
 
 const AddGroupForm = ({ ContextualSubmissionButton }: IContextualFormProps) => {
 
-  const { addGroup } = useGroupService()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError>()
+
+  const { addGroup } = useGroupService(setIsLoading, setError)
 
   return (
     <Formik
@@ -24,7 +30,7 @@ const AddGroupForm = ({ ContextualSubmissionButton }: IContextualFormProps) => {
       }}
     >
       {({ errors, touched, values, setFieldValue, isValid }) => (
-        <Form>
+        <FormikForm error={error}>
           <FormSection title="Details">
             <div className="flex items-end space-x-2">
               <FormikInput name="name" label="Groupname" errors={errors.name} touched={touched.name} classes="flex flex-grow" />
@@ -38,8 +44,8 @@ const AddGroupForm = ({ ContextualSubmissionButton }: IContextualFormProps) => {
               setFieldValue={(a) => setFieldValue('applications', a)}
             />
           </FormSection>
-          {ContextualSubmissionButton('Create group', undefined, isValid)}
-        </Form>
+          {ContextualSubmissionButton('Create group', undefined, isValid, true, isLoading)}
+        </FormikForm>
       )
       }
     </Formik >

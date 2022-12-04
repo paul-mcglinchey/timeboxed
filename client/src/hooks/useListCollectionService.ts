@@ -11,7 +11,7 @@ const useListCollectionService = (refresh: () => void = () => {}) => {
 
   const { addNotification } = useNotification()
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
+  const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { handleResolution } = useResolutionService()
 
   const init = asyncHandler(async () => {
@@ -25,6 +25,7 @@ const useListCollectionService = (refresh: () => void = () => {}) => {
     if (!listcollectionId) return addNotification('Something went wrong...', Notification.Error)
 
     const res = await fetch(endpoints.systemlistcollection(listcollectionId), buildRequest('PUT', undefined, values))
+    if (!res.ok && res.status < 500) return setError(await res.json())
     const json = await res.json()
 
     if (res.ok) {

@@ -1,14 +1,15 @@
 
-import { useGroupService } from "../../hooks";
 import { ListboxSelector } from ".";
 import { combineClassNames } from "../../services";
+import { useContext } from "react";
+import { GroupContext } from "../../contexts";
 
 interface IGroupSelectorProps {
   fillContainer?: boolean
 }
 
 const GroupSelector = ({ fillContainer = false }: IGroupSelectorProps) => {
-  const { groups = [], getGroup, currentGroup, setCurrentGroup } = useGroupService()
+  const { groups = [], getGroup, currentGroup, setCurrentGroup } = useContext(GroupContext)
 
   return (
     <div className="flex flex-grow items-center justify-end min-w-">

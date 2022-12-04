@@ -1,29 +1,29 @@
 import { useContext } from "react";
 import { ISchedule, IScheduleShift, IScheduleRequest } from "../models"
 import { IScheduleService } from "./interfaces";
-import { ScheduleContext } from "../contexts";
+import { GroupContext, ScheduleContext } from "../contexts";
 import { endpoints } from '../config'
 import { addDays, subDays } from "date-fns";
-import { useAsyncHandler, useResolutionService, useGroupService, useRequestBuilderService } from "../hooks";
+import { useAsyncHandler, useResolutionService, useRequestBuilderService } from "../hooks";
 import { getDateOnly } from "../services";
 
 const useScheduleService = (): IScheduleService => {
   
   const scheduleContext = useContext(ScheduleContext)
   const { getSchedules, setSchedules, setIsLoading, setError } = scheduleContext
+  const { currentGroup } = useContext(GroupContext)
   
-  const { asyncReturnHandler } = useAsyncHandler(setIsLoading, setError)
+  const { asyncReturnHandler } = useAsyncHandler(setIsLoading)
   const { buildRequest } = useRequestBuilderService()
   const { handleResolution } = useResolutionService()
-  
-  const { currentGroup } = useGroupService()
 
   const getSchedule = (date: Date): ISchedule | undefined => getSchedules().find((schedule: ISchedule) => getDateOnly(new Date(schedule.startDate)) === getDateOnly(date))
 
-  const updateSchedule = asyncReturnHandler<ISchedule>(async (values: IScheduleRequest, scheduleId: string,  rotaId: string): Promise<ISchedule> => {
+  const updateSchedule = asyncReturnHandler<ISchedule | void>(async (values: IScheduleRequest, scheduleId: string,  rotaId: string): Promise<ISchedule | void> => {
     if (!currentGroup) throw new Error("Group not set")
 
     const res = await fetch(endpoints.schedule(rotaId, currentGroup.id, scheduleId), buildRequest("PUT", undefined, values))
+    if (!res.ok && res.status < 500) return setError(await res.json())
     const json: ISchedule = await res.json()
 
     handleResolution(res, json, 'update', 'schedule', [() => updateSchedulesInContext(json, scheduleId)])
@@ -31,10 +31,11 @@ const useScheduleService = (): IScheduleService => {
     return json
   })
 
-  const createSchedule = asyncReturnHandler<ISchedule>(async (values: IScheduleRequest, rotaId: string): Promise<ISchedule> => {
+  const createSchedule = asyncReturnHandler<ISchedule | void>(async (values: IScheduleRequest, rotaId: string): Promise<ISchedule | void> => {
     if (!currentGroup?.id) throw new Error()
 
     const res = await fetch(endpoints.schedules(rotaId, currentGroup.id), buildRequest('POST', undefined, values))
+    if (!res.ok && res.status < 500) return setError(await res.json())
     const json: ISchedule = await res.json()
 
     handleResolution(res, json, 'create', 'schedule', [() => updateSchedulesInContext(json)])

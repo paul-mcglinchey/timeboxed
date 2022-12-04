@@ -78,11 +78,11 @@ namespace Timeboxed.Core.FunctionWrappers
             }
             catch (BadRequestException ex)
             {
-                return new BadRequestObjectResult(ex.Message);
+                return new BadRequestObjectResult(new { Id = Guid.NewGuid(), Message = ex.Message });
             }
             catch (EntityNotFoundException ex)
             {
-                return new NotFoundObjectResult(ex.Message);
+                return new NotFoundObjectResult(new { Id = Guid.NewGuid(), Message = ex.Message });
             }
             catch (Exception ex)
             {

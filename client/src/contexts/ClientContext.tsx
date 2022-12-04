@@ -1,10 +1,11 @@
-import { createContext, useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { IChildrenProps, IClientListResponse, IClientsResponse, IFilter } from "../models";
-import { useAsyncHandler, useGroupService, useRequestBuilderService } from "../hooks";
+import { useAsyncHandler, useRequestBuilderService } from "../hooks";
 import { clientTableHeaders, endpoints } from "../config";
 import { getItemInLocalStorage, setItemInLocalStorage } from "../services";
 import { IClientContext } from "./interfaces";
 import { SortDirection } from "../enums";
+import { GroupContext } from "./GroupContext";
 
 interface IClientProviderProps extends IChildrenProps {
   includeDeleted?: boolean
@@ -45,9 +46,9 @@ export const ClientProvider = ({ children }: IClientProviderProps) => {
 
   const [filter, setFilter] = useState<IFilter>({ value: null, label: null, name: null })
 
-  const { currentGroup } = useGroupService()
+  const { currentGroup } = useContext(GroupContext)
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
+  const { asyncHandler } = useAsyncHandler(setIsLoading)
 
   const buildQueryString = useCallback(() => {
     var queryString = "?";

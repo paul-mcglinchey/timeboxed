@@ -1,16 +1,18 @@
 import { IGroupUserService } from "./interfaces"
-import { useAsyncHandler, useGroupService, useRequestBuilderService, useResolutionService } from "."
+import { useAsyncHandler, useRequestBuilderService, useResolutionService } from "."
 import { endpoints } from "../config"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { IGroupUser, IGroupUserInviteRequest, IGroupUserRequest } from "../models"
+import { IApiError } from "../models/error.model"
+import { GroupContext } from "../contexts"
 
 const useGroupUserService = (): IGroupUserService => {
   
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [error, setError] = useState<any>()
+  const [error, setError] = useState<IApiError>()
 
-  const { setGroups } = useGroupService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
+  const { setGroups } = useContext(GroupContext)
+  const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { buildRequest } = useRequestBuilderService()
   const { handleResolution } = useResolutionService()
 
@@ -27,7 +29,7 @@ const useGroupUserService = (): IGroupUserService => {
     if (!groupId) throw new Error('Something went wrong...')
 
     const res = await fetch(endpoints.invitegroupuser(groupId), buildRequest('POST', undefined, values))
-    if (!res.ok && res.status < 500) throw new Error(await res.text())
+    if (!res.ok && res.status < 500) return setError(await res.json())
 
     const json = await res.json()
 

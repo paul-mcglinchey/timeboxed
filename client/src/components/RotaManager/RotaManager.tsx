@@ -1,12 +1,12 @@
 import { Outlet } from "react-router"
-import { useGroupService } from "../../hooks";
 import { rotaLinks } from "../../config";
-import { EmployeeProvider, RotaProvider } from "../../contexts";
+import { EmployeeProvider, GroupContext, RotaProvider } from "../../contexts";
 import { NavMenu, SpinnerLoader } from "../Common";
+import { useContext } from "react";
 
 const RotaManager = () => {
 
-  const { isLoading, currentGroup } = useGroupService()
+  const { currentGroup, isLoading } = useContext(GroupContext)
 
   return (
     <>

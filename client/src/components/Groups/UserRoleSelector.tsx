@@ -1,7 +1,10 @@
-import { useApplicationService, useGroupService, useGroupUserService, useRoleService } from "../../hooks"
+import { useApplicationService, useGroupUserService, useRoleService } from "../../hooks"
 import { IApplication, IContextualFormProps, IGroup, IGroupUser } from "../../models"
-import { UserRoleGroup } from '.'
 import { Form, Formik } from "formik"
+
+import UserRoleGroup from "./UserRoleGroup"
+import { GroupContext } from "../../contexts"
+import { useContext } from "react"
 
 interface IUserRoleSelectorProps {
   groupUser: IGroupUser
@@ -9,7 +12,7 @@ interface IUserRoleSelectorProps {
 
 const UserRoleSelector = ({ groupUser, ContextualSubmissionButton }: IUserRoleSelectorProps & IContextualFormProps) => {
 
-  const { getGroup } = useGroupService()
+  const { getGroup } = useContext(GroupContext)
   const { roles } = useRoleService()
   const { getApplication } = useApplicationService()
   const { updateGroupUser } = useGroupUserService()
@@ -28,7 +31,6 @@ const UserRoleSelector = ({ groupUser, ContextualSubmissionButton }: IUserRoleSe
     >
       {({ values, setFieldValue, isValid }) => (
         <Form>
-          {console.log(values, roles)}
           <div className="mt-4 grid grid-cols-1 gap-4">
             <UserRoleGroup
               values={values}

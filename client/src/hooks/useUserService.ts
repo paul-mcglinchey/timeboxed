@@ -9,7 +9,7 @@ const useUserService = (): IUserService => {
   const userContext = useContext(UserContext)
   const { users, setUsers, setIsLoading, setError } = userContext
 
-  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
+  const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { buildRequest } = useRequestBuilderService()
   const { handleResolution } = useResolutionService()
   const { getRole } = useRoleService()
@@ -22,6 +22,7 @@ const useUserService = (): IUserService => {
     if (!userId) throw new Error()
 
     const res = await fetch(endpoints.user(userId), buildRequest('PUT', undefined, values))
+    if (!res.ok && res.status < 500) return setError(await res.json())
     const json = await res.json()
 
     handleResolution(res, json, 'update', 'user', [() => updateUserInContext(userId, values)])

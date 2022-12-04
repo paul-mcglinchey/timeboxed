@@ -11,6 +11,7 @@ export const GroupContext = createContext<IGroupContext>({
   groups: [],
   invites: [],
   setGroups: () => {},
+  getGroup: () => undefined,
   count: 0,
   setCount: () => {},
   isLoading: false,
@@ -28,7 +29,7 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
   
   const { buildRequest } = useRequestBuilderService()
   const { user } = useAuthService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
+  const { asyncHandler } = useAsyncHandler(setIsLoading)
   const isMounted = useIsMounted()
   
   useEffect(() => {
@@ -54,12 +55,17 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
     setCurrentGroup(groups.find(g => g.id === getItemInLocalStorage('group-id')) || groups[0])
   }, [groups])
 
+  const getGroup = (groupId: string | undefined): IGroup | undefined => {
+    return groups.find((group: IGroup) => group.id === groupId)
+  }
+
   const contextValue = {
     currentGroup,
     setCurrentGroup,
     groups: groups?.filter(g => g.groupUsers.find(gu => gu.userId === user?.id)?.hasJoined),
     invites: groups?.filter(g => !g.groupUsers.find(gu => gu.userId === user?.id)?.hasJoined),
     setGroups,
+    getGroup,
     count,
     setCount,
     isLoading,

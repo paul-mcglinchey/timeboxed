@@ -1,9 +1,10 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { IChildrenProps, IFetch, IEmployee, IEmployeesResponse } from "../models";
-import { useFetch, useGroupService, useRequestBuilderService } from "../hooks";
+import { useFetch, useRequestBuilderService } from "../hooks";
 import { endpoints } from "../config";
 import { IEmployeeContext } from "./interfaces";
 import { SortDirection } from "../enums";
+import { GroupContext } from "./GroupContext";
 
 export const EmployeeContext = createContext<IEmployeeContext>({
   employees: [],
@@ -29,7 +30,7 @@ export const EmployeeProvider = ({ children }: IChildrenProps) => {
   const [sortField, setSortField] = useState<string | undefined>(undefined)
   const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.Desc)
 
-  const { currentGroup } = useGroupService()
+  const { currentGroup } = useContext(GroupContext)
   const { buildRequest } = useRequestBuilderService()
   const { response }: IFetch<IEmployeesResponse> = useFetch(endpoints.employees(currentGroup?.id || ""), buildRequest(), [sortField, sortDirection, currentGroup], setIsLoading, setError)
 

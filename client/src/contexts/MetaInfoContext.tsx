@@ -1,8 +1,9 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { IChildrenProps, IFetch, IMetaInfo } from "../models";
-import { useFetch, useGroupService, useRequestBuilderService } from "../hooks";
+import { useFetch, useRequestBuilderService } from "../hooks";
 import { endpoints } from "../config";
 import { IMetaInfoContext } from "./interfaces";
+import { GroupContext } from "./GroupContext";
 
 export const MetaInfoContext = createContext<IMetaInfoContext>({
   applications: [],
@@ -20,7 +21,7 @@ export const MetaInfoProvider = ({ children }: IChildrenProps) => {
   const [error, setError] = useState<any>()
 
   const { buildRequest } = useRequestBuilderService()
-  const { currentGroup } = useGroupService()
+  const { currentGroup } = useContext(GroupContext)
   const { response }: IFetch<IMetaInfo> = useFetch(endpoints.metainfo(currentGroup?.id), buildRequest(), [currentGroup], setIsLoading, setError)
 
   useEffect(() => {

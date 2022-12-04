@@ -1,13 +1,15 @@
-import { IChildrenProps } from "../../models"
+import { FC } from "react"
+import { IChildrenProps, IProps } from "../../models"
 import { combineClassNames } from "../../services"
 
 interface IDialogButtonProps {
   actions: (() => void)[]
   disabled?: boolean
   type?: "button" | "submit" | "reset"
+  Icon?: FC<IProps> | null | undefined,
 }
 
-const DialogButton = ({ actions, disabled = false, type = "button", children }: IDialogButtonProps & IChildrenProps) => {
+const DialogButton = ({ actions, disabled = false, type = "button", Icon, children }: IDialogButtonProps & IChildrenProps) => {
   return (
     <button
       type={type}
@@ -21,6 +23,7 @@ const DialogButton = ({ actions, disabled = false, type = "button", children }: 
       onClick={() => actions.forEach(a => a())}
     >
       {children}
+      {Icon && <Icon className="h-4 w-4 text-current ml-2"/>}
     </button>
   )
 }

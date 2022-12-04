@@ -1,4 +1,6 @@
-import { useGroupService, useGroupUserService } from "../../hooks"
+import { useContext } from "react"
+import { GroupContext } from "../../contexts"
+import { useGroupUserService } from "../../hooks"
 import { InlineButton, Modal, SpinnerLoader } from "../Common"
 
 interface IGroupInvitesModalProps {
@@ -8,7 +10,7 @@ interface IGroupInvitesModalProps {
 
 const GroupInvitesModal = ({ isOpen, close }: IGroupInvitesModalProps) => {
 
-  const { invites = [], isLoading } = useGroupService()
+  const { invites, isLoading } = useContext(GroupContext)
   const { joinGroup } = useGroupUserService()
 
   return (

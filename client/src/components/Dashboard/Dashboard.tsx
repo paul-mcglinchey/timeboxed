@@ -1,17 +1,19 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { dashboardLinks } from "../../config";
 import { NavMenu, Toolbar } from "../Common";
-import { AppCard } from ".";
-import { useApplicationService, useAuthService, useGroupService } from "../../hooks";
+import { useApplicationService, useAuthService } from "../../hooks";
 import { IApplication } from "../../models";
-import { GroupModal, GroupPrompter } from "../Groups";
+
+import GroupPrompter from "../Groups/GroupPrompter";
+import GroupModal from "../Groups/GroupModal";
+import AppCard from "./AppCard";
+import { GroupContext } from "../../contexts";
 
 const Dashboard = () => {
-
   const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
 
   const { user } = useAuthService()
-  const { count, currentGroup } = useGroupService()
+  const { count, currentGroup } = useContext(GroupContext)
   const { getApplication } = useApplicationService()
 
   const getUserAccessibleApps = (): IApplication[] => {
@@ -51,7 +53,7 @@ const Dashboard = () => {
           </>
         )}
       </div>
-      <GroupModal 
+      <GroupModal
         isOpen={addGroupOpen}
         close={() => setAddGroupOpen(false)}
       />

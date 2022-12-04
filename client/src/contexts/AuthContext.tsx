@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<any>()
 
-  const { asyncHandler } = useAsyncHandler(setIsLoading, setError);
+  const { asyncHandler } = useAsyncHandler(setIsLoading);
   const { buildRequest } = useRequestBuilderService()
 
   const location = useLocation()

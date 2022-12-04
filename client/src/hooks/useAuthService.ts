@@ -1,21 +1,21 @@
 import { useContext } from "react"
 import { useNavigate } from "react-router"
 import { IPreferences, IUserRequest } from "../models"
-import { AuthContext } from "../contexts"
+import { AuthContext, GroupContext } from "../contexts"
 import { endpoints } from '../config'
-import { useRequestBuilderService, useAsyncHandler, useResolutionService, useGroupService, useUserService } from '.'
+import { useRequestBuilderService, useAsyncHandler, useResolutionService, useUserService } from '.'
 import { Permission } from "../enums"
 import { IAuthService } from "./interfaces"
 
 const useAuthService = (): IAuthService => {
   
   const auth = useContext(AuthContext)
-  const { user, setUser, setIsLoading, setError } = auth
+  const { user, setUser, setIsLoading } = auth
+  const { currentGroup } = useContext(GroupContext)
 
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
+  const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { handleResolution } = useResolutionService()
-  const { currentGroup } = useGroupService()
   const { userHasPermission } = useUserService()
   const navigate = useNavigate()
 

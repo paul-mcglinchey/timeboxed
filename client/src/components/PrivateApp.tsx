@@ -5,8 +5,6 @@ import {
   ClientDashboard,
   ClientManager,
   ClientPage,
-  Dashboard,
-  GroupDashboard,
   EmployeeDashboard,
   RotaDashboard,
   RotaManager,
@@ -15,6 +13,9 @@ import {
   RestrictedRoute
 } from "."
 import { Application, Permission } from "../enums"
+
+import GroupDashboard from "./Groups/GroupDashboard"
+import Dashboard from "./Dashboard/Dashboard"
 
 const PrivateApp = () => {
 

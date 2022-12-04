@@ -1,7 +1,8 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { endpoints } from "../config";
-import { useAsyncHandler, useGroupService, useIsMounted, useRequestBuilderService } from "../hooks";
+import { useAsyncHandler, useIsMounted, useRequestBuilderService } from "../hooks";
 import { IChildrenProps, IUser, IUsersResponse } from "../models";
+import { GroupContext } from "./GroupContext";
 import { IUserContext } from "./interfaces";
 
 interface IUserProviderProps {
@@ -25,9 +26,9 @@ export const UserProvider = ({ children, groupId = null }: IChildrenProps & IUse
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<any>()
 
+  const { currentGroup } = useContext(GroupContext)
   const { buildRequest } = useRequestBuilderService()
-  const { currentGroup } = useGroupService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading, setError)
+  const { asyncHandler } = useAsyncHandler(setIsLoading)
   const isMounted = useIsMounted()
 
   useEffect(() => {

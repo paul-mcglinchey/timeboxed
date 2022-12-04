@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TrashIcon, DotsVerticalIcon, PencilIcon, HeartIcon as HeartSolid } from '@heroicons/react/solid';
 import { HeartIcon } from '@heroicons/react/outline';
 import { IGroup } from '../../models';
-import { useAuthService, useGroupService } from '../../hooks';
-import { Dialog, SquareIconButton } from '../Common';
-import { GroupModal, DataPoint } from '.';
+import { useAuthService, useGroupService, useNotification } from '../../hooks';
+import { Dialog, SpinnerIcon, SquareIconButton } from '../Common';
+import DataPoint from './DataPoint';
+import GroupModal from './GroupModal';
+import { IApiError } from '../../models/error.model';
+import { Notification } from '../../enums';
 
 interface IGroupCardProps {
   g: IGroup
@@ -12,20 +15,28 @@ interface IGroupCardProps {
 
 const GroupCard = ({ g }: IGroupCardProps) => {
 
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError>()
+
   const [cardFlipped, setCardFlipped] = useState(false);
   const [deleteGroupOpen, setDeleteGroupOpen] = useState(false);
   const [editGroupOpen, setEditGroupOpen] = useState(false);
 
   const toggleCardFlipped = () => setCardFlipped(!cardFlipped);
 
-  const { deleteGroup } = useGroupService()
+  const { deleteGroup } = useGroupService(setIsLoading, setError)
   const { user, updatePreferences } = useAuthService()
+  const { addNotification } = useNotification()
 
   const isDefaultGroup = () => user?.preferences?.defaultGroup === g.id
 
   const toggleDefaultGroup = () => {
     updatePreferences({ defaultGroup: isDefaultGroup() ? undefined : g.id })
   }
+
+  useEffect(() => {
+    if (error) addNotification(error.message, Notification.Error) 
+  }, [error, addNotification])
 
   return (
     <>
@@ -36,6 +47,7 @@ const GroupCard = ({ g }: IGroupCardProps) => {
         <div className="flex flex-grow justify-between items-center space-x-4">
           <h1 className="text-xl md:text-3xl font-extrabold tracking-wide mr-10">{g.name}</h1>
           <div className="flex space-x-4">
+            {isLoading && <SpinnerIcon className="h-5 w-5" />}
             <SquareIconButton Icon={isDefaultGroup() ? HeartSolid : HeartIcon} action={() => toggleDefaultGroup()} />
             <SquareIconButton Icon={PencilIcon} action={() => setEditGroupOpen(true)} />
             <SquareIconButton Icon={DotsVerticalIcon} action={() => toggleCardFlipped()} className={`transform transition-all duration-500 ${cardFlipped ? 'rotate-180' : 'rotate-0'}`} />

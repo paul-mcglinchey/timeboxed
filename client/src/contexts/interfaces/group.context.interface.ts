@@ -6,8 +6,9 @@ export interface IGroupContext extends ILoadable {
   currentGroup: IGroup | undefined
   setCurrentGroup: Dispatch<SetStateAction<IGroup | undefined>>
   groups: IGroup[]
-  invites: IGroup[] | undefined
+  invites: IGroup[]
   setGroups: Dispatch<SetStateAction<IGroup[]>>
+  getGroup: (groupId: string | undefined) => IGroup | undefined
   count: number
   setCount: Dispatch<SetStateAction<number>>
   error: any | undefined

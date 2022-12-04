@@ -1,19 +1,19 @@
 import { IClient, IClientListResponse, IClientsResponse, ISession, IUpdateSessionRequest } from "../models"
-import { ClientContext } from "../contexts"
+import { ClientContext, GroupContext } from "../contexts"
 import { endpoints } from '../config'
-import { useRequestBuilderService, useAsyncHandler, useResolutionService, useGroupService } from '.'
+import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '.'
 import { useContext, useMemo } from "react"
 import { IClientService } from "./interfaces"
 
 const useClientService = (): IClientService => {
 
   const clientContext = useContext(ClientContext)
-  const { setClients, setCount, setIsLoading, setError, buildQueryString } = clientContext
+  const { setClients, setCount, setIsLoading, buildQueryString } = clientContext
+  const { currentGroup } = useContext(GroupContext)
 
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler, asyncReturnHandler } = useAsyncHandler(setIsLoading, setError)
+  const { asyncHandler, asyncReturnHandler } = useAsyncHandler(setIsLoading)
   const { handleResolution } = useResolutionService()
-  const { currentGroup } = useGroupService()
 
   const groupId: string | undefined = currentGroup?.id
 

@@ -1,14 +1,16 @@
 import { Fragment, ReactNode, useState } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 import { combineClassNames } from "../../services";
-import { DialogButton, Checkbox } from ".";
+import { DialogButton, Checkbox, SpinnerIcon } from ".";
 
 interface IModalProps {
   children?: (
     SubmissionButton: (
       content?: string | undefined, 
       actions?: (() => void)[] | undefined,
-      submissionGate?: boolean
+      submissionGate?: boolean,
+      shouldClose?: boolean,
+      isLoading?: boolean
     ) => ReactNode
   ) => JSX.Element
   title: string,
@@ -62,10 +64,10 @@ const Modal = ({ children, title, description, isOpen, close, level = 1, allowAd
                   {description}
                 </Dialog.Description>
 
-                {children && children((content, actions, submissionGate = true) =>
+                {children && children((content, actions, submissionGate = true, shouldClose = true, isLoading) =>
                   <div className={`flex mt-4 ${allowAddMultiple ? 'justify-between' : 'justify-end'}`}>
                     {allowAddMultiple && <Checkbox id="addMultiple" label="Add multiple" onChange={() => setKeepOpen(!keepOpen)} checked={keepOpen} />}
-                    <DialogButton disabled={!submissionGate} type="submit" actions={[...(keepOpen ? [] : [close]), ...actions || []]}>{content || 'Submit'}</DialogButton>
+                    <DialogButton disabled={!submissionGate} Icon={isLoading ? SpinnerIcon : undefined} type="submit" actions={[...((keepOpen || !shouldClose) ? [] : [close]), ...actions || []]}>{content || 'Submit'}</DialogButton>
                   </div>
                 )}
               </Dialog.Panel>
