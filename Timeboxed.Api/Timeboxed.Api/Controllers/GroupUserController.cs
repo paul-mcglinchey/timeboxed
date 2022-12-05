@@ -39,7 +39,7 @@ namespace Timeboxed.Api.Controllers
         }
 
         [FunctionName("GetGroupUsers")]
-        public async Task<ActionResult<ListResponse<UserListResponse>>> GetGroupUsers(
+        public async Task<ActionResult<ListResponse<GroupUserResponse>>> GetGroupUsers(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups/{groupId}/users")] HttpRequest req,
             string groupId,
             ILogger logger,
@@ -86,7 +86,9 @@ namespace Timeboxed.Api.Controllers
                 {
                     var request = await req.ConstructRequestModelAsync<InviteGroupUserRequest>();
 
-                    return new OkObjectResult(await this.groupUserService.InviteGroupUserAsync(request.UsernameOrEmail, cancellationToken));
+                    await this.groupUserService.InviteGroupUserAsync(request.UsernameOrEmail, cancellationToken);
+
+                    return new OkObjectResult(await this.groupUserService.GetGroupUsersAsync(cancellationToken));
                 },
                 cancellationToken);
 

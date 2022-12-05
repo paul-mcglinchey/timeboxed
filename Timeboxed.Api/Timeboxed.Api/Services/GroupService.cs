@@ -138,6 +138,8 @@ namespace Timeboxed.Api.Services
             {
                 Id = gu.Id,
                 UserId = gu.UserId,
+                Username = gu.User.Username,
+                Email = gu.User.Email,
                 GroupId = gu.GroupId,
                 HasJoined = gu.HasJoined,
                 Roles = gu.Roles.Select(r => r.Id).ToList(),

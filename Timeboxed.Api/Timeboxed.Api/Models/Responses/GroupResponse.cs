@@ -36,6 +36,10 @@ namespace Timeboxed.Api.Models.Responses
 
         public Guid UserId { get; set; }
 
+        public string Username { get; set; }
+
+        public string Email { get; set; }
+
         public Guid GroupId { get; set; }
 
         public bool HasJoined { get; set; }
@@ -48,6 +52,8 @@ namespace Timeboxed.Api.Models.Responses
         {
             Id = gu.Id,
             UserId = gu.UserId,
+            Username = gu.User.Username,
+            Email = gu.User.Email,
             GroupId = gu.GroupId,
             HasJoined = gu.HasJoined,
             Roles = gu.Roles.Select(r => r.Id).ToList(),

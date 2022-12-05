@@ -29,30 +29,33 @@ namespace Timeboxed.Api.Services
             this.context = context;
         }
 
-        public async Task<GroupUser?> GetGroupUserAsync(Guid groupId, Guid userId, CancellationToken cancellationToken)
+        public async Task<GroupUserResponse> GetGroupUserAsync(Guid groupId, Guid userId, CancellationToken cancellationToken)
         {
             return await this.context.GroupUsers
                 .Where(gu => gu.GroupId.Equals(groupId) && gu.UserId.Equals(userId))
                 .Include(gu => gu.Roles)
-                .SingleOrDefaultAsync(cancellationToken);
+                .SingleOrDefaultAsync(cancellationToken)
+            ?? throw new EntityNotFoundException($"User {userId} in Group {groupId} not found");
         }
 
-        public async Task<ListResponse<UserListResponse>> GetGroupUsersAsync(CancellationToken cancellationToken)
+        public async Task<ListResponse<GroupUserResponse>> GetGroupUsersAsync(CancellationToken cancellationToken)
         {
-            var users = await this.context.Users
-                .Where(u => this.context.GroupUsers
-                    .Where(gu => gu.GroupId.Equals(this.groupContextProvider.GroupId))
-                    .Any(gu => gu.UserId.Equals(u.Id)))
-                .Select(u => new UserListResponse
+            var users = await this.context.GroupUsers
+                .Where(gu => this.groupContextProvider.GroupId == gu.GroupId)
+                .Select(gu => new GroupUserResponse
                 {
-                    Id = u.Id,
-                    Username = u.Username,
-                    Email = u.Email,
-                    IsAdmin = u.IsAdmin,
+                    Id = gu.Id,
+                    UserId = gu.UserId,
+                    GroupId = gu.GroupId,
+                    Username = gu.User.Username,
+                    Email = gu.User.Email,
+                    HasJoined = gu.HasJoined,
+                    Roles = gu.Roles.Select(r => r.Id).ToList(),
+                    Applications = gu.Applications.Select(r => r.Id).ToList(),
                 })
                 .ToListAsync(cancellationToken);
 
-            return new ListResponse<UserListResponse>
+            return new ListResponse<GroupUserResponse>
             {
                 Items = users,
                 Count = users.Count,
@@ -79,7 +82,7 @@ namespace Timeboxed.Api.Services
             return groupUser;
         }
 
-        public async Task<ListResponse<UserListResponse>> InviteGroupUserAsync(string usernameOrEmail, CancellationToken cancellationToken)
+        public async Task InviteGroupUserAsync(string usernameOrEmail, CancellationToken cancellationToken)
         {
             var groupId = this.groupContextProvider.GroupId;
 
@@ -109,8 +112,6 @@ namespace Timeboxed.Api.Services
             });
 
             await this.context.SaveChangesAsync(cancellationToken);
-
-            return await this.GetGroupUsersAsync(cancellationToken);
         }
 
         public async Task UninviteGroupUserAsync(Guid userId, CancellationToken cancellationToken)
@@ -135,8 +136,11 @@ namespace Timeboxed.Api.Services
 
         public async Task<Guid> DeleteUserAsync(Guid userId, CancellationToken cancellationToken)
         {
-            var groupUser = await GetGroupUserAsync(this.groupContextProvider.GroupId, userId, cancellationToken);
-            this.context.GroupUsers.Remove(groupUser);
+            var groupUser = await this.context.GroupUsers
+                .Where(gu => gu.GroupId == this.groupContextProvider.GroupId && gu.UserId == this.userContextProvider.UserId)
+                .SingleOrDefaultAsync(cancellationToken)
+            ?? throw new EntityNotFoundException($"User {this.userContextProvider.UserId} in Group {this.groupContextProvider.GroupId} not found");
+
             await this.context.SaveChangesAsync(cancellationToken);
 
             return groupUser.Id;
@@ -144,7 +148,11 @@ namespace Timeboxed.Api.Services
 
         public async Task<Guid?> JoinGroupAsync(CancellationToken cancellationToken)
         {
-            var groupUser = await GetGroupUserAsync(this.groupContextProvider.GroupId, this.userContextProvider.UserId, cancellationToken);
+            var groupUser = await this.context.GroupUsers
+                .Where(gu => gu.GroupId == this.groupContextProvider.GroupId && gu.UserId == this.userContextProvider.UserId)
+                .SingleOrDefaultAsync(cancellationToken)
+            ?? throw new EntityNotFoundException($"User {this.userContextProvider.UserId} in Group {this.groupContextProvider.GroupId} not found");
+
             groupUser.HasJoined = true;
             await this.context.SaveChangesAsync(cancellationToken);
 
@@ -153,7 +161,11 @@ namespace Timeboxed.Api.Services
 
         public async Task<Guid?> LeaveGroupAsync(CancellationToken cancellationToken)
         {
-            var groupUser = await GetGroupUserAsync(this.groupContextProvider.GroupId, this.userContextProvider.UserId, cancellationToken);
+            var groupUser = await this.context.GroupUsers
+                .Where(gu => gu.GroupId == this.groupContextProvider.GroupId && gu.UserId == this.userContextProvider.UserId)
+                .SingleOrDefaultAsync(cancellationToken)
+            ?? throw new EntityNotFoundException($"User {this.userContextProvider.UserId} in Group {this.groupContextProvider.GroupId} not found");
+
             this.context.GroupUsers.Remove(groupUser);
             await this.context.SaveChangesAsync(cancellationToken);
 

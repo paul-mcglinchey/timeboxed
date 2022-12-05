@@ -1,6 +1,6 @@
 import { Formik } from "formik";
 import { useGroupService, useUserService } from "../../hooks";
-import { IContextualFormProps, IGroup, IMappableGroupUser } from "../../models";
+import { IContextualFormProps, IGroup, IGroupUser } from "../../models";
 import { combineClassNames, generateColour } from "../../services";
 import { groupValidationSchema } from "../../schema";
 import { ColourPicker, FormSection, Modal, FormikInput, Button, SpinnerLoader } from "../Common";
@@ -27,7 +27,7 @@ const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupForm
   const toggleInviteUserOpen = () => setInviteUserOpen(!inviteUserOpen)
 
   const { updateGroup } = useGroupService(setIsLoading, setError)
-  const { getUser, isLoading: isUsersLoading } = useUserService()
+  const { isLoading: isUsersLoading } = useUserService()
 
   return (
     <Formik
@@ -64,10 +64,8 @@ const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupForm
             ) : (
               <>
                 {group.groupUsers
-                  .map<IMappableGroupUser>(gu => ({ gu: gu, user: getUser(gu.userId) }))
-                  .filter(gu => !!gu.user)
-                  .map(u => (
-                    <GroupUserRow u={u} key={u.gu.userId}/>
+                  .map(gu => (
+                    <GroupUserRow gu={gu} key={gu.userId}/>
                   ))}
               </>
             )}
@@ -93,10 +91,10 @@ const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupForm
 }
 
 interface IGroupUserRowProps {
-  u: IMappableGroupUser
+  gu: IGroupUser
 }
 
-const GroupUserRow = ({ u }: IGroupUserRowProps) => {
+const GroupUserRow = ({ gu }: IGroupUserRowProps) => {
 
   const [editGroupUsersOpen, setEditGroupUsersOpen] = useState<boolean>(false)
   const toggleEditGroupUsersOpen = () => setEditGroupUsersOpen(!editGroupUsersOpen)
@@ -104,19 +102,20 @@ const GroupUserRow = ({ u }: IGroupUserRowProps) => {
   const { userHasRole } = useUserService()
 
   return (
-    <div key={u.gu.userId} className="flex">
+    <div className="flex">
       <button type="button" onClick={toggleEditGroupUsersOpen} className="w-full grid grid-cols-8 items-center group hover:bg-gray-300 dark:hover:bg-gray-900 rounded-md p-2">
         <div className="col-span-6 flex flex-col text-left">
-          <span className="uppercase font-bold text-lg tracking-wider">{u.user?.username}</span>
-          <span className="text-sm tracking-wide dark:text-gray-500 text-gray-500">{u.user?.email}</span>
+          {console.log(gu)}
+          <span className="uppercase font-bold text-lg tracking-wider">{gu.username}</span>
+          <span className="text-sm tracking-wide dark:text-gray-500 text-gray-500">{gu.email}</span>
         </div>
         <div className="col-span-2 grid grid-cols-6 items-center">
           <div className={combineClassNames(
             "col-span-5 font-bold px-2 py-0.5 border border-current rounded-md",
-            u.gu.hasJoined ? userHasRole(u.gu, Role.GroupAdmin) ? "text-orange-500" : "text-blue-500" : "text-emerald-500"
+            gu.hasJoined ? userHasRole(gu, Role.GroupAdmin) ? "text-orange-500" : "text-blue-500" : "text-emerald-500"
           )}>
-            {u.gu.hasJoined
-              ? userHasRole(u.gu, Role.GroupAdmin)
+            {gu.hasJoined
+              ? userHasRole(gu, Role.GroupAdmin)
                 ? 'Admin'
                 : 'Member'
               : 'Pending'
@@ -135,7 +134,7 @@ const GroupUserRow = ({ u }: IGroupUserRowProps) => {
         level={2}
       >
         {(ConfirmationButton) => (
-          <UserRoleSelector groupUser={u.gu} ContextualSubmissionButton={ConfirmationButton} />
+          <UserRoleSelector groupUser={gu} ContextualSubmissionButton={ConfirmationButton} />
         )}
       </Modal>
     </div>

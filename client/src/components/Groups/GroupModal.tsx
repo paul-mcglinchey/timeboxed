@@ -1,6 +1,5 @@
 import { Modal } from "../Common";
 import { IGroup } from "../../models";
-import { UserProvider } from "../../contexts";
 
 import AddGroupForm from "./AddGroupForm";
 import UpdateGroupForm from "./UpdateGroupForm";
@@ -21,9 +20,7 @@ const GroupModal = ({ isOpen, close, group }: IGroupModalProps) => {
     >
       {(ConfirmationButton) => (
         group ? (
-          <UserProvider groupId={group.id}>
-            <UpdateGroupForm group={group} ContextualSubmissionButton={ConfirmationButton} />
-          </UserProvider>
+          <UpdateGroupForm group={group} ContextualSubmissionButton={ConfirmationButton} />
         ) : (
           <AddGroupForm ContextualSubmissionButton={ConfirmationButton} />
         )

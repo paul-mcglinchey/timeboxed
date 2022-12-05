@@ -1,6 +1,6 @@
 import { Formik } from "formik"
-import { useGroupUserService, useUserService } from "../../hooks"
-import { IGroup, IMappableGroupUser } from "../../models"
+import { useGroupUserService } from "../../hooks"
+import { IGroup } from "../../models"
 import userInviteValidationSchema from "../../schema/userInviteValidationSchema"
 import { Button, FormikInput, SpinnerIcon } from "../Common"
 import { FormikForm } from "../Common/FormikForm"
@@ -12,7 +12,6 @@ interface IUserInvitesProps {
 const UserInvites = ({ g }: IUserInvitesProps) => {
 
   const { inviteGroupUser, uninviteGroupUser, isLoading, error } = useGroupUserService()
-  const { getUser } = useUserService()
 
   return (
     <>
@@ -39,14 +38,13 @@ const UserInvites = ({ g }: IUserInvitesProps) => {
       <div className="mt-4 pt-4 border-t border-gray-500">
         {g.groupUsers
           .filter(gu => !gu.hasJoined)
-          .map<IMappableGroupUser>(gu => ({ gu: gu, user: getUser(gu.userId) }))
-          .map(u => (
-            <div key={u.gu.userId} className="flex justify-between items-center">
+          .map(gu => (
+            <div key={gu.userId} className="flex justify-between items-center">
               <div className="flex flex-col text-left">
-                <span className="uppercase font-bold text-lg tracking-wider">{u.user?.username}</span>
-                <span className="text-sm tracking-wide dark:text-gray-500 text-gray-500">{u.user?.email}</span>
+                <span className="uppercase font-bold text-lg tracking-wider">{gu.username}</span>
+                <span className="text-sm tracking-wide dark:text-gray-500 text-gray-500">{gu.email}</span>
               </div>
-              <Button type='button' buttonType="Cancel" content="Revoke Invite" action={() => uninviteGroupUser(u.gu.groupId, u.gu.userId)} />
+              <Button type='button' buttonType="Cancel" content="Revoke Invite" action={() => uninviteGroupUser(gu.groupId, gu.userId)} />
             </div>
           ))}
       </div>

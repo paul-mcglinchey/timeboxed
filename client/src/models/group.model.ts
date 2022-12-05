@@ -1,14 +1,11 @@
 import { IUser } from "."
 
-export interface IGroupUserApplication {
-  applicationId: number
-  roles: string[]
-}
-
 export interface IGroupUser {
   id: string
   groupId: string
   userId: string
+  username: string
+  email: string
   hasJoined: boolean
   applications: number[]
   roles: string[]
