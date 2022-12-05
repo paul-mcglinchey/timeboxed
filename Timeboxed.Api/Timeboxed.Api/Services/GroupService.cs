@@ -49,7 +49,7 @@ namespace Timeboxed.Api.Services
                 .SingleOrDefaultAsync(cancellationToken)
             ?? throw new EntityNotFoundException($"Group {groupId} not found");
 
-        public async Task<GroupResponse> AddGroupAsync(AddGroupRequest request, CancellationToken cancellationToken)
+        public async Task<Guid> AddGroupAsync(AddGroupRequest request, CancellationToken cancellationToken)
         {
             var roles = await this.context.Roles
                 .Where(r => r.ApplicationId == null || request.Applications.Contains(r.Application.Id))
@@ -78,10 +78,10 @@ namespace Timeboxed.Api.Services
             this.context.Groups.Add(group);
             await this.context.SaveChangesAsync(cancellationToken);
 
-            return group;
+            return group.Id;
         }
 
-        public async Task<GroupResponse> UpdateGroupAsync(UpdateGroupRequest request, CancellationToken cancellationToken)
+        public async Task UpdateGroupAsync(UpdateGroupRequest request, CancellationToken cancellationToken)
         {
             var groupId = this.groupContextProvider.GroupId;
 
@@ -99,11 +99,9 @@ namespace Timeboxed.Api.Services
             group.AddTracking(this.userContextProvider.UserId);
 
             await this.context.SaveChangesAsync(cancellationToken);
-
-            return await this.GetGroupByIdAsync(groupId, cancellationToken);
         }
 
-        public async Task<Guid> DeleteGroupAsync(CancellationToken cancellationToken)
+        public async Task DeleteGroupAsync(CancellationToken cancellationToken)
         {
             var groupId = this.groupContextProvider.GroupId;
 
@@ -114,8 +112,6 @@ namespace Timeboxed.Api.Services
 
             this.context.Groups.Remove(group);
             await this.context.SaveChangesAsync(cancellationToken);
-
-            return group.Id;
         }
 
         public async Task<bool> GroupExistsAsync(Guid groupId, CancellationToken cancellationToken) =>

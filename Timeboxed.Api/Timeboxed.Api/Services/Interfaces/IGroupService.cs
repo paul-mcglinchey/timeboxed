@@ -13,11 +13,11 @@ namespace Timeboxed.Api.Services.Interfaces
 
         public Task<GroupResponse> GetGroupByIdAsync(Guid groupId, CancellationToken cancellationToken);
 
-        public Task<GroupResponse> AddGroupAsync(AddGroupRequest request, CancellationToken cancellationToken);
+        public Task<Guid> AddGroupAsync(AddGroupRequest request, CancellationToken cancellationToken);
 
-        public Task<GroupResponse> UpdateGroupAsync(UpdateGroupRequest request, CancellationToken cancellationToken);
+        public Task UpdateGroupAsync(UpdateGroupRequest request, CancellationToken cancellationToken);
 
-        public Task<Guid> DeleteGroupAsync(CancellationToken cancellationToken);
+        public Task DeleteGroupAsync(CancellationToken cancellationToken);
 
         public Task<bool> GroupExistsAsync(Guid groupId, CancellationToken cancellationToken);
 

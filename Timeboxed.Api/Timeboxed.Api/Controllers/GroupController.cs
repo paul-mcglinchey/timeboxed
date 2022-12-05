@@ -4,6 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -37,7 +38,7 @@ namespace Timeboxed.Api.Controllers
         }
 
         [FunctionName("GetGroups")]
-        public async Task<ActionResult<ListResponse<GroupResponse>>> GetGroups(
+        public async Task<ActionResult<ListResponse<GroupListResponse>>> GetGroups(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups")] HttpRequest req,
             ILogger logger,
             CancellationToken cancellationToken) =>
@@ -46,8 +47,27 @@ namespace Timeboxed.Api.Controllers
                 async () => new OkObjectResult(await this.groupService.GetGroupsAsync(cancellationToken)),
                 cancellationToken);
 
+        [FunctionName("GetGroupById")]
+        public async Task<ActionResult<GroupResponse>> GetGroupById(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups/{groupId}")] HttpRequest req,
+            string groupId,
+            ILogger logger,
+            CancellationToken cancellationToken) =>
+            await this.httpRequestWrapper.ExecuteAsync(
+                new List<int> { TimeboxedPermissions.ApplicationAccess },
+                async () =>
+                {
+                    if (groupId == null || !Guid.TryParse(groupId, out Guid groupIdGuid))
+                    {
+                        return new BadRequestObjectResult(new { message = "Group ID supplied is not a valid GUID" });
+                    }
+
+                    return new OkObjectResult(await this.groupService.GetGroupByIdAsync(groupIdGuid, cancellationToken));
+                },
+                cancellationToken);
+
         [FunctionName("AddGroup")]
-        public async Task<ActionResult> AddGroup(
+        public async Task<ActionResult<GroupResponse>> AddGroup(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "groups")] HttpRequest req,
             ILogger logger,
             CancellationToken cancellationToken) =>
@@ -62,12 +82,14 @@ namespace Timeboxed.Api.Controllers
                         return new BadRequestObjectResult(new { message = "Group name already exists." });
                     }
 
-                    return new CreatedAtRouteResult("groups", await this.groupService.AddGroupAsync(request, cancellationToken));
+                    var groupId = await this.groupService.AddGroupAsync(request, cancellationToken);
+
+                    return new CreatedAtRouteResult(nameof(this.GetGroupById), new { groupId = groupId }, await this.groupService.GetGroupByIdAsync(groupId, cancellationToken));
                 },
                 cancellationToken);
 
         [FunctionName("UpdateGroup")]
-        public async Task<ActionResult> UpdateGroup(
+        public async Task<ActionResult<GroupResponse>> UpdateGroup(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "groups/{groupId}")] HttpRequest req,
             string groupId,
             ILogger logger,
@@ -84,7 +106,9 @@ namespace Timeboxed.Api.Controllers
                         return new BadRequestObjectResult(new { message = "Group name already exists." });
                     }
 
-                    return new OkObjectResult(await this.groupService.UpdateGroupAsync(request, cancellationToken));
+                    await this.groupService.UpdateGroupAsync(request, cancellationToken);
+
+                    return new OkObjectResult(await this.groupService.GetGroupByIdAsync(this.groupContextProvider.GroupId, cancellationToken));
                 },
                 cancellationToken);
 
@@ -99,7 +123,9 @@ namespace Timeboxed.Api.Controllers
                 groupId,
                 async () =>
                 {
-                    return new OkObjectResult(new { groupId = await this.groupService.DeleteGroupAsync(cancellationToken) });
+                    await this.groupService.DeleteGroupAsync(cancellationToken);
+
+                    return new NoContentResult();
                 },
                 cancellationToken);
 

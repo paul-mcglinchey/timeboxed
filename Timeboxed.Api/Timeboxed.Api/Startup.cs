@@ -42,8 +42,6 @@ namespace Timeboxed.Api
                     options.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
                 }));
 
-            builder.Services.AddTransient<IUserValidator, UserValidator>();
-
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IGroupService, GroupService>();
             builder.Services.AddTransient<IGroupUserService, GroupUserService>();

@@ -24,34 +24,46 @@ namespace Timeboxed.Api.Controllers
     public class GroupUserController : GroupControllerWrapper<GroupUserController>
     {
         private readonly IGroupUserService groupUserService;
-        private readonly IUserValidator userValidator;
+        private readonly IGroupService groupService;
+        private readonly IGroupContextProvider groupContextProvider;
 
         public GroupUserController(
             ILogger<GroupUserController> logger,
             IHttpRequestWrapper<int> httpRequestWrapper,
             IGroupUserService groupUserService,
-            IGroupValidator groupValidator,
-            IUserValidator userValidator)
+            IGroupService groupService,
+            IGroupContextProvider groupContextProvider,
+            IGroupValidator groupValidator)
             : base(logger, httpRequestWrapper, groupValidator)
         {
             this.groupUserService = groupUserService;
-            this.userValidator = userValidator;
+            this.groupService = groupService;
+            this.groupContextProvider = groupContextProvider;
         }
 
-        [FunctionName("GetGroupUsers")]
-        public async Task<ActionResult<ListResponse<GroupUserResponse>>> GetGroupUsers(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups/{groupId}/users")] HttpRequest req,
+        [FunctionName("GetGroupUserById")]
+        public async Task<ActionResult<GroupUserResponse>> GetGroupUserById(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups/{groupId}/users/{userId}")] HttpRequest req,
             string groupId,
+            string userId,
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
                 new List<int> { TimeboxedPermissions.GroupAccess },
                 groupId,
-                async () => new OkObjectResult(await this.groupUserService.GetGroupUsersAsync(cancellationToken)),
+                async () => 
+                {
+                    if (!Guid.TryParse(userId, out var userIdGuid))
+                    {
+                        return new BadRequestObjectResult(new { message = "Invalid user ID supplied" });
+                    }
+
+                    return new OkObjectResult(await this.groupUserService.GetGroupUserByIdAsync(userIdGuid, cancellationToken));
+                },
                 cancellationToken);
 
         [FunctionName("UpdateGroupUser")]
-        public async Task<ActionResult> UpdateGroupUser(
+        public async Task<ActionResult<GroupUserResponse>> UpdateGroupUser(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "groups/{groupId}/users/{userId}")] HttpRequest req,
             string groupId,
             string userId,
@@ -64,12 +76,37 @@ namespace Timeboxed.Api.Controllers
                 {
                     var request = await req.ConstructRequestModelAsync<UpdateGroupUserRequest>();
 
-                    if (!this.userValidator.TryValidate(userId, out var userIdGuid))
+                    if (!Guid.TryParse(userId, out var userIdGuid))
                     {
-                        return new BadRequestObjectResult(new { message = "Invalid user ID supplied." });
-                    };
+                        return new BadRequestObjectResult(new { message = "Invalid user ID supplied" });
+                    }
 
-                    return new OkObjectResult(await this.groupUserService.UpdateGroupUserAsync(userIdGuid, request, cancellationToken));
+                    await this.groupUserService.UpdateGroupUserAsync(userIdGuid, request, cancellationToken);
+
+                    return new OkObjectResult(await this.groupUserService.GetGroupUserByIdAsync(userIdGuid, cancellationToken));
+                },
+                cancellationToken);
+
+        [FunctionName("DeleteUser")]
+        public async Task<ActionResult> DeleteUser(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "groups/{groupId}/users/{userId}")] HttpRequest req,
+            string groupId,
+            string userId,
+            ILogger logger,
+            CancellationToken cancellationToken) =>
+            await this.ExecuteAsync(
+                new List<int> { TimeboxedPermissions.GroupAdminAccess },
+                groupId,
+                async () =>
+                {
+                    if (!Guid.TryParse(userId, out var userIdGuid))
+                    {
+                        return new BadRequestObjectResult(new { message = "Invalid user ID supplied" });
+                    }
+
+                    await this.groupUserService.DeleteUserAsync(userIdGuid, cancellationToken);
+
+                    return new NoContentResult();
                 },
                 cancellationToken);
 
@@ -86,9 +123,9 @@ namespace Timeboxed.Api.Controllers
                 {
                     var request = await req.ConstructRequestModelAsync<InviteGroupUserRequest>();
 
-                    await this.groupUserService.InviteGroupUserAsync(request.UsernameOrEmail, cancellationToken);
+                    var userId = await this.groupUserService.InviteGroupUserAsync(request.UsernameOrEmail, cancellationToken);
 
-                    return new OkObjectResult(await this.groupUserService.GetGroupUsersAsync(cancellationToken));
+                    return new OkObjectResult(await this.groupUserService.GetGroupUserByIdAsync(userId, cancellationToken));
                 },
                 cancellationToken);
 
@@ -111,33 +148,12 @@ namespace Timeboxed.Api.Controllers
 
                     await this.groupUserService.UninviteGroupUserAsync(userIdGuid, cancellationToken);
 
-                    return new OkResult();
-                },
-                cancellationToken);
-
-        [FunctionName("DeleteUser")]
-        public async Task<ActionResult> DeleteUser(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "groups/{groupId}/users/{userId}")] HttpRequest req,
-            string groupId,
-            string userId,
-            ILogger logger,
-            CancellationToken cancellationToken) =>
-            await this.ExecuteAsync(
-                new List<int> { TimeboxedPermissions.GroupAdminAccess },
-                groupId,
-                async () =>
-                {
-                    if (!this.userValidator.TryValidate(userId, out var userIdGuid))
-                    {
-                        return new BadRequestObjectResult(new { message = "Invalid user ID supplied." });
-                    };
-
-                    return new OkObjectResult(new { groupUserId = await this.groupUserService.DeleteUserAsync(userIdGuid, cancellationToken) });
+                    return new NoContentResult();
                 },
                 cancellationToken);
 
         [FunctionName("JoinGroup")]
-        public async Task<ActionResult> JoinGroup(
+        public async Task<ActionResult<GroupResponse>> JoinGroup(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "groups/{groupId}/join")] HttpRequest req,
             string groupId,
             ILogger logger,
@@ -145,7 +161,12 @@ namespace Timeboxed.Api.Controllers
             await this.ExecuteAsync(
                 new List<int> { TimeboxedPermissions.GroupAdminAccess },
                 groupId,
-                async () => new OkObjectResult(new { groupUserId = await this.groupUserService.JoinGroupAsync(cancellationToken) }),
+                async () =>
+                {
+                    await this.groupUserService.JoinGroupAsync(cancellationToken);
+
+                    return new OkObjectResult(await this.groupService.GetGroupByIdAsync(this.groupContextProvider.GroupId, cancellationToken));
+                },
                 cancellationToken);
 
         [FunctionName("LeaveGroup")]
@@ -157,7 +178,12 @@ namespace Timeboxed.Api.Controllers
             await this.ExecuteAsync(
                 new List<int> { TimeboxedPermissions.GroupAdminAccess },
                 groupId,
-                async () => new OkObjectResult(new { groupUserId = await this.groupUserService.LeaveGroupAsync(cancellationToken) }),
+                async () =>
+                {
+                    await this.groupUserService.LeaveGroupAsync(cancellationToken);
+
+                    return new NoContentResult();    
+                },
                 cancellationToken);
 
         protected static async Task<T> ConstructRequestModelAsync<T>(HttpRequest req)
