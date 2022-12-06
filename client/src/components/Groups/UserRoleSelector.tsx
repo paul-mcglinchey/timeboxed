@@ -1,8 +1,12 @@
-import { useApplicationService, useGroupUserService, useRoleService } from "../../hooks"
+import { useApplicationService, useGroupUserService } from "../../hooks"
 import { IApplication, IContextualFormProps, IGroup, IGroupUser } from "../../models"
-import { Form, Formik } from "formik"
+import { Formik } from "formik"
 
 import UserRoleGroup from "./UserRoleGroup"
+import { useContext, useState } from "react"
+import { MetaInfoContext } from "../../contexts"
+import { IApiError } from "../../models/error.model"
+import { FormikForm } from "../Common/FormikForm"
 
 interface IUserRoleSelectorProps {
   group: IGroup
@@ -11,9 +15,12 @@ interface IUserRoleSelectorProps {
 
 const UserRoleSelector = ({ group, groupUser, ContextualSubmissionButton }: IUserRoleSelectorProps & IContextualFormProps) => {
 
-  const { roles } = useRoleService()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError>()
+  
+  const { roles } = useContext(MetaInfoContext)
   const { getApplication } = useApplicationService()
-  const { updateGroupUser } = useGroupUserService()
+  const { updateGroupUser } = useGroupUserService(setIsLoading, setError)
 
   return (
     <Formik
@@ -26,7 +33,7 @@ const UserRoleSelector = ({ group, groupUser, ContextualSubmissionButton }: IUse
       }}
     >
       {({ values, setFieldValue, isValid }) => (
-        <Form>
+        <FormikForm error={error}>
           <div className="mt-4 grid grid-cols-1 gap-4">
             <UserRoleGroup
               values={values}
@@ -50,8 +57,8 @@ const UserRoleSelector = ({ group, groupUser, ContextualSubmissionButton }: IUse
               />
             ))}
           </div>
-          {ContextualSubmissionButton('Update user', undefined, isValid)}
-        </Form>
+          {ContextualSubmissionButton('Update user', undefined, isValid, undefined, isLoading)}
+        </FormikForm>
       )}
     </Formik>
   )

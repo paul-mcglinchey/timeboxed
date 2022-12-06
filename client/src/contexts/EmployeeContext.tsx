@@ -15,10 +15,9 @@ export const EmployeeContext = createContext<IEmployeeContext>({
   setSortField: () => {},
   sortDirection: SortDirection.Desc,
   setSortDirection: () => {},
+  getEmployee: () => undefined,
   isLoading: false,
-  setIsLoading: () => {},
   error: undefined,
-  setError: () => {}
 });
 
 export const EmployeeProvider = ({ children }: IChildrenProps) => {
@@ -41,6 +40,10 @@ export const EmployeeProvider = ({ children }: IChildrenProps) => {
     }
   }, [response])
 
+  const getEmployee = (employeeId: string): IEmployee | undefined => {
+    return employees.find((e) => e.id === employeeId)
+  }
+
   const contextValue = {
     employees,
     setEmployees,
@@ -50,10 +53,9 @@ export const EmployeeProvider = ({ children }: IChildrenProps) => {
     setSortField,
     sortDirection,
     setSortDirection,
+    getEmployee,
     isLoading,
-    setIsLoading,
     error,
-    setError
   }
 
   return (

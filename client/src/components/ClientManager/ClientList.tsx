@@ -1,11 +1,11 @@
-import { Dispatch, Fragment, SetStateAction } from 'react';
+import { Dispatch, Fragment, SetStateAction, useContext } from 'react';
 import { UserAddIcon } from '@heroicons/react/solid';
 import { IClientListResponse, IFilterableField } from '../../models';
-import { useAuthService, useClientService } from '../../hooks';
 import { Paginator, Table, Prompter, SearchBar } from '../Common';
 import { ClientTableRow } from '.';
 import { Application, Permission } from '../../enums';
 import { clientTableHeaders } from '../../config';
+import { AuthContext, ClientContext } from '../../contexts';
 
 interface IClientListProps {
   setAddClientOpen: Dispatch<SetStateAction<boolean>>
@@ -13,8 +13,8 @@ interface IClientListProps {
 
 const ClientList = ({ setAddClientOpen }: IClientListProps) => {
 
-  const { clients, count, filter, setFilter, sortField, setSortField, sortDirection, setSortDirection, isLoading, pageNumber, setPageNumber, pageSize, setPageSize } = useClientService()
-  const { hasPermission } = useAuthService()
+  const { clients, count, filter, setFilter, sortField, setSortField, sortDirection, setSortDirection, isLoading, pageNumber, setPageNumber, pageSize, setPageSize } = useContext(ClientContext)
+  const { hasPermission } = useContext(AuthContext)
 
   const filterApplied = (): boolean => filter.value !== null
 

@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { UserIcon } from "@heroicons/react/solid";
-import { useEmployeeService } from "../../hooks";
 import { IEmployee } from "../../models";
 import { Prompter, Table } from "../Common";
 import { EmployeeTableRow } from ".";
+import { EmployeeContext } from "../../contexts";
 
 const headers = [
   { name: "Employee name", value: "name", interactive: true },
@@ -16,7 +16,7 @@ interface IEmployeeListProps {
 
 const EmployeeList = ({ setAddEmployeesOpen }: IEmployeeListProps) => {
 
-  const { employees, isLoading, sortField, setSortField, sortDirection, setSortDirection } = useEmployeeService()
+  const { employees, isLoading, sortField, setSortField, sortDirection, setSortDirection } = useContext(EmployeeContext)
 
   useEffect(() => {
     setSortField(headers[1]!.value)

@@ -1,24 +1,15 @@
 import { IGroupUserService } from "./interfaces"
 import { useAsyncHandler, useRequestBuilderService, useResolutionService } from "."
 import { endpoints } from "../config"
-import { useContext, useState } from "react"
-import { IGroup, IGroupUser, IGroupUserInviteRequest, IGroupUserRequest } from "../models"
+import { Dispatch, SetStateAction } from "react"
+import { IGroupUserInviteRequest, IGroupUserRequest } from "../models"
 import { IApiError } from "../models/error.model"
-import { GroupContext } from "../contexts"
 
-const useGroupUserService = (): IGroupUserService => {
-  
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [error, setError] = useState<IApiError>()
+const useGroupUserService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setError: Dispatch<SetStateAction<IApiError | undefined>>): IGroupUserService => {
 
-  const { currentGroup } = useContext(GroupContext)
   const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { buildRequest } = useRequestBuilderService()
   const { handleResolution } = useResolutionService()
-
-  const getGroupUser = (userId: string | undefined, group?: IGroup | undefined): IGroupUser | undefined  => {
-    return (group ? group : currentGroup)?.users.find(u => u.userId === userId)
-  }
 
   const updateGroupUser = asyncHandler(async (groupId: string | undefined, userId: string | undefined, values: IGroupUserRequest) => {
     if (!groupId || !userId) throw new Error('Something went wrong...')
@@ -60,7 +51,7 @@ const useGroupUserService = (): IGroupUserService => {
     handleResolution(res, json, 'join', 'group')
   })
 
-  return { getGroupUser, updateGroupUser, inviteGroupUser, uninviteGroupUser, joinGroup, isLoading, setIsLoading, error, setError }
+  return { updateGroupUser, inviteGroupUser, uninviteGroupUser, joinGroup }
 }
 
 export default useGroupUserService

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useEmployeeService } from "../../hooks";
+import { useContext, useState } from "react";
+import { EmployeeContext } from "../../contexts";
 import { IEmployee, IFilter } from "../../models";
 import { combineClassNames } from "../../services";
 import { MultiSelector, SearchBar } from "../Common";
@@ -29,7 +29,7 @@ const EmployeeMultiSelector = ({ formValues, setFieldValue, fieldName = 'employe
   const [showAll, setShowAll] = useState<boolean>(false)
   const toggleShowAll = () => setShowAll(!showAll)
 
-  const { employees, getEmployee } = useEmployeeService()
+  const { employees, getEmployee } = useContext(EmployeeContext)
 
   return (
     <div className="flex flex-col space-y-2">

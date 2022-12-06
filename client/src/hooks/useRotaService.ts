@@ -1,15 +1,16 @@
-import { useContext } from "react"
+import { Dispatch, SetStateAction, useContext } from "react"
 import { IRota, IRotaRequest, IUpdateRotaEmployeesRequest } from "../models"
 import { IRotaService } from "./interfaces"
 import { GroupContext, RotaContext } from "../contexts"
 import { endpoints } from "../config"
 import { useNavigate } from "react-router"
 import { useAsyncHandler, useResolutionService, useRequestBuilderService } from '.'
+import { IApiError } from "../models/error.model"
 
-const useRotaService = (): IRotaService => {
+const useRotaService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setError: Dispatch<SetStateAction<IApiError | undefined>>): IRotaService => {
   
   const rotaContext = useContext(RotaContext)
-  const { rotas, setRotas, setIsLoading, setError } = rotaContext
+  const { setRotas } = rotaContext
   const { currentGroup } = useContext(GroupContext)
   
   const navigate = useNavigate();
@@ -17,9 +18,6 @@ const useRotaService = (): IRotaService => {
   const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { handleResolution } = useResolutionService()
   const groupId: string | undefined = currentGroup?.id
-
-
-  const getRota = (rotaId: string): IRota | undefined => rotas.find(r => r.id === rotaId)
 
   const addRota = asyncHandler(async (values: IRotaRequest) => {
     if (!groupId) throw new Error()
@@ -73,7 +71,7 @@ const useRotaService = (): IRotaService => {
     setRotas(rotas => rotas.filter(r => r.id !== rotaId))
   }
 
-  return { ...rotaContext, getRota, addRota, updateRota, updateRotaEmployees, deleteRota }
+  return { ...rotaContext, addRota, updateRota, updateRotaEmployees, deleteRota }
 }
 
 export default useRotaService

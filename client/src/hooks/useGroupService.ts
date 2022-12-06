@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useContext } from "react"
-import { IGroup, IGroupList, IGroupRequest } from "../models"
+import { IGroup, IGroupRequest } from "../models"
 import { GroupContext } from "../contexts"
 import { endpoints } from '../config'
 import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '.'
@@ -50,7 +50,7 @@ const useGroupService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setErr
 
   const addGroupInContext = (group: IGroup) => {
     setGroups(groups => [
-      ...groups, mapGroupToGroupList(group)
+      ...groups, group
     ])
     setCount(count => count + 1)
   }
@@ -61,10 +61,8 @@ const useGroupService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setErr
   }
 
   const updateGroupInContext = (groupId: string, values: IGroup) => {
-    setGroups(groups => groups.map(g => g.id === groupId ? mapGroupToGroupList(values) : g))
+    setGroups(groups => groups.map(g => g.id === groupId ? values : g))
   }
-
-  const mapGroupToGroupList = (group: IGroup): IGroupList => ({ ...group, users: group.users.map(u => u.id) })
 
   return { ...groupContext, getGroup, addGroup, updateGroup, deleteGroup }
 }

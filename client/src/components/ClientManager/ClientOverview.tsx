@@ -1,13 +1,14 @@
-import { useGroupUserService } from "../../hooks";
 import { IClient } from "../../models";
 import { generateColour, getInitials } from "../../services";
 import { InfoTabs } from ".";
+import { useContext } from "react";
+import { GroupContext } from "../../contexts";
 
 const ClientOverview = ({ client }: { client: IClient }) => {
 
   const { colour, createdAt, updatedAt, updatedBy } = client;
 
-  const { getGroupUser } = useGroupUserService()
+  const { getGroupUser } = useContext(GroupContext)
 
   return (
     <div className={`bg-gray-800/40 flex justify-between w-full mt-10 mb-4 rounded-lg text-gray-200 shadow-md space-x-8`}>

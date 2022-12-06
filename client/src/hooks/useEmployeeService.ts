@@ -1,29 +1,29 @@
-import { useContext } from "react";
+import { Dispatch, SetStateAction, useContext } from "react";
 import { IEmployee } from "../models";
 import { generateColour } from "../services"
 import { EmployeeContext, GroupContext } from "../contexts";
 import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '../hooks'
 import { endpoints } from '../config'
 import { IEmployeeService } from "./interfaces";
+import { IApiError } from "../models/error.model";
 
-const useEmployeeService = (): IEmployeeService => {
+const useEmployeeService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setError: Dispatch<SetStateAction<IApiError | undefined>>): IEmployeeService => {
 
   const employeeContext = useContext(EmployeeContext)
-  const { employees, setEmployees, setIsLoading } = employeeContext
+  const { setEmployees } = employeeContext
   const { currentGroup } = useContext(GroupContext)
   
   const { buildRequest } = useRequestBuilderService()
   const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { handleResolution } = useResolutionService()
 
-  const getEmployee = (employeeId: string | undefined): IEmployee | undefined => {
-    return employees.find((e) => e.id === employeeId)
-  }
-
   const addEmployee = asyncHandler(async (values: IEmployee) => {
     if (!currentGroup?.id) throw new Error()
 
     const res = await fetch(endpoints.employees(currentGroup.id), buildRequest('POST', undefined, { ...values, colour: generateColour() }))
+
+    if (!res.ok && res.status < 500) return setError(await res.json())
+
     const json = await res.json()
 
     handleResolution(res, json, 'create', 'employee', [() => addEmployeeInContext(json)])
@@ -64,7 +64,7 @@ const useEmployeeService = (): IEmployeeService => {
     })
   }
   
-  return { ...employeeContext, getEmployee, addEmployee, updateEmployee, deleteEmployee }
+  return { ...employeeContext, addEmployee, updateEmployee, deleteEmployee }
 }
 
 export default useEmployeeService

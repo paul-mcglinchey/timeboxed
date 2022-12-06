@@ -1,6 +1,8 @@
 import { Formik } from "formik"
+import { useState } from "react"
 import { useGroupUserService } from "../../hooks"
 import { IGroup } from "../../models"
+import { IApiError } from "../../models/error.model"
 import userInviteValidationSchema from "../../schema/userInviteValidationSchema"
 import { Button, FormikInput, SpinnerIcon } from "../Common"
 import { FormikForm } from "../Common/FormikForm"
@@ -11,7 +13,10 @@ interface IUserInvitesProps {
 
 const UserInvites = ({ g }: IUserInvitesProps) => {
 
-  const { inviteGroupUser, uninviteGroupUser, isLoading, error } = useGroupUserService()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError>()
+
+  const { inviteGroupUser, uninviteGroupUser } = useGroupUserService(setIsLoading, setError)
 
   return (
     <>

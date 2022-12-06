@@ -1,11 +1,12 @@
-import { Fragment } from 'react';
+import { Fragment, useContext } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { MenuIcon, FireIcon, XIcon, MoonIcon, SunIcon } from '@heroicons/react/solid';
 import { Link, resolvePath, matchPath } from 'react-router-dom';
 import { combineClassNames } from '../../services';
-import { useAuthService, useTheme } from '../../hooks';
+import { useTheme } from '../../hooks';
 import { FadeInOut, GroupSelector, SmartLink, Switch, ThumbIcon, WideIcon } from '.'
 import { useLocation } from 'react-router';
+import { AuthContext } from '../../contexts';
 
 interface INavMenuProps {
   links?: {
@@ -17,7 +18,7 @@ interface INavMenuProps {
 
 const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
 
-  const { user, logout, isAdmin } = useAuthService()
+  const { user, logout, isAdmin } = useContext(AuthContext)
   const { theme, setTheme } = useTheme()
   const location = useLocation()
 

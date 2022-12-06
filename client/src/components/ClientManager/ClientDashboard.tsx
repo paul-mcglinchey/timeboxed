@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { useAuthService } from '../../hooks';
+import { useContext, useState } from 'react';
 import { Toolbar, Prompter, Button, Modal } from '../Common';
 import { AddClientForm, ClientList } from '.';
 import { Application, Permission } from '../../enums';
+import { AuthContext } from '../../contexts';
 
 const ClientDashboard = () => {
   const [addClientOpen, setAddClientOpen] = useState(false)
-  const { hasPermission } = useAuthService()
+  const { hasPermission } = useContext(AuthContext)
 
   return (
     <>

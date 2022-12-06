@@ -2,14 +2,14 @@ import { Transition } from "@headlessui/react"
 import { XIcon } from "@heroicons/react/solid"
 import { Form } from "formik"
 import { Fragment, useEffect, useState } from "react"
-import { IChildrenProps } from "../../models"
+import { IChildrenProps, IProps } from "../../models"
 import { IApiError } from "../../models/error.model"
 
 interface IFormikFormProps {
   error?: IApiError | undefined
 }
 
-export const FormikForm = ({ error, children }: IFormikFormProps & IChildrenProps) => {
+export const FormikForm = ({ error, children, ...props }: IFormikFormProps & IChildrenProps & IProps) => {
 
   const [errorDismissed, setErrorDismissed] = useState<boolean>(false)
   const [prevError, setPrevError] = useState<IApiError>()
@@ -23,7 +23,7 @@ export const FormikForm = ({ error, children }: IFormikFormProps & IChildrenProp
   }, [error, prevError])
 
   return (
-    <Form>
+    <Form {...props}>
       <Transition
         as={Fragment}
         show={error !== undefined && !errorDismissed}

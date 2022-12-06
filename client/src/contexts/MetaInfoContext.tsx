@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { IChildrenProps, IFetch, IMetaInfo } from "../models";
+import { IChildrenProps, IFetch, IMetaInfo, IPermission, IRole } from "../models";
 import { useFetch, useRequestBuilderService } from "../hooks";
 import { endpoints } from "../config";
 import { IMetaInfoContext } from "./interfaces";
@@ -9,14 +9,15 @@ export const MetaInfoContext = createContext<IMetaInfoContext>({
   applications: [],
   roles: [],
   permissions: [],
+  getRole: () => undefined,
+  getPermission: () => undefined,
+  getRolePermissions: () => [],
   isLoading: false,
-  setIsLoading: () => {},
-  error: null,
-  setError: () => {}
+  error: undefined,
 });
 
 export const MetaInfoProvider = ({ children }: IChildrenProps) => {
-  const [metaInfo, setMetaInfo] = useState<IMetaInfo | undefined>()
+  const [metaInfo, setMetaInfo] = useState<IMetaInfo>({ applications: [], roles: [], permissions: [] })
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<any>()
 
@@ -30,12 +31,25 @@ export const MetaInfoProvider = ({ children }: IChildrenProps) => {
     }
   }, [response])
 
+  const getRole = (roleId: string): IRole | undefined => {
+    return metaInfo.roles.find(r => r.id === roleId)
+  }
+
+  const getPermission = (permissionId: number | undefined): IPermission | undefined => {
+    return metaInfo.permissions.find(p => p.id === permissionId)
+  }
+
+  const getRolePermissions = (roleId: string): IPermission[] => {
+    return metaInfo.roles.find(r => r.id === roleId)?.permissions.map(p => getPermission(p)).filter((p): p is IPermission => !!p) || []
+  }
+
   const contextValue = {
     ...metaInfo,
+    getRole,
+    getPermission,
+    getRolePermissions,
     isLoading,
-    setIsLoading,
     error,
-    setError
   }
 
   return (

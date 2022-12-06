@@ -1,12 +1,14 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { EyeIcon, LockClosedIcon, LockOpenIcon, PencilIcon, TrashIcon, UsersIcon } from "@heroicons/react/solid";
 import { useFormikContext } from "formik";
 import { IRota } from "../../models";
-import { useAuthService, useRotaService } from "../../hooks";
-import { Button, Dialog, Dropdown } from "../Common";
+import { useNotification, useRotaService } from "../../hooks";
+import { Button, Dialog, Dropdown, SpinnerIcon } from "../Common";
 import { RotaModal } from ".";
-import { Application, Permission } from "../../enums";
+import { Application, Notification, Permission } from "../../enums";
+import { IApiError } from "../../models/error.model";
+import { AuthContext } from "../../contexts";
 
 interface IRotaHeaderProps {
   rota: IRota,
@@ -16,12 +18,16 @@ interface IRotaHeaderProps {
 
 const RotaHeader = ({ rota, editing, setEditing }: IRotaHeaderProps) => {
 
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError>()
+
   const [deletionOpen, setDeletionOpen] = useState<boolean>(false);
   const [editRotaOpen, setEditRotaOpen] = useState<boolean>(false);
 
-  const { updateRota, deleteRota } = useRotaService()
+  const { updateRota, deleteRota } = useRotaService(setIsLoading, setError)
   const { handleSubmit, dirty } = useFormikContext()
-  const { hasPermission } = useAuthService()
+  const { hasPermission } = useContext(AuthContext)
+  const { addNotification } = useNotification()
 
   const updateEditingStatus = () => {
     dirty && handleSubmit()
@@ -32,6 +38,10 @@ const RotaHeader = ({ rota, editing, setEditing }: IRotaHeaderProps) => {
     updateRota(rota?.id, { ...rota, locked: !rota?.locked })
     setEditing(false)
   }
+
+  useEffect(() => {
+    if (error?.message) addNotification(error.message, Notification.Error) 
+  }, [error])
 
   return (
     <div className="flex justify-between items-center text-gray-200">
@@ -47,6 +57,7 @@ const RotaHeader = ({ rota, editing, setEditing }: IRotaHeaderProps) => {
           <span>{rota.name}</span>
         </span>
         <span> / {editing ? 'Editing' : 'Viewing'}</span>
+        {isLoading && <SpinnerIcon className="w-6 h-6" />}
       </div>
       <div className="flex space-x-4 items-center">
         {rota.locked && (

@@ -1,7 +1,6 @@
 import { Transition } from "@headlessui/react"
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
-import { GroupContext, GroupProvider, MetaInfoContext, MetaInfoProvider } from "../contexts"
-import { useAuthService } from "../hooks"
+import { AuthContext, GroupContext, GroupProvider, MetaInfoContext, MetaInfoProvider } from "../contexts"
 import { IChildrenProps } from "../models"
 import { combineClassNames } from "../services"
 import { WideIcon } from "./Common"
@@ -12,11 +11,15 @@ const AppLoader = ({ children }: { children: any }) => {
   const [loadingCompleted, setLoadingCompleted] = useState<boolean>(false)
   const [appLoading, setAppLoading] = useState<boolean>(true)
 
-  const { isLoading: isAuthLoading, user } = useAuthService()
+  const { isLoading: isAuthLoading, user } = useContext(AuthContext)
 
   useEffect(() => {
-    if (!isAuthLoading) setAuthCompleted(true)
+    if (!isAuthLoading) setTimeout(() => setAuthCompleted(true), 100)
   }, [isAuthLoading])
+
+  useEffect(() => {
+    loadingCompleted && setTimeout(() => setAppLoading(false), 500)
+  }, [loadingCompleted, setAppLoading])
 
   return (
     <>
@@ -44,7 +47,7 @@ const AppLoader = ({ children }: { children: any }) => {
       {authCompleted && user && (
         <GroupProvider>
           <MetaInfoProvider>
-            <SubLoader setAppLoading={setAppLoading} loadingCompleted={loadingCompleted} setLoadingCompleted={setLoadingCompleted}>
+            <SubLoader setLoadingCompleted={setLoadingCompleted}>
               {!appLoading && children}
             </SubLoader>
           </MetaInfoProvider>
@@ -55,12 +58,10 @@ const AppLoader = ({ children }: { children: any }) => {
 }
 
 interface ISubLoaderProps {
-  setAppLoading: Dispatch<SetStateAction<boolean>>
-  loadingCompleted: boolean
   setLoadingCompleted: Dispatch<SetStateAction<boolean>>
 }
 
-const SubLoader = ({ children, setAppLoading, loadingCompleted, setLoadingCompleted }: ISubLoaderProps & IChildrenProps) => {
+const SubLoader = ({ children, setLoadingCompleted }: ISubLoaderProps & IChildrenProps) => {
 
   const { isLoading: isGroupsLoading } = useContext(GroupContext)
   const { isLoading: isMetaInfoLoading } = useContext(MetaInfoContext)
@@ -68,10 +69,6 @@ const SubLoader = ({ children, setAppLoading, loadingCompleted, setLoadingComple
   useEffect(() => {
     if (!isGroupsLoading && !isMetaInfoLoading) setLoadingCompleted(true)
   }, [isGroupsLoading, isMetaInfoLoading, setLoadingCompleted])
-
-  useEffect(() => {
-    loadingCompleted && setTimeout(() => setAppLoading(false), 500)
-  }, [loadingCompleted, setAppLoading])
 
   return (
     <>

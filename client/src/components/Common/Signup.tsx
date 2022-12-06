@@ -1,14 +1,19 @@
 import { Link } from 'react-router-dom';
-import { Formik, Form } from 'formik';
+import { Formik } from 'formik';
 import { signupValidationSchema } from '../../schema';
 import { useAuthService } from '../../hooks';
 import { FormikInput, Button } from '.';
 import { PublicWrapper, SpinnerIcon } from '.';
+import { useState } from 'react';
+import { IApiError } from '../../models/error.model';
+import { FormikForm } from './FormikForm';
 
 const Signup = () => {
 
-  const { isLoading } = useAuthService()
-  const { signup } = useAuthService();
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError>()
+
+  const { signup } = useAuthService(setIsLoading, setError)
 
   return (
     <PublicWrapper>
@@ -26,7 +31,7 @@ const Signup = () => {
         }}
       >
         {({ errors, touched, dirty, isValid }) => (
-          <Form>
+          <FormikForm error={error}>
             <div className="mb-4">
               <FormikInput name="email" label="Email" errors={errors.email} touched={touched.email} />
               <FormikInput name="username" label="Username" errors={errors.username} touched={touched.username} />
@@ -47,7 +52,7 @@ const Signup = () => {
                 </button>
               </Link>
             </div>
-          </Form>
+          </FormikForm>
         )}
       </Formik>
     </PublicWrapper>

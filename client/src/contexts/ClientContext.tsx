@@ -28,9 +28,7 @@ export const ClientContext = createContext<IClientContext>({
   setFilter: () => {},
   buildQueryString: () => {},
   isLoading: false,
-  setIsLoading: () => {},
   error: undefined,
-  setError: () => {}
 });
 
 export const ClientProvider = ({ children }: IClientProviderProps) => {

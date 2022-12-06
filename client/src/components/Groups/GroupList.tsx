@@ -1,4 +1,4 @@
-import { IGroupList } from "../../models"
+import { IGroup } from "../../models"
 import { SpinnerIcon } from "../Common"
 import { Dispatch, SetStateAction, useContext } from "react"
 import GroupCard from "./GroupCard"
@@ -22,7 +22,7 @@ const GroupList = ({ setAddGroupOpen }: IGroupListProps) => {
       ) : (
         groups.length > 0 ? (
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-            {groups.map((g: IGroupList, i: number) => (
+            {groups.map((g: IGroup, i: number) => (
               <GroupCard key={i} g={g} />
             ))}
           </div>

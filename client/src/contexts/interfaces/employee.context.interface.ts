@@ -6,5 +6,5 @@ export interface IEmployeeContext extends ISortable, ILoadable {
   setEmployees: Dispatch<SetStateAction<IEmployee[]>>
   count: number
   setCount: Dispatch<SetStateAction<number>>
-  error: any | undefined
+  getEmployee: (employeeId: string) => IEmployee | undefined
 }

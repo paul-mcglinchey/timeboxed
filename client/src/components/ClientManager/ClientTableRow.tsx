@@ -1,15 +1,15 @@
 import { ViewGridAddIcon } from '@heroicons/react/outline';
-import { useGroupUserService } from '../../hooks';
 import { IClientListResponse } from '../../models';
 import { InlineLink, InlineButton, TableRow, TableRowItem, Modal, UpdateClientForm, AddSessionForm } from '..';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { GroupContext } from '../../contexts';
 
 const ClientTableRow = ({ client }: { client: IClientListResponse }) => {
 
   const [editClientOpen, setEditClientOpen] = useState<boolean>(false)
   const [addSessionOpen, setAddSessionOpen] = useState<boolean>(false)
 
-  const { getGroupUser } = useGroupUserService()
+  const { getGroupUser } = useContext(GroupContext)
 
   return (
     <TableRow>

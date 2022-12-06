@@ -1,10 +1,10 @@
 import { Formik } from "formik";
-import { useGroupService, useUserService } from "../../hooks";
+import { useGroupService } from "../../hooks";
 import { IContextualFormProps, IGroup, IGroupUser } from "../../models";
 import { combineClassNames, generateColour } from "../../services";
 import { groupValidationSchema } from "../../schema";
 import { ColourPicker, FormSection, Modal, FormikInput, Button, SpinnerLoader } from "../Common";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PencilIcon } from "@heroicons/react/solid";
 import { Role } from "../../enums";
 import { FormikForm } from "../Common/FormikForm";
@@ -13,6 +13,7 @@ import ApplicationMultiSelector from "./ApplicationMultiSelector";
 import UserInvites from "./UserInvites";
 import UserRoleSelector from "./UserRoleSelector";
 import { IApiError } from "../../models/error.model";
+import { GroupContext } from "../../contexts";
 
 interface IUpdateGroupFormProps {
   groupId: string
@@ -28,7 +29,6 @@ const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFo
   const toggleInviteUserOpen = () => setInviteUserOpen(!inviteUserOpen)
 
   const { getGroup, updateGroup } = useGroupService(setIsLoading, setError)
-  const { isLoading: isUsersLoading } = useUserService()
 
   useEffect(() => {
     const _fetch = async () => setGroup(await getGroup(groupId))
@@ -68,16 +68,11 @@ const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFo
                 />
               </FormSection>
               <FormSection title="Users" titleActionComponent={<Button action={toggleInviteUserOpen} content="Invite" type="button" />}>
-                {isUsersLoading ? (
-                  <SpinnerLoader />
-                ) : (
-                  <>
-                    {group.users
-                      .map(gu => (
-                        <GroupUserRow group={group} gu={gu} key={gu.userId} />
-                      ))}
-                  </>
-                )}
+                {group.users
+                  .map(gu => (
+                    <GroupUserRow group={group} gu={gu} key={gu.userId} />
+                  ))
+                }
                 <Modal
                   title="Invite user"
                   description="This dialog can be used to invite existing users to the currently selected group."
@@ -113,7 +108,7 @@ const GroupUserRow = ({ group, gu }: IGroupUserRowProps) => {
   const [editGroupUsersOpen, setEditGroupUsersOpen] = useState<boolean>(false)
   const toggleEditGroupUsersOpen = () => setEditGroupUsersOpen(!editGroupUsersOpen)
 
-  const { userHasRole } = useUserService()
+  const { userHasRole } = useContext(GroupContext)
 
   return (
     <div className="flex">
@@ -126,10 +121,10 @@ const GroupUserRow = ({ group, gu }: IGroupUserRowProps) => {
         <div className="col-span-2 grid grid-cols-6 items-center">
           <div className={combineClassNames(
             "col-span-5 font-bold px-2 py-0.5 border border-current rounded-md",
-            gu.hasJoined ? userHasRole(gu, Role.GroupAdmin) ? "text-orange-500" : "text-blue-500" : "text-emerald-500"
+            gu.hasJoined ? userHasRole(gu.groupId, gu.userId, Role.GroupAdmin) ? "text-orange-500" : "text-blue-500" : "text-emerald-500"
           )}>
             {gu.hasJoined
-              ? userHasRole(gu, Role.GroupAdmin)
+              ? userHasRole(gu.groupId, gu.userId, Role.GroupAdmin)
                 ? 'Admin'
                 : 'Member'
               : 'Pending'

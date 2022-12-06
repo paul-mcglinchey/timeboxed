@@ -8,13 +8,18 @@ import {
 import { ClientHeader, ClientOverview } from ".";
 import { useClientService } from "../../hooks";
 import { IClient } from "../../models";
+import { IApiError } from "../../models/error.model";
+import { SpinnerLoader } from "../Common";
 
 const ClientPage = () => {
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError>()
 
   const [client, setClient] = useState<IClient | undefined>()
  
   const { clientId } = useParams()
-  const { getClient } = useClientService()
+  const { getClient } = useClientService(setIsLoading, setError)
 
   useEffect(() => {
     const _fetch = async () => {
@@ -37,9 +42,7 @@ const ClientPage = () => {
           </Routes>
         </div>
       ) : (
-        <>
-          Loading dat client
-        </>
+        isLoading ? <SpinnerLoader /> : error ? Error : null
       )}
     </>
   )

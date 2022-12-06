@@ -1,29 +1,28 @@
-import { useContext } from "react"
+import { Dispatch, SetStateAction, useContext } from "react"
 import { useNavigate } from "react-router"
 import { IPreferences, IUserRequest } from "../models"
-import { AuthContext, GroupContext } from "../contexts"
+import { AuthContext } from "../contexts"
 import { endpoints } from '../config'
-import { useRequestBuilderService, useAsyncHandler, useResolutionService, useUserService } from '.'
-import { Permission } from "../enums"
+import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '.'
 import { IAuthService } from "./interfaces"
+import { IApiError } from "../models/error.model"
 
-const useAuthService = (): IAuthService => {
+const useAuthService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setError: Dispatch<SetStateAction<IApiError | undefined>>): IAuthService => {
   
   const auth = useContext(AuthContext)
-  const { user, setUser, setIsLoading } = auth
-  const { currentGroup } = useContext(GroupContext)
+  const { user, setUser } = auth
 
   const { buildRequest } = useRequestBuilderService()
   const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { handleResolution } = useResolutionService()
-  const { userHasPermission } = useUserService()
   const navigate = useNavigate()
 
   const login = asyncHandler(async (user: IUserRequest) => {
     const res = await fetch(endpoints.login, buildRequest('POST', undefined, user))
 
     if (res.status === 401) throw new Error("Invalid user details")
-    if (!res.ok) throw new Error(await res.text())
+    
+    if (!res.ok && res.status < 500) setError(await res.json())
 
     const json = await res.json()
 
@@ -41,18 +40,6 @@ const useAuthService = (): IAuthService => {
     handleResolution(res, json, undefined, undefined, [() => setUser(json), () => navigate('/dashboard', { replace: true })], undefined, false)
   })
 
-  const logout = () => {
-    setUser(undefined)
-
-    navigate('/login')
-  }
-
-  const hasPermission = (applicationId: number, permission: Permission): boolean => {
-    if (!currentGroup?.applications?.includes(applicationId)) return false
-
-    return userHasPermission(currentGroup, user?.id, permission)
-  }
-
   const updatePreferences = asyncHandler(async (values: IPreferences) => {
     if (!user?.id) throw new Error()
 
@@ -65,7 +52,7 @@ const useAuthService = (): IAuthService => {
     handleResolution(res, json, 'update', 'preferences', [() => setUser(u => u && ({ ...u, preferences: json }))], [() => setUser(prevUser)])
   })
 
-  return { ...auth, signup, login, logout, hasPermission, updatePreferences }
+  return { ...auth, signup, login, updatePreferences }
 }
 
 export default useAuthService;

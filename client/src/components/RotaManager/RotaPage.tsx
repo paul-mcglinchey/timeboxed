@@ -1,15 +1,14 @@
 import { useParams } from "react-router";
-import { useRotaService } from "../../hooks";
-import { ScheduleProvider } from "../../contexts";
+import { RotaContext, ScheduleProvider } from "../../contexts";
 import { Scheduler } from ".";
 import { IRota } from "../../models";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 const RotaPage = () => {
 
   const [rota, setRota] = useState<IRota>()
   const { rotaId } = useParams()
-  const { getRota } = useRotaService()
+  const { getRota } = useContext(RotaContext)
 
   useEffect(() => {
     if (rotaId) setRota(getRota(rotaId))

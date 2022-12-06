@@ -16,10 +16,9 @@ export const RotaContext = createContext<IRotaContext>({
   setSortField: () => {},
   sortDirection: SortDirection.Desc,
   setSortDirection: () => {},
+  getRota: () => undefined,
   isLoading: false,
-  setIsLoading: () => {},
   error: undefined,
-  setError: () => {}
 });
 
 export const RotaProvider = ({ children }: IChildrenProps) => {
@@ -43,6 +42,8 @@ export const RotaProvider = ({ children }: IChildrenProps) => {
     }
   }, [response])
 
+  const getRota = (rotaId: string): IRota | undefined => rotas.find(r => r.id === rotaId)
+
   const contextValue = {
     rotas,
     setRotas,
@@ -53,10 +54,9 @@ export const RotaProvider = ({ children }: IChildrenProps) => {
     setSortField,
     sortDirection,
     setSortDirection,
+    getRota,
     isLoading,
-    setIsLoading,
     error,
-    setError
   }
 
   return (

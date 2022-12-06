@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { Dispatch, SetStateAction, useContext } from "react";
 import { ISchedule, IScheduleShift, IScheduleRequest } from "../models"
 import { IScheduleService } from "./interfaces";
 import { GroupContext, ScheduleContext } from "../contexts";
@@ -6,11 +6,12 @@ import { endpoints } from '../config'
 import { addDays, subDays } from "date-fns";
 import { useAsyncHandler, useResolutionService, useRequestBuilderService } from "../hooks";
 import { getDateOnly } from "../services";
+import { IApiError } from "../models/error.model";
 
-const useScheduleService = (): IScheduleService => {
+const useScheduleService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setError: Dispatch<SetStateAction<IApiError | undefined>>): IScheduleService => {
   
   const scheduleContext = useContext(ScheduleContext)
-  const { getSchedules, setSchedules, setIsLoading, setError } = scheduleContext
+  const { getSchedules, setSchedules } = scheduleContext
   const { currentGroup } = useContext(GroupContext)
   
   const { asyncReturnHandler } = useAsyncHandler(setIsLoading)

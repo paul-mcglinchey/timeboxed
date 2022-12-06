@@ -1,5 +1,4 @@
 import { Navigate, Route, Routes } from "react-router"
-import { useAuthService } from "../hooks"
 import {
   AdminPanel,
   ClientDashboard,
@@ -16,10 +15,12 @@ import { Application, Permission } from "../enums"
 
 import GroupDashboard from "./Groups/GroupDashboard"
 import Dashboard from "./Dashboard/Dashboard"
+import { AuthContext } from "../contexts"
+import { useContext } from "react"
 
 const PrivateApp = () => {
 
-  const { isAdmin } = useAuthService()
+  const { isAdmin } = useContext(AuthContext)
 
   return (
     <AppLoader>

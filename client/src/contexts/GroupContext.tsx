@@ -1,10 +1,13 @@
-import { createContext, useEffect, useState } from "react";
-import { IChildrenProps, IGroup, IGroupList } from "../models";
-import { useAsyncHandler, useAuthService, useIsMounted, useRequestBuilderService } from "../hooks";
+import { createContext, useContext, useEffect, useState } from "react";
+import { IChildrenProps, IGroup, IGroupUser } from "../models";
+import { useAsyncHandler, useIsMounted, useRequestBuilderService } from "../hooks";
 import { endpoints } from "../config";
 import { getItemInLocalStorage, setItemInLocalStorage } from "../services";
 import { IGroupContext } from "./interfaces";
 import { IListResponse } from "../models/list-response.model";
+import { IApiError } from "../models/error.model";
+import { AuthContext } from "./AuthContext";
+import { MetaInfoContext } from "./MetaInfoContext";
 
 export const GroupContext = createContext<IGroupContext>({
   currentGroup: undefined,
@@ -13,44 +16,36 @@ export const GroupContext = createContext<IGroupContext>({
   setGroups: () => {},
   count: 0,
   setCount: () => {},
+  getGroupUser: () => undefined,
+  getPermissions: () => [],
+  userHasPermission: () => false,
+  userHasRole: () => false,
   isLoading: false,
-  setIsLoading: () => {},
-  error: undefined,
-  setError: () => {}
+  error: undefined
 });
 
 export const GroupProvider = ({ children }: IChildrenProps) => {
-  const [groups, setGroups] = useState<IGroupList[]>([])
+  const [groups, setGroups] = useState<IGroup[]>([])
   const [count, setCount] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [error, setError] = useState<any>()
+  const [error, setError] = useState<IApiError>()
   const [currentGroupId, setCurrentGroupId] = useState<string | undefined>(getItemInLocalStorage('group-id'))
-  const [currentGroup, setCurrentGroup] = useState<IGroup | undefined>()
   
+  const currentGroup = currentGroupId ? groups.find(g => g.id === currentGroupId) : groups[0]
+
+  const { user } = useContext(AuthContext)
+  const { getRole } = useContext(MetaInfoContext)
+
   const { buildRequest } = useRequestBuilderService()
-  const { user } = useAuthService()
   const { asyncHandler } = useAsyncHandler(setIsLoading)
   const isMounted = useIsMounted()
-  
-  useEffect(() => {
-    const _fetch = asyncHandler(async () => {
-      if (currentGroupId) {
-        var res = await fetch(endpoints.group(currentGroupId), buildRequest())
-        var json: IGroup = await res.json()
-
-        setCurrentGroup(json)
-      }
-    })
-
-    if (isMounted()) {
-      _fetch()
-    }
-  }, [currentGroupId, user, asyncHandler, buildRequest, isMounted])
 
   useEffect(() => {
     const _fetch = asyncHandler(async () => {
       var res = await fetch(endpoints.groups, buildRequest())
-      var json: IListResponse<IGroupList> = await res.json()
+      var json: IListResponse<IGroup> = await res.json()
+
+      if (!res.ok && res.status < 500) return setError(await res.json())
 
       setGroups(json.items)
       setCount(json.count)
@@ -63,12 +58,32 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
   }, [user])
 
   useEffect(() => {
-    currentGroup && setItemInLocalStorage('group-id', currentGroup?.id)
+    currentGroup && setItemInLocalStorage('group-id', currentGroup.id)
   }, [currentGroup])
 
-  useEffect(() => {
-    if (!currentGroup && groups.length > 0) setCurrentGroupId(groups[0]?.id)
-  }, [groups, currentGroup])
+  const getGroup = (groupId: string): IGroup | undefined => {
+    return groups.find(g => g.id === groupId)
+  }
+
+  const getGroupUser = (userId: string, groupId?: string | undefined): IGroupUser | undefined => {
+    return groups.find(g => g.id === (groupId ?? currentGroupId))?.users.find(u => u.id === userId)
+  }
+
+  const getPermissions = (groupId: string, userId: string): number[] => {
+    return getGroup(groupId)?.users.find(gu => gu.userId === userId)?.roles.map(r => getRole(r)?.permissions).filter((p): p is number[] => !!p).flatMap(p => p) || []
+  }
+
+  const userHasPermission = (groupId: string, userId: string | undefined, permissionId: number | undefined): boolean => {
+    if (!userId || !permissionId) return false
+
+    return getPermissions(groupId, userId).includes(permissionId)
+  }
+
+  const userHasRole = (groupId: string, userId: string | undefined, roleId: string | undefined): boolean => {
+    if (!userId || !roleId) return false
+
+    return getGroupUser(userId, groupId)?.roles.includes(roleId) ?? false
+  }
 
   const contextValue = {
     currentGroup,
@@ -77,10 +92,13 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
     setGroups,
     count,
     setCount,
+    getGroup,
+    getGroupUser,
+    getPermissions,
+    userHasPermission,
+    userHasRole,
     isLoading,
-    setIsLoading,
-    error,
-    setError
+    error
   }
 
   return (

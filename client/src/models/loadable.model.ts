@@ -3,7 +3,12 @@ import { IApiError } from "./error.model"
 
 export interface ILoadable {
   isLoading: boolean
-  setIsLoading: Dispatch<SetStateAction<boolean>>
   error: IApiError | undefined
+}
+
+
+
+export interface ILoadableHandler {
+  setIsLoading: Dispatch<SetStateAction<boolean>>
   setError: Dispatch<SetStateAction<IApiError | undefined>>
 }

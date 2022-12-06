@@ -1,18 +1,18 @@
 import { useContext, useState } from "react";
 import { dashboardLinks } from "../../config";
 import { NavMenu, Toolbar } from "../Common";
-import { useApplicationService, useAuthService } from "../../hooks";
+import { useApplicationService } from "../../hooks";
 import { IApplication } from "../../models";
 
 import GroupPrompter from "../Groups/GroupPrompter";
 import GroupModal from "../Groups/GroupModal";
 import AppCard from "./AppCard";
-import { GroupContext } from "../../contexts";
+import { AuthContext, GroupContext } from "../../contexts";
 
 const Dashboard = () => {
   const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
 
-  const { user } = useAuthService()
+  const { user } = useContext(AuthContext)
   const { count, currentGroup } = useContext(GroupContext)
   const { getApplication } = useApplicationService()
 

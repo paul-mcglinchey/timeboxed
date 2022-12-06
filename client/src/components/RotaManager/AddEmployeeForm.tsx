@@ -1,12 +1,18 @@
-import { Form, Formik } from "formik"
+import { Formik } from "formik"
+import { useState } from "react";
 import { useEmployeeService } from "../../hooks";
 import { IContextualFormProps } from "../../models"
+import { IApiError } from "../../models/error.model";
 import { addEmployeeValidationSchema } from "../../schema/employeeValidationSchema";
 import { FormikInput } from "../Common";
+import { FormikForm } from "../Common/FormikForm";
 
 const AddEmployeeForm = ({ ContextualSubmissionButton }: IContextualFormProps) => {
 
-  const { addEmployee } = useEmployeeService()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError>()
+
+  const { addEmployee } = useEmployeeService(setIsLoading, setError)
 
   return (
     <Formik
@@ -21,12 +27,13 @@ const AddEmployeeForm = ({ ContextualSubmissionButton }: IContextualFormProps) =
       }}
     >
       {({ errors, touched }) => (
-        <Form>
+        <FormikForm error={error}>
           <FormikInput name="firstName" label="First name" errors={errors.firstName} touched={touched.firstName} />
           <FormikInput name="lastName" label="Last name" errors={errors.lastName} touched={touched.lastName} />
           <FormikInput name="primaryEmailAddress" label="Email" errors={errors.primaryEmailAddress} touched={touched.primaryEmailAddress} />
-          {ContextualSubmissionButton()}
-        </Form>
+
+          {ContextualSubmissionButton('Add employee', undefined, undefined, undefined, isLoading)}
+        </FormikForm>
       )}
     </Formik>
   )

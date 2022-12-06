@@ -1,13 +1,13 @@
-import { memo, useState } from 'react';
-import { useAuthService } from '../../hooks';
+import { memo, useContext, useState } from 'react';
 import { Button, Prompter, Toolbar } from '../Common';
 import { RotaModal, RotaList } from '.';
 import { Application, Permission } from '../../enums';
+import { AuthContext } from '../../contexts';
 
 const RotaDashboard = () => {
   const [addRotaOpen, setAddRotaOpen] = useState(false);
 
-  const { hasPermission } = useAuthService()
+  const { hasPermission } = useContext(AuthContext)
 
   return (
     <>

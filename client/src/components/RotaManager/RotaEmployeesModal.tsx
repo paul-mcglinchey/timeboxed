@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Form, Formik } from "formik";
 import { IRota } from "../../models";
-import { Modal } from "../Common";
+import { Modal, SpinnerLoader } from "../Common";
 import { EmployeeMultiSelector } from "..";
 import { useRotaService } from "../../hooks";
+import { IApiError } from "../../models/error.model";
 
 interface IEditRotaEmployeesProps {
   isOpen: boolean
@@ -12,7 +13,11 @@ interface IEditRotaEmployeesProps {
 }
 
 const EditRotaEmployeesModal = ({ isOpen, close, rota }: IEditRotaEmployeesProps) => {
-  const { updateRota } = useRotaService()
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError>()
+
+  const { updateRota } = useRotaService(setIsLoading, setError)
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeydown)
@@ -37,21 +42,27 @@ const EditRotaEmployeesModal = ({ isOpen, close, rota }: IEditRotaEmployeesProps
       close={close}
     >
       {(ConfirmationButton) => (
-        <Formik
-          initialValues={{
-            employees: rota.employees || []
-          }}
-          onSubmit={(values) => {
-            updateRota(rota.id, { ...rota, ...values })
-          }}
-        >
-          {({ values, setFieldValue }) => (
-            <Form>
-              <EmployeeMultiSelector formValues={values.employees} setFieldValue={(e) => setFieldValue('employees', e)} />
-              {ConfirmationButton()}
-            </Form>
+        <>
+          {rota ? (
+            <Formik
+              initialValues={{
+                employees: rota.employees || []
+              }}
+              onSubmit={(values) => {
+                updateRota(rota.id, { ...rota, ...values })
+              }}
+            >
+              {({ values, setFieldValue }) => (
+                <Form>
+                  <EmployeeMultiSelector formValues={values.employees} setFieldValue={(e) => setFieldValue('employees', e)} />
+                  {ConfirmationButton()}
+                </Form>
+              )}
+            </Formik>
+          ) : (
+            isLoading ? <SpinnerLoader /> : error ? Error : null
           )}
-        </Formik>
+        </>
       )}
     </Modal>
   )

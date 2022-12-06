@@ -7,5 +7,5 @@ export interface IRotaContext extends ILoadable, ISortable {
   count: number
   rotaId: string | undefined
   setRotaId: Dispatch<SetStateAction<string | undefined>>
-  error: any | undefined
+  getRota: (rotaId: string) => IRota | undefined
 }

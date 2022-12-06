@@ -2,13 +2,14 @@ import { IClient, IClientListResponse, IClientsResponse, ISession, IUpdateSessio
 import { ClientContext, GroupContext } from "../contexts"
 import { endpoints } from '../config'
 import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '.'
-import { useContext, useMemo } from "react"
+import { Dispatch, SetStateAction, useContext, useMemo } from "react"
 import { IClientService } from "./interfaces"
+import { IApiError } from "../models/error.model"
 
-const useClientService = (): IClientService => {
+const useClientService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setError: Dispatch<SetStateAction<IApiError | undefined>>): IClientService => {
 
   const clientContext = useContext(ClientContext)
-  const { setClients, setCount, setIsLoading, buildQueryString } = clientContext
+  const { setClients, setCount, buildQueryString } = clientContext
   const { currentGroup } = useContext(GroupContext)
 
   const { buildRequest } = useRequestBuilderService()
@@ -21,6 +22,9 @@ const useClientService = (): IClientService => {
     if (!groupId) throw new Error()
 
     const res = await fetch(endpoints.client(clientId, groupId), buildRequest('GET'))
+
+    if (!res.ok && res.status < 500) return setError(await res.json())
+
     const json: IClient = await res.json()
 
     return json

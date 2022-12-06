@@ -1,22 +1,28 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Formik } from "formik";
 import { UserAddIcon } from "@heroicons/react/solid";
-import { useRotaService, useScheduleService } from "../../hooks";
+import { useScheduleService } from "../../hooks";
 import { Prompter, SpinnerLoader } from "../Common";
 import { RotaHeader, Schedule } from "."
 import { IRota, ISchedule, IScheduleShiftRequest } from "../../models";
 import { getDateOnly } from "../../services";
+import { RotaContext } from "../../contexts";
+import { IApiError } from "../../models/error.model";
 
 interface ISchedulerResponse {
   rota: IRota
 }
 
 const Scheduler = ({ rota }: ISchedulerResponse) => {
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError>()
+
   const [editing, setEditing] = useState<boolean>(false)
   const [currentWeekModifier, setCurrentWeekModifier] = useState<number>(0)
 
-  const { isLoading: isRotaLoading, } = useRotaService()
-  const { getSchedule, updateSchedule, createSchedule, getWeek, isLoading: isScheduleLoading, getShift } = useScheduleService()
+  const { isLoading: isRotaLoading } = useContext(RotaContext)
+  const { getSchedule, updateSchedule, createSchedule, getWeek, getShift } = useScheduleService(setIsLoading, setError)
 
   const currentWeek = getWeek(currentWeekModifier)
   const startDate = currentWeek.first
@@ -27,7 +33,7 @@ const Scheduler = ({ rota }: ISchedulerResponse) => {
 
   return (
     <>
-      {!isScheduleLoading ? (
+      {schedule ? (
         <Formik
           enableReinitialize
           initialValues={schedule
@@ -63,8 +69,10 @@ const Scheduler = ({ rota }: ISchedulerResponse) => {
           )}
         </Formik>
       ) : (
-        (isRotaLoading || isScheduleLoading) && (
+        (isRotaLoading || isLoading) ? (
           <SpinnerLoader />
+        ) : (
+          error ? Error : null
         )
       )}
     </>

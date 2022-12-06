@@ -1,9 +1,9 @@
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
 import { FieldArray } from "formik";
-import { useEmployeeService } from "../../hooks";
 import { IEmployeeSchedule, ISchedule, IScheduleShift } from "../../models";
 import { ScheduleTableRowItem } from ".";
 import { generateColour, getInitials } from "../../services";
+import { EmployeeContext } from "../../contexts";
 
 interface IScheduleTableRowProps {
   employeeSchedule: IEmployeeSchedule
@@ -16,7 +16,7 @@ interface IScheduleTableRowProps {
 
 const ScheduleTableRow = ({ employeeSchedule, dayCycle, employeeIndex, values, currentWeek, editing }: IScheduleTableRowProps) => {
 
-  const { getEmployee } = useEmployeeService()
+  const { getEmployee } = useContext(EmployeeContext)
   const employee = getEmployee(employeeSchedule.employeeId)
 
   const getShift = (date: Date | undefined): IScheduleShift | undefined => {

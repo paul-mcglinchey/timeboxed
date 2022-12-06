@@ -1,9 +1,11 @@
 import { ArrowLeftIcon, TrashIcon } from "@heroicons/react/solid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { SquareIconButton, Dialog, Dropdown } from "..";
-import { useClientService } from "../../hooks";
+import { SquareIconButton, Dialog, Dropdown, SpinnerIcon } from "..";
+import { Notification } from "../../enums";
+import { useClientService, useNotification } from "../../hooks";
 import { IClient } from "../../models";
+import { IApiError } from "../../models/error.model";
 
 interface IClientHeaderProps {
   client: IClient
@@ -11,11 +13,15 @@ interface IClientHeaderProps {
 
 const ClientHeader = ({ client }: IClientHeaderProps) => {
 
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError>()
+
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { addNotification } = useNotification()
 
   const [deleteClientOpen, setDeleteClientOpen] = useState(false);
-  const { deleteClient } = useClientService();
+  const { deleteClient } = useClientService(setIsLoading, setError)
 
   const getRouteName = () => {
     switch (pathname.split('/').pop()) {
@@ -29,6 +35,10 @@ const ClientHeader = ({ client }: IClientHeaderProps) => {
         return "";
     }
   }
+
+  useEffect(() => {
+    if (error?.message) addNotification(error.message, Notification.Error)
+  }, [error])
 
   return (
     <div className="flex justify-between">
@@ -44,6 +54,7 @@ const ClientHeader = ({ client }: IClientHeaderProps) => {
           <span>{client.firstName} {client.lastName}</span>
         </span>
         <span>{getRouteName()}</span>
+        {isLoading && <SpinnerIcon className="w-6 h-6" />}
       </div>
       <div>
         <Dropdown options={[

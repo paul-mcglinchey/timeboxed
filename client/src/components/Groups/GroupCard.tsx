@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TrashIcon, DotsVerticalIcon, PencilIcon, HeartIcon as HeartSolid } from '@heroicons/react/solid';
 import { HeartIcon } from '@heroicons/react/outline';
-import { IGroupList } from '../../models';
+import { IGroup } from '../../models';
 import { useAuthService, useGroupService, useNotification } from '../../hooks';
 import { Dialog, SpinnerIcon, SquareIconButton } from '../Common';
 import DataPoint from './DataPoint';
@@ -10,7 +10,7 @@ import { IApiError } from '../../models/error.model';
 import { Notification } from '../../enums';
 
 interface IGroupCardProps {
-  g: IGroupList
+  g: IGroup
 }
 
 const GroupCard = ({ g }: IGroupCardProps) => {
@@ -25,7 +25,7 @@ const GroupCard = ({ g }: IGroupCardProps) => {
   const toggleCardFlipped = () => setCardFlipped(!cardFlipped);
 
   const { deleteGroup } = useGroupService(setIsLoading, setError)
-  const { user, updatePreferences } = useAuthService()
+  const { user, updatePreferences } = useAuthService(setIsLoading, setError)
   const { addNotification } = useNotification()
 
   const isDefaultGroup = () => user?.preferences?.defaultGroup === g.id

@@ -38,7 +38,7 @@ namespace Timeboxed.Api.Controllers
         }
 
         [FunctionName("GetGroups")]
-        public async Task<ActionResult<ListResponse<GroupListResponse>>> GetGroups(
+        public async Task<ActionResult<ListResponse<GroupResponse>>> GetGroups(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups")] HttpRequest req,
             ILogger logger,
             CancellationToken cancellationToken) =>
@@ -48,7 +48,7 @@ namespace Timeboxed.Api.Controllers
                 cancellationToken);
 
         [FunctionName("GetGroupInvites")]
-        public async Task<ActionResult<ListResponse<GroupListResponse>>> GetGroupInvites(
+        public async Task<ActionResult<ListResponse<GroupResponse>>> GetGroupInvites(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groupinvites")] HttpRequest req,
             ILogger logger,
             CancellationToken cancellationToken) =>

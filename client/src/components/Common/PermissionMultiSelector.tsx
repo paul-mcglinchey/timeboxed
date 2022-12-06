@@ -1,5 +1,6 @@
+import { useContext } from "react"
 import { ListboxMultiSelector } from "."
-import { usePermissionService } from "../../hooks"
+import { MetaInfoContext } from "../../contexts"
 import { IListboxOption } from "../../models"
 
 interface IPermissionMultiSelectorProps {
@@ -14,7 +15,7 @@ interface IPermissionMultiSelectorProps {
 
 const PermissionMultiSelector = (props: IPermissionMultiSelectorProps) => {
 
-  const { permissions } = usePermissionService()
+  const { permissions } = useContext(MetaInfoContext)
 
   return (
     <ListboxMultiSelector<number>

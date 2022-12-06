@@ -6,6 +6,7 @@ import { useClientService } from "../../hooks";
 import { IClient, IContextualFormProps } from "../../models";
 import { CustomDate, FormikInput, FormSection } from "..";
 import { updateClientValidationSchema } from "../../schema/clientValidationSchema";
+import { IApiError } from "../../models/error.model";
 
 interface IUpdateClientFormProps {
   clientId: string
@@ -13,10 +14,13 @@ interface IUpdateClientFormProps {
 
 const UpdateClientForm = ({ clientId, ContextualSubmissionButton }: IUpdateClientFormProps & IContextualFormProps) => {
 
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError>()
+
   const [addressExpanded, setAddressExpanded] = useState(false)
   const [client, setClient] = useState<IClient | undefined>()
 
-  const { getClient, updateClient, isLoading, error } = useClientService()
+  const { getClient, updateClient } = useClientService(setIsLoading, setError)
 
   useEffect(() => {
     const _fetch = async () => {
