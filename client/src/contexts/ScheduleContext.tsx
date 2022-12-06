@@ -14,7 +14,7 @@ export const ScheduleContext = createContext<IScheduleContext>({
   setSchedules: () => {},
   getCount: () => 0,
   isLoading: false,
-  error: undefined,
+  error: undefined
 });
 
 export const ScheduleProvider = ({ rotaId, children }: IScheduleProviderProps & IChildrenProps) => {
