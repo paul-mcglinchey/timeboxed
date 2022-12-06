@@ -47,6 +47,16 @@ namespace Timeboxed.Api.Controllers
                 async () => new OkObjectResult(await this.groupService.GetGroupsAsync(cancellationToken)),
                 cancellationToken);
 
+        [FunctionName("GetGroupInvites")]
+        public async Task<ActionResult<ListResponse<GroupListResponse>>> GetGroupInvites(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groupinvites")] HttpRequest req,
+            ILogger logger,
+            CancellationToken cancellationToken) =>
+            await this.httpRequestWrapper.ExecuteAsync(
+                new List<int> { TimeboxedPermissions.ApplicationAccess },
+                async () => new OkObjectResult(await this.groupService.GetGroupInvitesAsync(cancellationToken)),
+                cancellationToken);
+
         [FunctionName("GetGroupById")]
         public async Task<ActionResult<GroupResponse>> GetGroupById(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups/{groupId}")] HttpRequest req,

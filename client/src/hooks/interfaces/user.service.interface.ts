@@ -1,9 +1,9 @@
-import { IUserContext } from "../../contexts/interfaces"
-import { IGroup, IGroupUser, IUser } from "../../models"
+import { IGroup, IGroupUser, ILoadable } from "../../models"
+import { IApiError } from "../../models/error.model"
 
-export interface IUserService extends IUserContext {
-  getUser: (userId: string | undefined) => IUser | undefined
-  updateUser: (userId: string | undefined, values: IUser) => void
+export interface IUserService extends ILoadable {
   userHasRole: (groupUser: IGroupUser, roleId: string | undefined) => boolean
   userHasPermission: (group: IGroup, userId: string | undefined, permissionId: number | undefined) => boolean
+  isLoading: boolean
+  error: IApiError | undefined
 }

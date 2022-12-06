@@ -1,5 +1,5 @@
 import { ViewGridAddIcon } from '@heroicons/react/outline';
-import { useUserService } from '../../hooks';
+import { useGroupUserService } from '../../hooks';
 import { IClientListResponse } from '../../models';
 import { InlineLink, InlineButton, TableRow, TableRowItem, Modal, UpdateClientForm, AddSessionForm } from '..';
 import { useState } from 'react';
@@ -9,7 +9,7 @@ const ClientTableRow = ({ client }: { client: IClientListResponse }) => {
   const [editClientOpen, setEditClientOpen] = useState<boolean>(false)
   const [addSessionOpen, setAddSessionOpen] = useState<boolean>(false)
 
-  const { getUser } = useUserService()
+  const { getGroupUser } = useGroupUserService()
 
   return (
     <TableRow>
@@ -25,7 +25,7 @@ const ClientTableRow = ({ client }: { client: IClientListResponse }) => {
             {new Date(client.updatedAt || "").toLocaleDateString()}
           </span>
           <span className="font-medium px-2 bg-gray-800 tracking-wide rounded-lg select-none">
-            <div>{getUser(client.updatedBy)?.username || '--'}</div>
+            <div>{getGroupUser(client.updatedBy)?.username || '--'}</div>
           </span>
         </div>
       </TableRowItem>

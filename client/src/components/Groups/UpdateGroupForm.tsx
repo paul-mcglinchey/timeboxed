@@ -4,7 +4,7 @@ import { IContextualFormProps, IGroup, IGroupUser } from "../../models";
 import { combineClassNames, generateColour } from "../../services";
 import { groupValidationSchema } from "../../schema";
 import { ColourPicker, FormSection, Modal, FormikInput, Button, SpinnerLoader } from "../Common";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PencilIcon } from "@heroicons/react/solid";
 import { Role } from "../../enums";
 import { FormikForm } from "../Common/FormikForm";
@@ -15,86 +15,100 @@ import UserRoleSelector from "./UserRoleSelector";
 import { IApiError } from "../../models/error.model";
 
 interface IUpdateGroupFormProps {
-  group: IGroup
+  groupId: string
 }
 
-const UpdateGroupForm = ({ group, ContextualSubmissionButton }: IUpdateGroupFormProps & IContextualFormProps) => {
+const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFormProps & IContextualFormProps) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<IApiError>()
+  const [group, setGroup] = useState<IGroup | undefined>()
 
   const [inviteUserOpen, setInviteUserOpen] = useState<boolean>(false)
   const toggleInviteUserOpen = () => setInviteUserOpen(!inviteUserOpen)
 
-  const { updateGroup } = useGroupService(setIsLoading, setError)
+  const { getGroup, updateGroup } = useGroupService(setIsLoading, setError)
   const { isLoading: isUsersLoading } = useUserService()
 
+  useEffect(() => {
+    const _fetch = async () => setGroup(await getGroup(groupId))
+
+    _fetch()
+  }, [groupId, getGroup])
+
   return (
-    <Formik
-      enableReinitialize
-      initialValues={{
-        name: group.name || '',
-        description: group.description || '',
-        applications: group.applications || [],
-        colour: group.colour || generateColour()
-      }}
-      validationSchema={groupValidationSchema}
-      onSubmit={(values) => {
-        updateGroup(values, group.id)
-      }}
-    >
-      {({ errors, touched, values, setFieldValue, isValid, dirty }) => (
-        <FormikForm error={error}>
-          <FormSection title="Details">
-            <div className="flex items-end space-x-2">
-              <FormikInput name="name" label="Groupname" errors={errors.name} touched={touched.name} classes="flex flex-grow" />
-              <ColourPicker square colour={values.colour} setColour={(pc) => setFieldValue('colour', pc)} />
-            </div>
-            <FormikInput as="textarea" name="description" label="Description" errors={errors.description} touched={touched.description} />
-          </FormSection>
-          <FormSection title="Group Applications" classes="mb-6">
-            <ApplicationMultiSelector
-              formValues={values.applications}
-              setFieldValue={(a) => setFieldValue('applications', a)}
-            />
-          </FormSection>
-          <FormSection title="Users" titleActionComponent={<Button action={toggleInviteUserOpen} content="Invite" type="button" />}>
-            {isUsersLoading ? (
-              <SpinnerLoader />
-            ) : (
-              <>
-                {group.groupUsers
-                  .map(gu => (
-                    <GroupUserRow gu={gu} key={gu.userId}/>
-                  ))}
-              </>
-            )}
-            <Modal
-              title="Invite user"
-              description="This dialog can be used to invite existing users to the currently selected group."
-              isOpen={inviteUserOpen}
-              close={toggleInviteUserOpen}
-              level={2}
-            >
-              {() => (
-                <div>
-                  <UserInvites g={group} />
+    <>
+      {group ? (
+        <Formik
+          enableReinitialize
+          initialValues={{
+            name: group.name || '',
+            description: group.description || '',
+            applications: group.applications || [],
+            colour: group.colour || generateColour()
+          }}
+          validationSchema={groupValidationSchema}
+          onSubmit={(values) => {
+            updateGroup(values, group.id)
+          }}
+        >
+          {({ errors, touched, values, setFieldValue, isValid, dirty }) => (
+            <FormikForm error={error}>
+              <FormSection title="Details">
+                <div className="flex items-end space-x-2">
+                  <FormikInput name="name" label="Groupname" errors={errors.name} touched={touched.name} classes="flex flex-grow" />
+                  <ColourPicker square colour={values.colour} setColour={(pc) => setFieldValue('colour', pc)} />
                 </div>
-              )}
-            </Modal>
-          </FormSection>
-          {ContextualSubmissionButton('Update group', undefined, isValid, dirty, isLoading)}
-        </FormikForm>
+                <FormikInput as="textarea" name="description" label="Description" errors={errors.description} touched={touched.description} />
+              </FormSection>
+              <FormSection title="Group Applications" classes="mb-6">
+                <ApplicationMultiSelector
+                  formValues={values.applications}
+                  setFieldValue={(a) => setFieldValue('applications', a)}
+                />
+              </FormSection>
+              <FormSection title="Users" titleActionComponent={<Button action={toggleInviteUserOpen} content="Invite" type="button" />}>
+                {isUsersLoading ? (
+                  <SpinnerLoader />
+                ) : (
+                  <>
+                    {group.users
+                      .map(gu => (
+                        <GroupUserRow group={group} gu={gu} key={gu.userId} />
+                      ))}
+                  </>
+                )}
+                <Modal
+                  title="Invite user"
+                  description="This dialog can be used to invite existing users to the currently selected group."
+                  isOpen={inviteUserOpen}
+                  close={toggleInviteUserOpen}
+                  level={2}
+                >
+                  {() => (
+                    <div>
+                      <UserInvites g={group} />
+                    </div>
+                  )}
+                </Modal>
+              </FormSection>
+              {ContextualSubmissionButton('Update group', undefined, isValid, dirty, isLoading)}
+            </FormikForm>
+          )}
+        </Formik >
+      ) : (
+        isLoading && <SpinnerLoader />
       )}
-    </Formik >
+    </>
   )
 }
 
 interface IGroupUserRowProps {
+  group: IGroup
   gu: IGroupUser
 }
 
-const GroupUserRow = ({ gu }: IGroupUserRowProps) => {
+const GroupUserRow = ({ group, gu }: IGroupUserRowProps) => {
 
   const [editGroupUsersOpen, setEditGroupUsersOpen] = useState<boolean>(false)
   const toggleEditGroupUsersOpen = () => setEditGroupUsersOpen(!editGroupUsersOpen)
@@ -134,7 +148,7 @@ const GroupUserRow = ({ gu }: IGroupUserRowProps) => {
         level={2}
       >
         {(ConfirmationButton) => (
-          <UserRoleSelector groupUser={gu} ContextualSubmissionButton={ConfirmationButton} />
+          <UserRoleSelector group={group} groupUser={gu} ContextualSubmissionButton={ConfirmationButton} />
         )}
       </Modal>
     </div>

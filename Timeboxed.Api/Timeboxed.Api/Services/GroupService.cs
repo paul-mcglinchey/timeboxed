@@ -29,13 +29,28 @@ namespace Timeboxed.Api.Services
             this.context = context;
         }
 
-        public async Task<ListResponse<GroupResponse>> GetGroupsAsync(CancellationToken cancellationToken)
+        public async Task<ListResponse<GroupListResponse>> GetGroupsAsync(CancellationToken cancellationToken)
         {
             var groups = this.context.Groups
                 .Where(g => g.GroupUsers.Any(gu => gu.UserId.Equals(this.userContextProvider.UserId)))
-                .Select(MapEFGroupToResponse);
+                .Where(g => g.GroupUsers.Any(gu => gu.HasJoined))
+                .Select(MapEFGroupToListResponse);
 
-            return new ListResponse<GroupResponse>
+            return new ListResponse<GroupListResponse>
+            {
+                Items = await groups.ToListAsync(cancellationToken),
+                Count = groups.Count(),
+            };
+        }
+
+        public async Task<ListResponse<GroupListResponse>> GetGroupInvitesAsync(CancellationToken cancellationToken)
+        {
+            var groups = this.context.Groups
+                .Where(g => g.GroupUsers.Any(gu => gu.UserId.Equals(this.userContextProvider.UserId)))
+                .Where(g => g.GroupUsers.Any(gu => !gu.HasJoined))
+                .Select(MapEFGroupToListResponse);
+
+            return new ListResponse<GroupListResponse>
             {
                 Items = await groups.ToListAsync(cancellationToken),
                 Count = groups.Count(),
@@ -123,6 +138,16 @@ namespace Timeboxed.Api.Services
         public async Task<bool> GroupNameExistsAsync(Guid groupId, string groupName, CancellationToken cancellationToken) =>
             await this.context.Groups.Where(g => !g.Id.Equals(groupId) && g.Name.Equals(groupName)).SingleOrDefaultAsync(cancellationToken) != null;
 
+        private static Expression<Func<Group, GroupListResponse>> MapEFGroupToListResponse => (Group g) => new GroupListResponse
+        {
+            Id = g.Id,
+            Name = g.Name,
+            Description = g.Description,
+            Colour = g.Colour,
+            Applications = g.Applications.Select(a => a.Id).ToList(),
+            Users = g.GroupUsers.Select(gu => gu.UserId).ToList(),
+        };
+
         private static Expression<Func<Group, GroupResponse>> MapEFGroupToResponse => (Group g) => new GroupResponse
         {
             Id = g.Id,
@@ -130,7 +155,7 @@ namespace Timeboxed.Api.Services
             Description = g.Description,
             Colour = g.Colour,
             Applications = g.Applications.Select(a => a.Id).ToList(),
-            GroupUsers = g.GroupUsers.Select(gu => new GroupUserResponse
+            Users = g.GroupUsers.Select(gu => new GroupUserResponse
             {
                 Id = gu.Id,
                 UserId = gu.UserId,

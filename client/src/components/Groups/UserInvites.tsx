@@ -36,7 +36,7 @@ const UserInvites = ({ g }: IUserInvitesProps) => {
         )}
       </Formik>
       <div className="mt-4 pt-4 border-t border-gray-500">
-        {g.groupUsers
+        {g.users
           .filter(gu => !gu.hasJoined)
           .map(gu => (
             <div key={gu.userId} className="flex justify-between items-center">

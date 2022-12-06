@@ -1,25 +1,3 @@
-import { IUser } from "."
-
-export interface IGroupUser {
-  id: string
-  groupId: string
-  userId: string
-  username: string
-  email: string
-  hasJoined: boolean
-  applications: number[]
-  roles: string[]
-}
-
-export interface IGroup {
-  id: string
-  name: string
-  description: string | null
-  applications: number[]
-  groupUsers: IGroupUser[]
-  listDefinitions?: string
-  colour: string | null
-}
 export interface IGroupRequest {
   name: string
   description: string
@@ -36,12 +14,32 @@ export interface IGroupUserInviteRequest {
   usernameOrEmail: string
 }
 
-export interface IGroupsResponse {
-  count: number,
-  items: IGroup[]
+export interface IGroupUser {
+  id: string
+  groupId: string
+  userId: string
+  username: string
+  email: string
+  hasJoined: boolean
+  applications: number[]
+  roles: string[]
 }
 
-export interface IMappableGroupUser {
-  gu: IGroupUser
-  user: IUser | undefined
+export interface IGroup {
+  id: string
+  name: string
+  description: string
+  applications: number[]
+  users: IGroupUser[]
+  listDefinitions?: string
+  colour: string
+}
+
+export interface IGroupList {
+  id: string
+  name: string
+  description: string
+  applications: number[]
+  users: string[]
+  colour: string
 }

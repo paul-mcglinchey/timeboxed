@@ -1,12 +1,13 @@
 import { CalendarIcon, CheckCircleIcon } from "@heroicons/react/outline";
-import { useState } from "react";
-import { useInterval, useUserService } from "../../hooks";
+import { useContext, useState } from "react";
+import { GroupContext } from "../../contexts";
+import { useInterval } from "../../hooks";
 import { IActivityLog } from "../../models";
 import { parseTimeDifference } from "../../services";
 
 const ActivityLogEntry = ({ al }: { al: IActivityLog }) => {
   const [timeDifference, setTimeDifference] = useState<number | string>('');
-  const { getUser } = useUserService()
+  const { currentGroup } = useContext(GroupContext)
 
   useInterval(() => {
     setTimeDifference(parseTimeDifference(al.updatedAt));
@@ -17,7 +18,7 @@ const ActivityLogEntry = ({ al }: { al: IActivityLog }) => {
       <div className="flex py-2 space-x-2 items-center">
         <CheckCircleIcon className="w-5 text-green-500"/>
         <span className="px-2 py-1 text-sm tracking-wide bg-blue-500/10 rounded-lg">
-          {getUser(al.actor)}
+          {currentGroup?.users.find(gu => gu.userId === al.actor)?.username}
         </span>
         <span className="text-sm text-gray-400">
           {al.task}

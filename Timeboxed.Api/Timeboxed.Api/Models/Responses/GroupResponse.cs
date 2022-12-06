@@ -30,6 +30,6 @@ namespace Timeboxed.Api.Models.Responses
 
         public List<int> Applications { get; set; }
 
-        public List<GroupUserResponse> GroupUsers { get; set; }
+        public List<GroupUserResponse> Users { get; set; }
     }
 }

@@ -13,6 +13,7 @@ export const endpoints = {
     "authenticate"  : DOTNET_API_URL + `users/authenticate`,
 
     "groups"        : DOTNET_API_URL + 'groups',
+    "groupinvites"  : DOTNET_API_URL + 'groupinvites',
     "group"         : (groupId: string) => DOTNET_API_URL + `groups/${groupId}`,
     "joingroup"     : (groupId: string) => DOTNET_API_URL + `groups/${groupId}/join`,
     "leavegroup"    : (groupId: string) => DOTNET_API_URL + `groups/${groupId}/leave`,

@@ -20,7 +20,7 @@ const Dashboard = () => {
     if (!currentGroup) return []
 
     let groupApps = currentGroup.applications
-    let userApps = currentGroup.groupUsers.find(gu => gu.userId === user?.id)?.applications || []
+    let userApps = currentGroup.users.find(gu => gu.userId === user?.id)?.applications || []
 
     let userAccessibleApps = userApps.filter(ua => groupApps.includes(ua));
 

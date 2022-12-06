@@ -9,7 +9,7 @@ interface IGroupSelectorProps {
 }
 
 const GroupSelector = ({ fillContainer = false }: IGroupSelectorProps) => {
-  const { groups = [], getGroup, currentGroup, setCurrentGroup } = useContext(GroupContext)
+  const { groups = [], currentGroup, setCurrentGroupId } = useContext(GroupContext)
 
   return (
     <div className="flex flex-grow items-center justify-end min-w-">
@@ -20,7 +20,7 @@ const GroupSelector = ({ fillContainer = false }: IGroupSelectorProps) => {
         classes={combineClassNames(fillContainer && "w-full")}
         buttonClasses="bg-transparent shadow-none group"
         optionsClasses="min-w-max text-gray-800 dark:text-gray-200"
-        onUpdate={(selected) => setCurrentGroup(getGroup(selected.value))}
+        onUpdate={(selected) => setCurrentGroupId(selected.value)}
       />
     </div>
   )

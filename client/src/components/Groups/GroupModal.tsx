@@ -1,5 +1,4 @@
 import { Modal } from "../Common";
-import { IGroup } from "../../models";
 
 import AddGroupForm from "./AddGroupForm";
 import UpdateGroupForm from "./UpdateGroupForm";
@@ -7,20 +6,20 @@ import UpdateGroupForm from "./UpdateGroupForm";
 interface IGroupModalProps {
   isOpen: boolean,
   close: () => void,
-  group?: IGroup
+  groupId?: string
 }
 
-const GroupModal = ({ isOpen, close, group }: IGroupModalProps) => {
+const GroupModal = ({ isOpen, close, groupId }: IGroupModalProps) => {
   return (
     <Modal
-      title={group ? 'Edit Group' : 'Add Group'}
-      description={`This dialog can be used to ${group ? 'edit an existing' : 'create a new'} group`}
+      title={groupId ? 'Edit Group' : 'Add Group'}
+      description={`This dialog can be used to ${groupId ? 'edit an existing' : 'create a new'} group`}
       isOpen={isOpen}
       close={close}
     >
       {(ConfirmationButton) => (
-        group ? (
-          <UpdateGroupForm group={group} ContextualSubmissionButton={ConfirmationButton} />
+        groupId ? (
+          <UpdateGroupForm groupId={groupId} ContextualSubmissionButton={ConfirmationButton} />
         ) : (
           <AddGroupForm ContextualSubmissionButton={ConfirmationButton} />
         )

@@ -3,21 +3,17 @@ import { IApplication, IContextualFormProps, IGroup, IGroupUser } from "../../mo
 import { Form, Formik } from "formik"
 
 import UserRoleGroup from "./UserRoleGroup"
-import { GroupContext } from "../../contexts"
-import { useContext } from "react"
 
 interface IUserRoleSelectorProps {
+  group: IGroup
   groupUser: IGroupUser
 }
 
-const UserRoleSelector = ({ groupUser, ContextualSubmissionButton }: IUserRoleSelectorProps & IContextualFormProps) => {
+const UserRoleSelector = ({ group, groupUser, ContextualSubmissionButton }: IUserRoleSelectorProps & IContextualFormProps) => {
 
-  const { getGroup } = useContext(GroupContext)
   const { roles } = useRoleService()
   const { getApplication } = useApplicationService()
   const { updateGroupUser } = useGroupUserService()
-
-  const group: IGroup | undefined = getGroup(groupUser.groupId)
 
   return (
     <Formik

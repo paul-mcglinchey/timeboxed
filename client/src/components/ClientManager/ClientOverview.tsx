@@ -1,4 +1,4 @@
-import { useUserService } from "../../hooks";
+import { useGroupUserService } from "../../hooks";
 import { IClient } from "../../models";
 import { generateColour, getInitials } from "../../services";
 import { InfoTabs } from ".";
@@ -6,7 +6,8 @@ import { InfoTabs } from ".";
 const ClientOverview = ({ client }: { client: IClient }) => {
 
   const { colour, createdAt, updatedAt, updatedBy } = client;
-  const { getUser } = useUserService()
+
+  const { getGroupUser } = useGroupUserService()
 
   return (
     <div className={`bg-gray-800/40 flex justify-between w-full mt-10 mb-4 rounded-lg text-gray-200 shadow-md space-x-8`}>
@@ -25,7 +26,7 @@ const ClientOverview = ({ client }: { client: IClient }) => {
             <span className="text-gray-400 tracking-wide text-sm">
               Last updated: {new Date(updatedAt || "").toLocaleDateString()}
               <span> by <span className="font-medium px-2 py-1 bg-gray-800 tracking-wide rounded-lg select-none">
-                {getUser(updatedBy)?.username || '--'}
+                {getGroupUser(updatedBy)?.username || '--'}
               </span></span>
             </span>
           </div>

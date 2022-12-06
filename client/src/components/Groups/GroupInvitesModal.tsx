@@ -1,6 +1,9 @@
-import { useContext } from "react"
+import { useContext, useEffect, useState } from "react"
+import { endpoints } from "../../config"
 import { GroupContext } from "../../contexts"
-import { useGroupUserService } from "../../hooks"
+import { useGroupUserService, useRequestBuilderService } from "../../hooks"
+import { IGroupList } from "../../models"
+import { IListResponse } from "../../models/list-response.model"
 import { InlineButton, Modal, SpinnerLoader } from "../Common"
 
 interface IGroupInvitesModalProps {
@@ -10,8 +13,22 @@ interface IGroupInvitesModalProps {
 
 const GroupInvitesModal = ({ isOpen, close }: IGroupInvitesModalProps) => {
 
-  const { invites, isLoading } = useContext(GroupContext)
+  const [invites, setInvites] = useState<IGroupList[]>([])
+
+  const { isLoading } = useContext(GroupContext)
   const { joinGroup } = useGroupUserService()
+  const { buildRequest } = useRequestBuilderService()
+
+  useEffect(() => {
+    const _fetch = async () => {
+      const res = await fetch(endpoints.groupinvites, buildRequest())
+      const json: IListResponse<IGroupList> = await res.json()
+
+      setInvites(json.items)
+    }
+
+    _fetch()
+  }, [buildRequest])
 
   return (
     <Modal
@@ -21,20 +38,22 @@ const GroupInvitesModal = ({ isOpen, close }: IGroupInvitesModalProps) => {
       close={close}
     >
       {() => (
-        isLoading ? (
-          <SpinnerLoader />
-        ) : (
-          <div>
-            {invites.map((g, i) => (
-              <div key={i} className="flex justify-between">
-                <div>{g.name}</div>
-                <div>
-                  <InlineButton action={() => joinGroup(g.id)}>Join</InlineButton>
+        <>
+          {invites && invites.length > 0 ? (
+            <div>
+              {invites.map((g, i) => (
+                <div key={i} className="flex justify-between">
+                  <div>{g.name}</div>
+                  <div>
+                    <InlineButton action={() => joinGroup(g.id)}>Join</InlineButton>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )
+              ))}
+            </div>
+          ) : (
+            isLoading && <SpinnerLoader />
+          )}
+        </>
       )}
     </Modal>
   )

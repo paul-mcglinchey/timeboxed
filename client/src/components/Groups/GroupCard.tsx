@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TrashIcon, DotsVerticalIcon, PencilIcon, HeartIcon as HeartSolid } from '@heroicons/react/solid';
 import { HeartIcon } from '@heroicons/react/outline';
-import { IGroup } from '../../models';
+import { IGroupList } from '../../models';
 import { useAuthService, useGroupService, useNotification } from '../../hooks';
 import { Dialog, SpinnerIcon, SquareIconButton } from '../Common';
 import DataPoint from './DataPoint';
@@ -10,7 +10,7 @@ import { IApiError } from '../../models/error.model';
 import { Notification } from '../../enums';
 
 interface IGroupCardProps {
-  g: IGroup
+  g: IGroupList
 }
 
 const GroupCard = ({ g }: IGroupCardProps) => {
@@ -55,7 +55,7 @@ const GroupCard = ({ g }: IGroupCardProps) => {
         </div>
         <div className="flex justify-between items-end my-4">
           <div>
-            {cardFlipped ? <DataPoint value={g.groupUsers?.length || 0} label="user" /> : <DataPoint value={g.applications?.length} label="application" />}
+            {cardFlipped ? <DataPoint value={g.users?.length || 0} label="user" /> : <DataPoint value={g.applications?.length} label="application" />}
           </div>
           {cardFlipped && (
             <div>
@@ -64,7 +64,7 @@ const GroupCard = ({ g }: IGroupCardProps) => {
           )}
         </div>
       </div>
-      <GroupModal isOpen={editGroupOpen} close={() => setEditGroupOpen(false)} group={g} />
+      <GroupModal isOpen={editGroupOpen} close={() => setEditGroupOpen(false)} groupId={g.id} />
       <Dialog
         isOpen={deleteGroupOpen}
         close={() => setDeleteGroupOpen(false)}

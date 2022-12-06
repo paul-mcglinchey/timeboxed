@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useContext } from "react"
-import { IGroup, IGroupRequest } from "../models"
+import { IGroup, IGroupList, IGroupRequest } from "../models"
 import { GroupContext } from "../contexts"
 import { endpoints } from '../config'
 import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '.'
@@ -12,8 +12,15 @@ const useGroupService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setErr
   const { setGroups, setCount } = groupContext
   
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler, asyncReturnHandler } = useAsyncHandler(setIsLoading)
   const { handleResolution } = useResolutionService()
+
+  const getGroup = asyncReturnHandler<IGroup | undefined>(async (groupId: string) => {
+    const res = await fetch(endpoints.group(groupId), buildRequest())
+    const json: IGroup = await res.json()
+
+    return json
+  })
 
   const addGroup = asyncHandler(async (values: IGroupRequest) => {
     const res = await fetch(endpoints.groups, buildRequest('POST', undefined, values))
@@ -42,7 +49,9 @@ const useGroupService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setErr
   })
 
   const addGroupInContext = (group: IGroup) => {
-    setGroups(groups => [...groups, group])
+    setGroups(groups => [
+      ...groups, mapGroupToGroupList(group)
+    ])
     setCount(count => count + 1)
   }
 
@@ -52,11 +61,12 @@ const useGroupService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setErr
   }
 
   const updateGroupInContext = (groupId: string, values: IGroup) => {
-    console.log(values)
-    setGroups(groups => groups.map(g => g.id === groupId ? { ...g, ...values } : g))
+    setGroups(groups => groups.map(g => g.id === groupId ? mapGroupToGroupList(values) : g))
   }
 
-  return { ...groupContext, addGroup, updateGroup, deleteGroup }
+  const mapGroupToGroupList = (group: IGroup): IGroupList => ({ ...group, users: group.users.map(u => u.id) })
+
+  return { ...groupContext, getGroup, addGroup, updateGroup, deleteGroup }
 }
 
 export default useGroupService

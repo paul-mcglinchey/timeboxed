@@ -2,7 +2,7 @@ import { IGroupUserService } from "./interfaces"
 import { useAsyncHandler, useRequestBuilderService, useResolutionService } from "."
 import { endpoints } from "../config"
 import { useContext, useState } from "react"
-import { IGroupUser, IGroupUserInviteRequest, IGroupUserRequest } from "../models"
+import { IGroup, IGroupUser, IGroupUserInviteRequest, IGroupUserRequest } from "../models"
 import { IApiError } from "../models/error.model"
 import { GroupContext } from "../contexts"
 
@@ -11,10 +11,14 @@ const useGroupUserService = (): IGroupUserService => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<IApiError>()
 
-  const { setGroups } = useContext(GroupContext)
+  const { currentGroup } = useContext(GroupContext)
   const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { buildRequest } = useRequestBuilderService()
   const { handleResolution } = useResolutionService()
+
+  const getGroupUser = (userId: string | undefined, group?: IGroup | undefined): IGroupUser | undefined  => {
+    return (group ? group : currentGroup)?.users.find(u => u.userId === userId)
+  }
 
   const updateGroupUser = asyncHandler(async (groupId: string | undefined, userId: string | undefined, values: IGroupUserRequest) => {
     if (!groupId || !userId) throw new Error('Something went wrong...')
@@ -22,7 +26,7 @@ const useGroupUserService = (): IGroupUserService => {
     const res = await fetch(endpoints.groupuser(groupId, userId), buildRequest('PUT', undefined, values))
     const json = await res.json()
 
-    handleResolution(res, json, 'update', 'group user', [() => updateGroupUserInContext(groupId, userId, json)])
+    handleResolution(res, json, 'update', 'group user')
   })
 
   const inviteGroupUser = asyncHandler(async (groupId: string | undefined, values: IGroupUserInviteRequest) => {
@@ -56,19 +60,7 @@ const useGroupUserService = (): IGroupUserService => {
     handleResolution(res, json, 'join', 'group')
   })
 
-  const updateGroupUserInContext = (groupId: string, userId: string, values: IGroupUser) => {
-    setGroups(groups => groups.map(
-      g => g.id === groupId
-        ? ({ ...g, groupUsers: g.groupUsers.map(
-          gu => gu.userId === userId 
-            ? ({ ...gu, ...values })
-            : gu
-          )}) 
-        : g
-      ))
-  }
-
-  return { updateGroupUser, inviteGroupUser, uninviteGroupUser, joinGroup, isLoading, error }
+  return { getGroupUser, updateGroupUser, inviteGroupUser, uninviteGroupUser, joinGroup, isLoading, setIsLoading, error, setError }
 }
 
 export default useGroupUserService

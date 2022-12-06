@@ -1,6 +1,6 @@
 import { Transition } from "@headlessui/react"
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
-import { GroupContext, GroupProvider, MetaInfoContext, MetaInfoProvider, UserProvider } from "../contexts"
+import { GroupContext, GroupProvider, MetaInfoContext, MetaInfoProvider } from "../contexts"
 import { useAuthService } from "../hooks"
 import { IChildrenProps } from "../models"
 import { combineClassNames } from "../services"
@@ -43,13 +43,11 @@ const AppLoader = ({ children }: { children: any }) => {
       </Transition>
       {authCompleted && user && (
         <GroupProvider>
-          <UserProvider>
-            <MetaInfoProvider>
-              <SubLoader setAppLoading={setAppLoading} loadingCompleted={loadingCompleted} setLoadingCompleted={setLoadingCompleted}>
-                {!appLoading && children}
-              </SubLoader>
-            </MetaInfoProvider>
-          </UserProvider>
+          <MetaInfoProvider>
+            <SubLoader setAppLoading={setAppLoading} loadingCompleted={loadingCompleted} setLoadingCompleted={setLoadingCompleted}>
+              {!appLoading && children}
+            </SubLoader>
+          </MetaInfoProvider>
         </GroupProvider>
       )}
     </>
@@ -63,10 +61,10 @@ interface ISubLoaderProps {
 }
 
 const SubLoader = ({ children, setAppLoading, loadingCompleted, setLoadingCompleted }: ISubLoaderProps & IChildrenProps) => {
-  
+
   const { isLoading: isGroupsLoading } = useContext(GroupContext)
   const { isLoading: isMetaInfoLoading } = useContext(MetaInfoContext)
-  
+
   useEffect(() => {
     if (!isGroupsLoading && !isMetaInfoLoading) setLoadingCompleted(true)
   }, [isGroupsLoading, isMetaInfoLoading, setLoadingCompleted])

@@ -1,17 +1,16 @@
 import { createContext, useEffect, useState } from "react";
-import { IChildrenProps, IGroup, IGroupsResponse } from "../models";
+import { IChildrenProps, IGroup, IGroupList } from "../models";
 import { useAsyncHandler, useAuthService, useIsMounted, useRequestBuilderService } from "../hooks";
 import { endpoints } from "../config";
 import { getItemInLocalStorage, setItemInLocalStorage } from "../services";
 import { IGroupContext } from "./interfaces";
+import { IListResponse } from "../models/list-response.model";
 
 export const GroupContext = createContext<IGroupContext>({
   currentGroup: undefined,
-  setCurrentGroup: () => {},
+  setCurrentGroupId: () => {},
   groups: [],
-  invites: [],
   setGroups: () => {},
-  getGroup: () => undefined,
   count: 0,
   setCount: () => {},
   isLoading: false,
@@ -21,11 +20,12 @@ export const GroupContext = createContext<IGroupContext>({
 });
 
 export const GroupProvider = ({ children }: IChildrenProps) => {
-  const [groups, setGroups] = useState<IGroup[]>([])
+  const [groups, setGroups] = useState<IGroupList[]>([])
   const [count, setCount] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<any>()
-  const [currentGroup, setCurrentGroup] = useState<IGroup | undefined>(groups && groups.find(g => g.id === getItemInLocalStorage('group-id')))
+  const [currentGroupId, setCurrentGroupId] = useState<string | undefined>(getItemInLocalStorage('group-id'))
+  const [currentGroup, setCurrentGroup] = useState<IGroup | undefined>()
   
   const { buildRequest } = useRequestBuilderService()
   const { user } = useAuthService()
@@ -34,8 +34,23 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
   
   useEffect(() => {
     const _fetch = asyncHandler(async () => {
+      if (currentGroupId) {
+        var res = await fetch(endpoints.group(currentGroupId), buildRequest())
+        var json: IGroup = await res.json()
+
+        setCurrentGroup(json)
+      }
+    })
+
+    if (isMounted()) {
+      _fetch()
+    }
+  }, [currentGroupId, user, asyncHandler, buildRequest, isMounted])
+
+  useEffect(() => {
+    const _fetch = asyncHandler(async () => {
       var res = await fetch(endpoints.groups, buildRequest())
-      var json: IGroupsResponse = await res.json()
+      var json: IListResponse<IGroupList> = await res.json()
 
       setGroups(json.items)
       setCount(json.count)
@@ -52,20 +67,14 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
   }, [currentGroup])
 
   useEffect(() => {
-    setCurrentGroup(groups.find(g => g.id === getItemInLocalStorage('group-id')) || groups[0])
-  }, [groups])
-
-  const getGroup = (groupId: string | undefined): IGroup | undefined => {
-    return groups.find((group: IGroup) => group.id === groupId)
-  }
+    if (!currentGroup && groups.length > 0) setCurrentGroupId(groups[0]?.id)
+  }, [groups, currentGroup])
 
   const contextValue = {
     currentGroup,
-    setCurrentGroup,
-    groups: groups?.filter(g => g.groupUsers.find(gu => gu.userId === user?.id)?.hasJoined),
-    invites: groups?.filter(g => !g.groupUsers.find(gu => gu.userId === user?.id)?.hasJoined),
+    setCurrentGroupId,
+    groups,
     setGroups,
-    getGroup,
     count,
     setCount,
     isLoading,

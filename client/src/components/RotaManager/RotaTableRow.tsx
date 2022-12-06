@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useUserService } from '../../hooks';
+import { useGroupUserService } from '../../hooks';
 import { IRota } from '../../models';
 import { Button, InlineLink, TableRow, TableRowItem } from '../Common';
 import { RotaEmployeesModal } from '.';
@@ -7,7 +7,7 @@ const RotaTableRow = ({ rota }: { rota: IRota }) => {
 
   const [editRotaEmployeesOpen, setEditRotaEmployeesOpen] = useState(false)
 
-  const { getUser } = useUserService()
+  const { getGroupUser } = useGroupUserService()
 
   return (
     <TableRow>
@@ -20,7 +20,7 @@ const RotaTableRow = ({ rota }: { rota: IRota }) => {
             {new Date(rota.updatedAt || "").toLocaleDateString()}
           </span>
           <span className="font-medium px-2 bg-gray-800 tracking-wide rounded-lg select-none">
-            {getUser(rota?.createdBy)?.username || '--'}
+            {getGroupUser(rota?.createdBy)?.username || '--'}
           </span>
         </div>
       </TableRowItem>
