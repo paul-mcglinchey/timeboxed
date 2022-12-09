@@ -17,9 +17,9 @@ const AddClientForm = ({ ContextualSubmissionButton }: IContextualFormProps) => 
   return (
     <Formik
       initialValues={{
-        firstName: null,
-        lastName: null,
-        primaryEmailAddress: null
+        firstName: '',
+        lastName: '',
+        primaryEmailAddress: ''
       }}
       validationSchema={addClientValidationSchema}
       onSubmit={(values) => {

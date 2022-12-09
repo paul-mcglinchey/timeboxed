@@ -1,12 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Models.Requests;
 using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
+using Timeboxed.Api.Services.Projections;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Exceptions;
 using Timeboxed.Core.Extensions;
@@ -28,7 +30,7 @@ namespace Timeboxed.Api.Services
             this.groupContextProvider = groupContextProvider;
         }
 
-        public async Task<ListResponse<EmployeeResponse>> GetEmployeesAsync(GetEmployeesRequest requestParameters, CancellationToken cancellationToken)
+        public async Task<ListResponse<EmployeeListResponse>> GetEmployeesAsync(GetEmployeesRequest requestParameters, CancellationToken cancellationToken)
         {
             var employeeQuery = this.context.Employees.Where(e => this.groupContextProvider.GroupId == e.GroupId);
 
@@ -38,14 +40,21 @@ namespace Timeboxed.Api.Services
             var count = employeeQuery.Count();
             employeeQuery = employeeQuery.Paginate(requestParameters.PageNumber ?? 1, requestParameters.PageSize ?? 10);
 
-            return new ListResponse<EmployeeResponse>
+            return new ListResponse<EmployeeListResponse>
             {
-                Items = await employeeQuery.Select<Employee, EmployeeResponse>(e => e).ToListAsync(cancellationToken),
+                Items = await employeeQuery.Select(MapEFEmployeeToListResponse).ToListAsync(cancellationToken),
                 Count = count,
             };
         }
 
-        public async Task<EmployeeResponse> AddEmployeeAsync(AddEmployeeRequest request, CancellationToken cancellationToken)
+        public async Task<EmployeeResponse> GetEmployeeByIdAsync(Guid employeeId, CancellationToken cancellationToken) =>
+            await this.context.Employees
+                .Where(e => e.Id == employeeId)
+                .Select(MapEFEmployeeToResponse)
+                .SingleOrDefaultAsync(cancellationToken)
+            ?? throw new EntityNotFoundException($"Employee {employeeId} not found");
+
+        public async Task<Guid> AddEmployeeAsync(AddEmployeeRequest request, CancellationToken cancellationToken)
         {
             var employee = new Employee(
                 request.FirstName,
@@ -57,10 +66,10 @@ namespace Timeboxed.Api.Services
             this.context.Employees.Add(employee);
             await this.context.SaveChangesAsync(cancellationToken);
 
-            return employee;
+            return employee.Id;
         }
 
-        public async Task<EmployeeResponse> UpdateEmployeeAsync(Guid employeeId, UpdateEmployeeRequest request, CancellationToken cancellationToken)
+        public async Task UpdateEmployeeAsync(Guid employeeId, UpdateEmployeeRequest request, CancellationToken cancellationToken)
         {
             var employee = await this.context.Employees
                 .Where(e => e.Id == employeeId && e.GroupId == this.groupContextProvider.GroupId)
@@ -93,8 +102,6 @@ namespace Timeboxed.Api.Services
             employee.AddTracking(this.userContextProvider.UserId);
 
             await this.context.SaveChangesAsync(cancellationToken);
-
-            return employee;
         }
 
         public async Task<Guid> DeleteEmployeeAsync(Guid employeeId, CancellationToken cancellationToken)
@@ -121,5 +128,74 @@ namespace Timeboxed.Api.Services
                     : query.OrderByDescending(q => q.FirstName).ThenBy(q => q.LastName)
             };
         }
+
+        private static Expression<Func<Employee, EmployeeListResponse>> MapEFEmployeeToListResponse => (Employee e) => new EmployeeListResponse
+        {
+            Id = e.Id,
+            Role = e.Role,
+            GroupId = e.GroupId,
+            FirstName = e.FirstName,
+            LastName = e.LastName,
+            MiddleNames = e.MiddleNames,
+            PrimaryEmailAddress = e.PrimaryEmailAddress,
+            Holidays = e.Holidays.Select(h => new EmployeeHolidayResponse
+            {
+                Id = h.Id,
+                StartDate = h.StartDate,
+                EndDate = h.EndDate,
+                Notes = h.Notes,
+                IsPaid = h.IsPaid
+            }).ToList(),
+            MinHours = e.MinHours,
+            MaxHours = e.MaxHours,
+            UnavailableDays = e.UnavailableDays.Select(ud => (DayOfWeek)ud.DayOfWeek).ToList(),
+            Colour = e.Colour,
+            IsDeleted = e.IsDeleted,
+            UpdatedAt = e.UpdatedAt,
+            UpdatedBy = e.UpdatedBy,
+            CreatedAt = e.CreatedAt,
+            CreatedBy = e.CreatedBy,
+        };
+
+        private static Expression<Func<Employee, EmployeeResponse>> MapEFEmployeeToResponse => (Employee e) => new EmployeeResponse
+        {
+            Id = e.Id,
+            Role = e.Role,
+            GroupId = e.GroupId,
+            FirstName = e.FirstName,
+            LastName = e.LastName,
+            MiddleNames = e.MiddleNames,
+            PrimaryEmailAddress = e.PrimaryEmailAddress,
+            PrimaryPhoneNumber = e.PrimaryPhoneNumber,
+            Emails = e.Emails.AsQueryable().Select(Common.MapEFEmailToResponse).ToList(),
+            PhoneNumbers = e.PhoneNumbers.AsQueryable().Select(Common.MapEFPhoneNumberToResponse).ToList(),
+            FirstLine = e.FirstLine,
+            SecondLine = e.SecondLine,
+            ThirdLine = e.ThirdLine,
+            City = e.City,
+            Country = e.Country,
+            PostCode = e.PostCode,
+            ZipCode = e.ZipCode,
+            BirthDate = e.BirthDate,
+            StartDate = e.StartDate,
+            Holidays = e.Holidays.Select(h => new EmployeeHolidayResponse
+            {
+                Id = h.Id,
+                StartDate = h.StartDate,
+                EndDate = h.EndDate,
+                Notes = h.Notes,
+                IsPaid = h.IsPaid
+            }).ToList(),
+            MinHours = e.MinHours,
+            MaxHours = e.MaxHours,
+            UnavailableDays = e.UnavailableDays.Select(ud => (DayOfWeek)ud.DayOfWeek).ToList(),
+            ReportsTo = e.ReportsTo.Id,
+            Colour = e.Colour,
+            IsDeleted = e.IsDeleted,
+            UpdatedAt = e.UpdatedAt,
+            UpdatedBy = e.UpdatedBy,
+            CreatedAt = e.CreatedAt,
+            CreatedBy = e.CreatedBy,
+        };
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Models.Requests;
@@ -31,39 +32,41 @@ namespace Timeboxed.Api.Services
             this.groupContextProvider = groupContextProvider;
         }
 
-        public async Task<ListResponse<RotaResponse>> GetRotasAsync(GetRotasRequest requestParameters, CancellationToken cancellationToken)
+        public async Task<ListResponse<RotaListResponse>> GetRotasAsync(GetRotasRequest requestParameters, CancellationToken cancellationToken)
         {
             var rotaQuery = this.context.Rotas
-                .Include(r => r.Employees)
-                .Include(r => r.Schedules)
                 .Where(r => Guid.Equals(this.groupContextProvider.GroupId, r.GroupId));
 
             rotaQuery = ApplyFilter(rotaQuery, requestParameters);
             rotaQuery = ApplySort(rotaQuery, requestParameters);
 
-            var count = rotaQuery.Count();
             rotaQuery = rotaQuery.Paginate(requestParameters.PageNumber ?? 1, requestParameters.PageSize ?? 10);
 
-            return new ListResponse<RotaResponse>
+            return new ListResponse<RotaListResponse>
             {
-                Items = await rotaQuery.Select<Rota, RotaResponse>(r => r).ToListAsync(cancellationToken),
-                Count = count,
+                Items = await rotaQuery.Select(MapEFRotaToListResponse).ToListAsync(cancellationToken),
+                Count = rotaQuery.Count(),
             };
         }
 
-        public async Task<RotaResponse> AddRotaAsync(AddEditRotaRequest requestBody, CancellationToken cancellationToken)
-        {
-            var rotaId = Guid.NewGuid();
+        public async Task<RotaResponse> GetRotaByIdAsync(Guid rotaId, CancellationToken cancellationToken) =>
+            await this.context.Rotas
+                .Where(r => r.Id == rotaId)
+                .Select(MapEFRotaToResponse)
+                .SingleOrDefaultAsync(cancellationToken)
+            ?? throw new EntityNotFoundException($"Rota {rotaId} not found");
+            
 
+        public async Task<Guid> AddRotaAsync(AddEditRotaRequest requestBody, CancellationToken cancellationToken)
+        {
             var rota = new Rota
             {
-                Id = rotaId,
                 GroupId = this.groupContextProvider.GroupId,
                 Name = requestBody.Name,
                 Description = requestBody.Description,
                 Colour = requestBody.Colour,
                 ClosingHour = requestBody.ClosingHour,
-                Employees = requestBody.Employees.Select(e => new RotaEmployee { EmployeeId = e, RotaId = rotaId, }).ToList(),
+                Employees = await this.context.Employees.Where(e => requestBody.Employees.Contains(e.Id)).ToListAsync(),
             };
 
             rota.AddTracking(this.userContextProvider.UserId, true);
@@ -71,10 +74,10 @@ namespace Timeboxed.Api.Services
             this.context.Rotas.Add(rota);
             await this.context.SaveChangesAsync(cancellationToken);
 
-            return rota;
+            return rota.Id;
         }
 
-        public async Task<RotaResponse> UpdateRotaAsync(Guid rotaId, AddEditRotaRequest requestBody, CancellationToken cancellationToken)
+        public async Task UpdateRotaAsync(Guid rotaId, AddEditRotaRequest requestBody, CancellationToken cancellationToken)
         {
             var rota = await this.context.Rotas
                 .Where(r => Guid.Equals(r.Id, rotaId) && Guid.Equals(r.GroupId, this.groupContextProvider.GroupId))
@@ -89,20 +92,20 @@ namespace Timeboxed.Api.Services
             rota.ClosingHour = requestBody.ClosingHour;
             rota.Colour = requestBody.Colour;
             rota.Locked = requestBody.Locked;
-            rota.Employees = requestBody.Employees.Select(e => new RotaEmployee { RotaId = rota.Id, EmployeeId = e }).ToList();
+            rota.Employees = await this.context.Employees.Where(e => requestBody.Employees.Contains(e.Id)).ToListAsync();
 
             await this.context.SaveChangesAsync(cancellationToken);
-
-            return rota;
         }
 
-        public async Task<Guid> DeleteRotaAsync(Guid rotaId, CancellationToken cancellationToken)
+        public async Task DeleteRotaAsync(Guid rotaId, CancellationToken cancellationToken)
         {
-            var rota = await this.context.Rotas.Where(r => Guid.Equals(r.Id, rotaId)).SingleOrDefaultAsync(cancellationToken);
+            var rota = await this.context.Rotas
+                .Where(r => r.Id == rotaId)
+                .SingleOrDefaultAsync(cancellationToken)
+            ?? throw new EntityNotFoundException($"Rota {rotaId} not found");
+
             this.context.Rotas.Remove(rota);
             await this.context.SaveChangesAsync(cancellationToken);
-
-            return rota.Id;
         }
 
         public async Task LockRotaAsync(Guid rotaId, CancellationToken cancellationToken)
@@ -134,5 +137,56 @@ namespace Timeboxed.Api.Services
                     : query.OrderByDescending(q => q.Employees.Count),
             };
         }
+
+        private static Expression<Func<Rota, RotaListResponse>> MapEFRotaToListResponse => (Rota r) => new RotaListResponse
+        {
+            Id = r.Id,
+            GroupId = r.GroupId,
+            Name = r.Name,
+            Locked = r.Locked,
+            Colour = r.Colour,
+            Employees = r.Employees.Select(e => e.Id).ToList(),
+            UpdatedAt = r.UpdatedAt,
+            UpdatedBy = r.UpdatedBy,
+            CreatedAt = r.CreatedAt,
+            CreatedBy = r.CreatedBy,
+        };
+
+        private static Expression<Func<Rota, RotaResponse>> MapEFRotaToResponse => (Rota r) => new RotaResponse
+        {
+            Id = r.Id,
+            GroupId = r.GroupId,
+            Name = r.Name,
+            Description = r.Description,
+            Locked = r.Locked,
+            Colour = r.Colour,
+            Employees = r.Employees.Select(e => new EmployeeListResponse
+            {
+                Id = e.Id,
+                Role = e.Role,
+                GroupId = e.GroupId,
+                FirstName = e.FirstName,
+                LastName = e.LastName,
+                MiddleNames = e.MiddleNames,
+                PrimaryEmailAddress = e.PrimaryEmailAddress,
+                Holidays = e.Holidays.Select(h => new EmployeeHolidayResponse
+                {
+                    Id = h.Id,
+                    StartDate = h.StartDate,
+                    EndDate = h.EndDate,
+                    Notes = h.Notes,
+                    IsPaid = h.IsPaid
+                }).ToList(),
+                MinHours = e.MinHours,
+                MaxHours = e.MaxHours,
+                UnavailableDays = e.UnavailableDays.Select(ud => (DayOfWeek)ud.DayOfWeek).ToList(),
+                Colour = e.Colour,
+                IsDeleted = e.IsDeleted,
+            }).ToList(),
+            UpdatedAt = r.UpdatedAt,
+            UpdatedBy = r.UpdatedBy,
+            CreatedAt = r.CreatedAt,
+            CreatedBy = r.CreatedBy,
+        };
     }
 }

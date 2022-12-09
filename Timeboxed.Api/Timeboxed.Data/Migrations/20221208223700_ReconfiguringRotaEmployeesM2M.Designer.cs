@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Timeboxed.Data;
 
@@ -11,9 +12,10 @@ using Timeboxed.Data;
 namespace Timeboxed.Data.Migrations
 {
     [DbContext(typeof(TimeboxedContext))]
-    partial class TimeboxedContextModelSnapshot : ModelSnapshot
+    [Migration("20221208223700_ReconfiguringRotaEmployeesM2M")]
+    partial class ReconfiguringRotaEmployeesM2M
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -422,6 +424,26 @@ namespace Timeboxed.Data.Migrations
                     b.ToTable("EmployeeHolidays");
                 });
 
+            modelBuilder.Entity("Timeboxed.Domain.Models.EmployeePreferences", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("MaxHours")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MinHours")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmployeePreferences");
+                });
+
             modelBuilder.Entity("Timeboxed.Domain.Models.EmployeeSchedule", b =>
                 {
                     b.Property<Guid>("Id")
@@ -475,15 +497,20 @@ namespace Timeboxed.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<byte>("DayOfWeek")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("EmployeeId")
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EmployeePreferencesId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId");
+
+                    b.HasIndex("EmployeePreferencesId");
 
                     b.ToTable("EmployeeUnavailableDays");
                 });
@@ -1157,13 +1184,17 @@ namespace Timeboxed.Data.Migrations
 
             modelBuilder.Entity("Timeboxed.Domain.Models.EmployeeUnavailableDays", b =>
                 {
-                    b.HasOne("Timeboxed.Domain.Models.Employee", "Employee")
+                    b.HasOne("Timeboxed.Domain.Models.Employee", null)
                         .WithMany("UnavailableDays")
-                        .HasForeignKey("EmployeeId")
+                        .HasForeignKey("EmployeeId");
+
+                    b.HasOne("Timeboxed.Domain.Models.EmployeePreferences", "EmployeePreferences")
+                        .WithMany("UnavailableDays")
+                        .HasForeignKey("EmployeePreferencesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Employee");
+                    b.Navigation("EmployeePreferences");
                 });
 
             modelBuilder.Entity("Timeboxed.Domain.Models.GroupApplication", b =>
@@ -1368,6 +1399,11 @@ namespace Timeboxed.Data.Migrations
 
                     b.Navigation("PhoneNumbers");
 
+                    b.Navigation("UnavailableDays");
+                });
+
+            modelBuilder.Entity("Timeboxed.Domain.Models.EmployeePreferences", b =>
+                {
                     b.Navigation("UnavailableDays");
                 });
 

@@ -2,17 +2,18 @@ import { useContext, useState } from 'react';
 import { TableIcon } from '@heroicons/react/solid';
 import { IRota } from '../../models';
 import { Prompter, SpinnerLoader, Table } from '../Common';
-import { RotaModal, RotaTableRow } from '.';
 import { Application, Permission } from '../../enums';
 import { rotaTableHeaders } from '../../config';
-import { AuthContext, RotaContext } from '../../contexts';
+import { MetaInfoContext, RotaContext } from '../../contexts';
+import RotaModal from './RotaModal';
+import RotaTableRow from './RotaTableRow';
 
 const RotaList = () => {
   
   const [addRotaOpen, setAddRotaOpen] = useState(false);
   
   const { rotas, isLoading, sortField, sortDirection, setSortField, setSortDirection } = useContext(RotaContext);
-  const { hasPermission } = useContext(AuthContext)
+  const { hasPermission } = useContext(MetaInfoContext)
 
   return (
     <>

@@ -1,19 +1,16 @@
 import { Formik } from "formik";
 import { useGroupService } from "../../hooks";
-import { IContextualFormProps, IGroup, IGroupUser } from "../../models";
-import { combineClassNames, generateColour } from "../../services";
+import { IContextualFormProps, IGroup } from "../../models";
+import { generateColour } from "../../services";
 import { groupValidationSchema } from "../../schema";
 import { ColourPicker, FormSection, Modal, FormikInput, Button, SpinnerLoader } from "../Common";
-import { useContext, useEffect, useState } from "react";
-import { PencilIcon } from "@heroicons/react/solid";
-import { Role } from "../../enums";
+import { useEffect, useState } from "react";
 import { FormikForm } from "../Common/FormikForm";
+import { IApiError } from "../../models/error.model";
 
 import ApplicationMultiSelector from "./ApplicationMultiSelector";
 import UserInvites from "./UserInvites";
-import UserRoleSelector from "./UserRoleSelector";
-import { IApiError } from "../../models/error.model";
-import { GroupContext } from "../../contexts";
+import GroupUserEntry from "./GroupUserEntry";
 
 interface IUpdateGroupFormProps {
   groupId: string
@@ -70,7 +67,7 @@ const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFo
               <FormSection title="Users" titleActionComponent={<Button action={toggleInviteUserOpen} content="Invite" type="button" />}>
                 {group.users
                   .map(gu => (
-                    <GroupUserRow group={group} gu={gu} key={gu.userId} />
+                    <GroupUserEntry group={group} gu={gu} key={gu.userId} />
                   ))
                 }
                 <Modal
@@ -95,58 +92,6 @@ const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFo
         isLoading && <SpinnerLoader />
       )}
     </>
-  )
-}
-
-interface IGroupUserRowProps {
-  group: IGroup
-  gu: IGroupUser
-}
-
-const GroupUserRow = ({ group, gu }: IGroupUserRowProps) => {
-
-  const [editGroupUsersOpen, setEditGroupUsersOpen] = useState<boolean>(false)
-  const toggleEditGroupUsersOpen = () => setEditGroupUsersOpen(!editGroupUsersOpen)
-
-  const { userHasRole } = useContext(GroupContext)
-
-  return (
-    <div className="flex">
-      <button type="button" onClick={toggleEditGroupUsersOpen} className="w-full grid grid-cols-8 items-center group hover:bg-gray-300 dark:hover:bg-gray-900 rounded-md p-2">
-        <div className="col-span-6 flex flex-col text-left">
-          {console.log(gu)}
-          <span className="uppercase font-bold text-lg tracking-wider">{gu.username}</span>
-          <span className="text-sm tracking-wide dark:text-gray-500 text-gray-500">{gu.email}</span>
-        </div>
-        <div className="col-span-2 grid grid-cols-6 items-center">
-          <div className={combineClassNames(
-            "col-span-5 font-bold px-2 py-0.5 border border-current rounded-md",
-            gu.hasJoined ? userHasRole(gu.groupId, gu.userId, Role.GroupAdmin) ? "text-orange-500" : "text-blue-500" : "text-emerald-500"
-          )}>
-            {gu.hasJoined
-              ? userHasRole(gu.groupId, gu.userId, Role.GroupAdmin)
-                ? 'Admin'
-                : 'Member'
-              : 'Pending'
-            }
-          </div>
-          <div className="col-span-1 flex flex-1 justify-end">
-            <PencilIcon className="w-6 h-6 group-hover:text-blue-500 transition-colors" />
-          </div>
-        </div>
-      </button>
-      <Modal
-        title="Edit group users"
-        description="This dialog can be used to edit and update an existing user's roles within the currently selected group."
-        isOpen={editGroupUsersOpen}
-        close={toggleEditGroupUsersOpen}
-        level={2}
-      >
-        {(ConfirmationButton) => (
-          <UserRoleSelector group={group} groupUser={gu} ContextualSubmissionButton={ConfirmationButton} />
-        )}
-      </Modal>
-    </div>
   )
 }
 

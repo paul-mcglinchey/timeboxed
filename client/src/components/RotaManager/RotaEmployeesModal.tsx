@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { Form, Formik } from "formik";
 import { IRota } from "../../models";
 import { Modal, SpinnerLoader } from "../Common";
-import { EmployeeMultiSelector } from "..";
 import { useRotaService } from "../../hooks";
 import { IApiError } from "../../models/error.model";
+import EmployeeMultiSelector from "./EmployeeMultiSelector";
 
 interface IEditRotaEmployeesProps {
   isOpen: boolean

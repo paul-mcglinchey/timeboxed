@@ -9,11 +9,13 @@ namespace Timeboxed.Api.Services.Interfaces
 {
     public interface IEmployeeService
     {
-        public Task<ListResponse<EmployeeResponse>> GetEmployeesAsync(GetEmployeesRequest requestParameters, CancellationToken cancellationToken);
+        public Task<ListResponse<EmployeeListResponse>> GetEmployeesAsync(GetEmployeesRequest requestParameters, CancellationToken cancellationToken);
 
-        public Task<EmployeeResponse> AddEmployeeAsync(AddEmployeeRequest request, CancellationToken cancellationToken);
+        public Task<EmployeeResponse> GetEmployeeByIdAsync(Guid employeeId, CancellationToken cancellationToken);
 
-        public Task<EmployeeResponse> UpdateEmployeeAsync(Guid employeeIdGuid, UpdateEmployeeRequest request, CancellationToken cancellationToken);
+        public Task<Guid> AddEmployeeAsync(AddEmployeeRequest request, CancellationToken cancellationToken);
+
+        public Task UpdateEmployeeAsync(Guid employeeIdGuid, UpdateEmployeeRequest request, CancellationToken cancellationToken);
 
         public Task<Guid> DeleteEmployeeAsync(Guid employeeIdGuid, CancellationToken cancellationToken);
     }

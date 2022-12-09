@@ -4,10 +4,6 @@ import {
   ClientDashboard,
   ClientManager,
   ClientPage,
-  EmployeeDashboard,
-  RotaDashboard,
-  RotaManager,
-  RotaPage,
   AppLoader,
   RestrictedRoute
 } from "."
@@ -15,6 +11,11 @@ import { Application, Permission } from "../enums"
 
 import GroupDashboard from "./Groups/GroupDashboard"
 import Dashboard from "./Dashboard/Dashboard"
+import RotaDashboard from "./RotaManager/RotaDashboard"
+import EmployeeDashboard from "./RotaManager/EmployeeDashboard"
+import RotaManager from "./RotaManager/RotaManager"
+import RotaPage from "./RotaManager/RotaPage"
+
 import { AuthContext } from "../contexts"
 import { useContext } from "react"
 

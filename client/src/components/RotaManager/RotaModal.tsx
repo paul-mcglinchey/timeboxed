@@ -1,14 +1,14 @@
-import { IRota } from "../../models";
 import { Modal } from "../Common";
-import { RotaForm } from ".";
+import AddRotaForm from "./AddRotaForm";
+import UpdateRotaForm from "./RotaForm";
 
 interface IRotaProps {
   isOpen: boolean
   close: () => void
-  rota?: IRota
+  rotaId?: string
 }
 
-const RotaModal = ({ isOpen, close, rota }: IRotaProps) => {
+const RotaModal = ({ isOpen, close, rotaId }: IRotaProps) => {
   return (
     <Modal 
       title="Add rota"
@@ -17,7 +17,7 @@ const RotaModal = ({ isOpen, close, rota }: IRotaProps) => {
       close={close}
     >
       {(ConfirmSubmission) => (
-        <RotaForm rota={rota} ContextualSubmissionButton={ConfirmSubmission} />
+        rotaId ? <UpdateRotaForm rotaId={rotaId} ContextualSubmissionButton={ConfirmSubmission} /> : <AddRotaForm ContextualSubmissionButton={ConfirmSubmission} />
       )}
     </Modal>
   ) 

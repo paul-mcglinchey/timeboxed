@@ -79,6 +79,6 @@ namespace Timeboxed.Domain.Models
 
         public bool? IsDeleted { get; set; } = false;
 
-        public virtual ICollection<RotaEmployee> Rotas { get; set; } = new List<RotaEmployee>();
+        public ICollection<Rota> Rotas { get; set; } = new List<Rota>();
     }
 }

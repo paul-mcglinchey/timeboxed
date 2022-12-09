@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useParams } from "react-router";
 import { Button, Toolbar } from "../Common";
-import { AddEmployeeModal, EmployeeList } from ".";
+import AddEmployeeModal from "./AddEmployeeModal";
+import EmployeeList from "./EmployeeList";
 
 const EmployeeDashboard = () => {
   const { isAddEmployeeOpen } = useParams();

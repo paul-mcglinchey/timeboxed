@@ -3,10 +3,10 @@ import { Form, FormikContextType, useFormikContext } from "formik";
 import { LockClosedIcon } from "@heroicons/react/solid";
 import { IEmployeeSchedule, ISchedule } from "../../models";
 import { Button } from "../Common";
-import { ScheduleTableRow } from '.'
 import { getInitials } from "../../services";
 import { DayOfWeek } from "../../enums";
 import { addDays } from "date-fns/esm";
+import ScheduleTableRow from "./ScheduleTableRow";
 
 interface IScheduleTableProps {
   currentWeek: { first: Date, last: Date, week: Date[] }

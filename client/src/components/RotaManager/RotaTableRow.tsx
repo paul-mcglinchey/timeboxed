@@ -1,8 +1,8 @@
 import { useContext, useState } from 'react';
 import { IRota } from '../../models';
 import { Button, InlineLink, TableRow, TableRowItem } from '../Common';
-import { RotaEmployeesModal } from '.';
 import { GroupContext } from '../../contexts';
+import RotaEmployeesModal from './RotaEmployeesModal';
 
 const RotaTableRow = ({ rota }: { rota: IRota }) => {
 

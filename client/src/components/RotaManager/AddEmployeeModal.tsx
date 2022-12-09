@@ -1,6 +1,6 @@
-import { AddEmployeeForm } from "."
 import { IEmployee } from "../../models"
 import { Modal } from "../Common"
+import AddEmployeeForm from "./AddEmployeeForm"
 
 interface IAddEmployeeModalProps {
   employee?: IEmployee | undefined

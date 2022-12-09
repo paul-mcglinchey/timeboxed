@@ -14,7 +14,7 @@ namespace Timeboxed.Domain.Models
 
         public ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 
-        public virtual ICollection<RotaEmployee> Employees { get; set; } = new List<RotaEmployee>();
+        public ICollection<Employee> Employees { get; set; } = new List<Employee>();
 
         public bool? Locked { get; set; } = false;
 

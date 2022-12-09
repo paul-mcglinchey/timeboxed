@@ -1,5 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/solid";
-import { SquareIconButton } from "../Common";
+import { SpinnerIcon, SquareIconButton } from "../Common";
 
 interface IScheduleSwitcherProps {
   backwards: () => void
@@ -7,9 +7,10 @@ interface IScheduleSwitcherProps {
   startDate: Date
   endDate: Date
   modifier: number
+  scheduleLoading: boolean
 }
 
-const ScheduleSwitcher = ({ backwards, forwards, startDate, endDate, modifier }: IScheduleSwitcherProps) => {
+const ScheduleSwitcher = ({ backwards, forwards, startDate, endDate, modifier, scheduleLoading }: IScheduleSwitcherProps) => {
   return (
     <div className="flex justify-between items-center text-xl font-bold tracking-wide">
       <div className="flex items-center space-x-2">
@@ -25,6 +26,7 @@ const ScheduleSwitcher = ({ backwards, forwards, startDate, endDate, modifier }:
             : modifier === -1 ? 'Last week' : Math.abs(modifier) + ' weeks ago'
         )}
       </div>
+      {scheduleLoading && <SpinnerIcon className="w-6 h-6"/>}
       <div className="flex items-center space-x-2">
         <div className="hidden md:block">
           {endDate.toLocaleDateString()}

@@ -5,10 +5,10 @@ import { useFormikContext } from "formik";
 import { IRota } from "../../models";
 import { useNotification, useRotaService } from "../../hooks";
 import { Button, Dialog, Dropdown, SpinnerIcon } from "../Common";
-import { RotaModal } from ".";
 import { Application, Notification, Permission } from "../../enums";
 import { IApiError } from "../../models/error.model";
-import { AuthContext } from "../../contexts";
+import { MetaInfoContext } from "../../contexts";
+import RotaModal from "./RotaModal";
 
 interface IRotaHeaderProps {
   rota: IRota,
@@ -24,9 +24,9 @@ const RotaHeader = ({ rota, editing, setEditing }: IRotaHeaderProps) => {
   const [deletionOpen, setDeletionOpen] = useState<boolean>(false);
   const [editRotaOpen, setEditRotaOpen] = useState<boolean>(false);
 
-  const { updateRota, deleteRota } = useRotaService(setIsLoading, setError)
+  const { hasPermission } = useContext(MetaInfoContext)
+  const { lockRota, unlockRota, deleteRota } = useRotaService(setIsLoading, setError)
   const { handleSubmit, dirty } = useFormikContext()
-  const { hasPermission } = useContext(AuthContext)
   const { addNotification } = useNotification()
 
   const updateEditingStatus = () => {
@@ -35,13 +35,13 @@ const RotaHeader = ({ rota, editing, setEditing }: IRotaHeaderProps) => {
   }
 
   const updateLockedStatus = () => {
-    updateRota(rota?.id, { ...rota, locked: !rota?.locked })
+    rota.locked ? unlockRota(rota.id) : lockRota(rota.id)
     setEditing(false)
   }
 
   useEffect(() => {
     if (error?.message) addNotification(error.message, Notification.Error) 
-  }, [error])
+  }, [error, addNotification])
 
   return (
     <div className="flex justify-between items-center text-gray-200">
@@ -78,7 +78,7 @@ const RotaHeader = ({ rota, editing, setEditing }: IRotaHeaderProps) => {
           </>
         )}
       </div>
-      <RotaModal isOpen={editRotaOpen} close={() => setEditRotaOpen(false)} rota={rota} />
+      <RotaModal isOpen={editRotaOpen} close={() => setEditRotaOpen(false)} rotaId={rota.id} />
       <Dialog
         isOpen={deletionOpen}
         close={() => setDeletionOpen(false)}

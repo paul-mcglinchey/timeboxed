@@ -8,6 +8,7 @@ using Timeboxed.Api.Models.Requests;
 using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
+using Timeboxed.Api.Services.Projections;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Exceptions;
 using Timeboxed.Core.Extensions;
@@ -41,7 +42,7 @@ namespace Timeboxed.Api.Services
 
             return new ListResponse<ClientListResponse>
             {
-                Items = await clientQuery.Select(EFClientToClientListResponse).ToListAsync(cancellationToken),
+                Items = await clientQuery.Select(MapEFClientToListResponse).ToListAsync(cancellationToken),
                 Count = count,
             };
         }
@@ -49,14 +50,11 @@ namespace Timeboxed.Api.Services
         public async Task<ClientResponse> GetClientByIdAsync(Guid clientId, CancellationToken cancellationToken) =>
             await this.context.Clients
                 .Where(c => c.Id == clientId && c.GroupId == this.groupContextProvider.GroupId)
-                .Include(c => c.Emails)
-                .Include(c => c.PhoneNumbers)
-                .Include(c => c.Sessions)
-                .AsSplitQuery()
+                .Select(MapEFClientToResponse)
                 .SingleOrDefaultAsync() 
             ?? throw new EntityNotFoundException($"Client {clientId} not found");
 
-        public async Task<ClientResponse> AddClientAsync(AddClientRequest request, CancellationToken cancellationToken)
+        public async Task<Guid> AddClientAsync(AddClientRequest request, CancellationToken cancellationToken)
         {
             var client = new Client(
                 request.FirstName,
@@ -69,10 +67,10 @@ namespace Timeboxed.Api.Services
             this.context.Clients.Add(client);
             await this.context.SaveChangesAsync(cancellationToken);
 
-            return client;
+            return client.Id;
         }
 
-        public async Task<ClientResponse> UpdateClientAsync(Guid clientId, UpdateClientRequest request, CancellationToken cancellationToken)
+        public async Task UpdateClientAsync(Guid clientId, UpdateClientRequest request, CancellationToken cancellationToken)
         {
             var client = await this.context.Clients
                 .Where(c => c.Id == clientId && c.GroupId == this.groupContextProvider.GroupId)
@@ -99,8 +97,6 @@ namespace Timeboxed.Api.Services
             client.Colour = request.Colour;
 
             await this.context.SaveChangesAsync(cancellationToken);
-
-            return client;
         }
 
         public async Task<Guid> DeleteClientAsync(Guid clientId, CancellationToken cancellationToken)
@@ -150,12 +146,39 @@ namespace Timeboxed.Api.Services
             };
         }
 
-        private static Expression<Func<Client, ClientListResponse>> EFClientToClientListResponse => (Client c) => new ClientListResponse
+        private static Expression<Func<Client, ClientListResponse>> MapEFClientToListResponse => (Client c) => new ClientListResponse
         {
             Id = c.Id,
             FirstName = c.FirstName,
             LastName = c.LastName,
             PrimaryEmailAddress = c.PrimaryEmailAddress,
+            Sessions = c.Sessions.Select(s => s.Id).ToList(),
+            Colour = c.Colour,
+            UpdatedAt = c.UpdatedAt,
+            UpdatedBy = c.UpdatedBy,
+            CreatedAt = c.CreatedAt,
+            CreatedBy = c.CreatedBy,
+        };
+
+        private static Expression<Func<Client, ClientResponse>> MapEFClientToResponse => (Client c) => new ClientResponse
+        {
+            Id = c.Id,
+            GroupId = c.GroupId,
+            FirstName = c.FirstName,
+            LastName = c.LastName,
+            MiddleNames = c.MiddleNames,
+            PrimaryEmailAddress = c.PrimaryEmailAddress,
+            PrimaryPhoneNumber = c.PrimaryPhoneNumber,
+            Emails = c.Emails.AsQueryable().Select(Common.MapEFEmailToResponse).ToList(),
+            PhoneNumbers = c.PhoneNumbers.AsQueryable().Select(Common.MapEFPhoneNumberToResponse).ToList(),
+            FirstLine = c.FirstLine,
+            SecondLine = c.SecondLine,
+            ThirdLine = c.ThirdLine,
+            City = c.City,
+            Country = c.Country,
+            PostCode = c.PostCode,
+            ZipCode = c.ZipCode,
+            BirthDate = c.BirthDate,
             Sessions = c.Sessions.Select(s => s.Id).ToList(),
             Colour = c.Colour,
             UpdatedAt = c.UpdatedAt,

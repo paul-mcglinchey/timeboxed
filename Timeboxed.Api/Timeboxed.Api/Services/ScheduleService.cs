@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Models.Requests;
@@ -8,6 +9,7 @@ using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
+using Timeboxed.Core.Exceptions;
 using Timeboxed.Data;
 using Timeboxed.Domain.Models;
 
@@ -26,13 +28,11 @@ namespace Timeboxed.Api.Services
             this.groupContextProvider = groupContextProvider;
         }
 
-        public async Task<ListResponse<ScheduleResponse>> GetRotaSchedulesAsync(Guid rotaIdGuid, CancellationToken cancellationToken)
+        public async Task<ListResponse<ScheduleResponse>> GetRotaSchedulesAsync(Guid rotaId, CancellationToken cancellationToken)
         {
             var schedules = await this.context.Schedules
-                .Where(s => s.RotaId.Equals(rotaIdGuid))
-                .Include(s => s.EmployeeSchedules)
-                    .ThenInclude(es => es.Shifts)
-                .Select<Schedule, ScheduleResponse>(s => s)
+                .Where(s => s.RotaId == rotaId)
+                .Select(MapEFScheduleToResponse)
                 .AsSplitQuery()
                 .ToListAsync(cancellationToken);
 
@@ -43,7 +43,15 @@ namespace Timeboxed.Api.Services
             };
         }
 
-        public async Task<ScheduleResponse> AddRotaScheduleAsync(Guid rotaIdGuid, AddEditScheduleRequest requestBody, CancellationToken cancellationToken)
+        public async Task<ScheduleResponse> GetRotaScheduleByIdAsync(Guid rotaId, Guid scheduleId, CancellationToken cancellationToken) =>
+            await this.context.Schedules
+                    .Where(s => s.RotaId == rotaId && s.Id == scheduleId)
+                    .Select(MapEFScheduleToResponse)
+                    .AsSplitQuery()
+                    .SingleOrDefaultAsync(cancellationToken)
+                ?? throw new EntityNotFoundException($"Schedule {scheduleId} on Rota {rotaId} not found");
+
+        public async Task AddRotaScheduleAsync(Guid rotaIdGuid, AddEditScheduleRequest requestBody, CancellationToken cancellationToken)
         {
             var schedule = new Schedule
             {
@@ -64,11 +72,9 @@ namespace Timeboxed.Api.Services
 
             this.context.Schedules.Add(schedule);
             await this.context.SaveChangesAsync(cancellationToken);
-
-            return schedule;
         }
 
-        public async Task<ScheduleResponse> UpdateRotaScheduleAsync(Guid rotaIdGuid, Guid scheduleIdGuid, AddEditScheduleRequest requestBody, CancellationToken cancellationToken)
+        public async Task UpdateRotaScheduleAsync(Guid rotaIdGuid, Guid scheduleIdGuid, AddEditScheduleRequest requestBody, CancellationToken cancellationToken)
         {
             var schedule = await this.context.Schedules
                 .Where(s => s.RotaId.Equals(rotaIdGuid) && s.Id.Equals(scheduleIdGuid))
@@ -95,10 +101,24 @@ namespace Timeboxed.Api.Services
                 .ToList();
 
             schedule.EmployeeSchedules = schedules;
-
             await this.context.SaveChangesAsync(cancellationToken);
-
-            return schedule;
         }
+
+        private static Expression<Func<Schedule, ScheduleResponse>> MapEFScheduleToResponse => (Schedule s) => new ScheduleResponse
+        {
+            Id = s.Id,
+            StartDate = s.StartDate,
+            EmployeeSchedules = s.EmployeeSchedules.Select(es => new EmployeeScheduleResponse
+            {
+                EmployeeId = es.EmployeeId,
+                Shifts = es.Shifts.Select(ess => new EmployeeScheduleShiftResponse
+                {
+                    Date = ess.Date,
+                    StartHour = ess.StartHour,
+                    EndHour = ess.EndHour,
+                    Notes = ess.Notes,
+                }).ToList(),
+            }).ToList(),
+        };
     }
 }

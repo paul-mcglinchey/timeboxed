@@ -4,6 +4,7 @@ import { useFetch, useRequestBuilderService } from "../hooks";
 import { endpoints } from "../config";
 import { IScheduleContext } from "./interfaces";
 import { GroupContext } from "./GroupContext";
+import { getDateOnly } from "../services";
 
 interface IScheduleProviderProps {
   rotaId: string | undefined
@@ -13,6 +14,7 @@ export const ScheduleContext = createContext<IScheduleContext>({
   getSchedules: () => [],
   setSchedules: () => {},
   getCount: () => 0,
+  getSchedule: () => undefined,
   isLoading: false,
   error: undefined
 });
@@ -35,14 +37,17 @@ export const ScheduleProvider = ({ rotaId, children }: IScheduleProviderProps & 
     }
   }, [response])
 
+  const getSchedule = (date: Date): ISchedule | undefined => {
+    return schedules.find((schedule: ISchedule) => getDateOnly(new Date(schedule.startDate)) === getDateOnly(date))
+  }
+
   const contextValue = {
     getSchedules: useCallback(() => schedules, [schedules]),
     setSchedules,
     getCount: useCallback(() => count, [count]),
+    getSchedule,
     isLoading,
-    setIsLoading,
     error,
-    setError
   }
 
   return (

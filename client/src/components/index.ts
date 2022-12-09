@@ -1,6 +1,5 @@
 export * from './AdminPanel'
 export * from './Common';
-export * from './RotaManager';
 export * from './ClientManager';
 
 export { default as AppLoader } from './AppLoader'

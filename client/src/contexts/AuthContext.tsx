@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { IChildrenProps, IUser } from "../models";
 import { useCookies } from 'react-cookie'
 import { useAsyncHandler, useRequestBuilderService } from "../hooks";
@@ -6,8 +6,6 @@ import { endpoints } from "../config";
 import { IAuthContext } from "./interfaces";
 import { useNavigate } from "react-router";
 import { useLocation } from "react-router";
-import { GroupContext } from "./GroupContext";
-import { Permission } from "../enums";
 import { IApiError } from "../models/error.model";
 
 export const AuthContext = createContext<IAuthContext>({
@@ -18,7 +16,6 @@ export const AuthContext = createContext<IAuthContext>({
   getToken: () => undefined,
   getCookie: () => undefined,
   isAdmin: () => false,
-  hasPermission: () => false,
   isLoading: false,
   error: undefined,
 });
@@ -31,7 +28,6 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
 
   const { asyncHandler } = useAsyncHandler(setIsLoading);
   const { buildRequest } = useRequestBuilderService()
-  const { currentGroup, userHasPermission } = useContext(GroupContext)
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -75,12 +71,6 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
   const getCookie = () => cookies.UserAuth
   const isAdmin = () => user?.isAdmin || false
 
-  const hasPermission = (applicationId: number, permission: Permission): boolean => {
-    if (!currentGroup?.applications?.includes(applicationId)) return false
-
-    return userHasPermission(currentGroup.id, user?.id, permission)
-  }
-
   const contextValue = {
     user,
     setUser,
@@ -89,7 +79,6 @@ export const AuthProvider = ({ children }: IChildrenProps) => {
     getToken,
     getCookie,
     isAdmin,
-    hasPermission,
     isLoading,
     error,
   }

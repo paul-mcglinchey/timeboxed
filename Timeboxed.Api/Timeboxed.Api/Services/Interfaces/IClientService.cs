@@ -13,9 +13,9 @@ namespace Timeboxed.Api.Services.Interfaces
 
         public Task<ClientResponse> GetClientByIdAsync(Guid clientId, CancellationToken cancellationToken);
 
-        public Task<ClientResponse> AddClientAsync(AddClientRequest request, CancellationToken cancellationToken);
+        public Task<Guid> AddClientAsync(AddClientRequest request, CancellationToken cancellationToken);
 
-        public Task<ClientResponse> UpdateClientAsync(Guid clientId, UpdateClientRequest request, CancellationToken cancellationToken);
+        public Task UpdateClientAsync(Guid clientId, UpdateClientRequest request, CancellationToken cancellationToken);
 
         public Task<Guid> DeleteClientAsync(Guid clientId, CancellationToken cancellationToken);
     }

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Timeboxed.Core.Converters;
-using Timeboxed.Domain.Models;
-using System.Linq;
-using Timeboxed.Domain.Models.Common;
 using Timeboxed.Api.Models.Responses.Common;
 using Newtonsoft.Json;
 
@@ -49,32 +46,5 @@ namespace Timeboxed.Api.Models.Responses
         public List<Guid> Sessions { get; set; }
 
         public string Colour { get; set; }
-
-        public static implicit operator ClientResponse(Client client) => new ClientResponse
-        {
-            Id = client.Id,
-            GroupId = client.GroupId,
-            FirstName = client.FirstName,
-            LastName = client.LastName,
-            MiddleNames = client.MiddleNames,
-            PrimaryEmailAddress = client.PrimaryEmailAddress,
-            PrimaryPhoneNumber = client.PrimaryPhoneNumber,
-            Emails = client.Emails.Select<Email, EmailResponse>(e => e).ToList(),
-            PhoneNumbers = client.PhoneNumbers.Select<PhoneNumber, PhoneNumberResponse>(pn => pn).ToList(),
-            FirstLine = client.FirstLine,
-            SecondLine = client.SecondLine,
-            ThirdLine = client.ThirdLine,
-            City = client.City,
-            Country = client.Country,
-            PostCode = client.PostCode,
-            ZipCode = client.ZipCode,
-            BirthDate = client.BirthDate,
-            Sessions = client.Sessions.Select(s => s.Id).ToList(),
-            Colour = client.Colour,
-            UpdatedAt = client.UpdatedAt,
-            CreatedAt = client.CreatedAt,
-            UpdatedBy = client.UpdatedBy,
-            CreatedBy = client.CreatedBy,
-        };
     }
 }

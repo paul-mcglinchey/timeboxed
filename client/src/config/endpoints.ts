@@ -29,6 +29,8 @@ export const endpoints = {
     
     "rotas"     : (groupId: string) => DOTNET_API_URL + `groups/${groupId}/rotas`,
     "rota"      : (rotaId: string, groupId: string) => DOTNET_API_URL + `groups/${groupId}/rotas/${rotaId}`,
+    "lockrota"  : (rotaId: string, groupId: string) => DOTNET_API_URL + `groups/${groupId}/rotas/${rotaId}/lock`,
+    "unlockrota": (rotaId: string, groupId: string) => DOTNET_API_URL + `groups/${groupId}/rotas/${rotaId}/unlock`,
     
     "schedules" : (rotaId: string, groupId: string) => DOTNET_API_URL + `groups/${groupId}/rotas/${rotaId}/schedules`,
     "schedule"  : (rotaId: string, groupId: string, scheduleId: string) => DOTNET_API_URL + `groups/${groupId}/rotas/${rotaId}/schedules/${scheduleId}`,

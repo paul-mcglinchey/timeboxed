@@ -57,6 +57,27 @@ namespace Timeboxed.Api.Controllers
                 },
                 cancellationToken);
 
+        [FunctionName("GetRotaById")]
+        public async Task<ActionResult<RotaResponse>> GetRotaById(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups/{groupId}/rotas/{rotaId}")] HttpRequest req,
+            string groupId,
+            string rotaId,
+            ILogger logger,
+            CancellationToken cancellationToken) =>
+            await this.ExecuteAsync(
+                new List<int> { TimeboxedPermissions.ViewRotas },
+                groupId,
+                async () =>
+                {
+                    if (rotaId == null || !Guid.TryParse(rotaId, out Guid rotaIdGuid))
+                    {
+                        return new BadRequestObjectResult(new { message = "Rota ID supplied is not a valid GUID" });
+                    }
+
+                    return new OkObjectResult(await this.rotaService.GetRotaByIdAsync(rotaIdGuid, cancellationToken));
+                },
+                cancellationToken);
+
         [FunctionName("AddRota")]
         public async Task<ActionResult<RotaResponse>> AddRota(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "groups/{groupId}/rotas")] HttpRequest req,
@@ -80,7 +101,7 @@ namespace Timeboxed.Api.Controllers
                 cancellationToken);
 
         [FunctionName("UpdateRota")]
-        public async Task<ActionResult<RotaResponse>> UpdateRota(
+        public async Task<ActionResult> UpdateRota(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "groups/{groupId}/rotas/{rotaId}")] HttpRequest req,
             string groupId,
             string rotaId,
@@ -98,12 +119,14 @@ namespace Timeboxed.Api.Controllers
                         return new BadRequestObjectResult(new { message = "Rota ID supplied is not a valid GUID" });
                     }
 
-                    return new OkObjectResult(await this.rotaService.UpdateRotaAsync(rotaIdGuid, requestBody, cancellationToken));
+                    await this.rotaService.UpdateRotaAsync(rotaIdGuid, requestBody, cancellationToken);
+
+                    return new NoContentResult();
                 },
                 cancellationToken);
 
         [FunctionName("DeleteRota")]
-        public async Task<ActionResult<Guid>> DeleteRota(
+        public async Task<ActionResult> DeleteRota(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "groups/{groupId}/rotas/{rotaId}")] HttpRequest req,
             string groupId,
             string rotaId,
@@ -119,13 +142,15 @@ namespace Timeboxed.Api.Controllers
                         return new BadRequestObjectResult(new { message = "Rota ID supplied is not a valid GUID" });
                     }
 
-                    return new OkObjectResult(new { rotaId = await this.rotaService.DeleteRotaAsync(rotaIdGuid, cancellationToken) });
+                    await this.rotaService.DeleteRotaAsync(rotaIdGuid, cancellationToken);
+
+                    return new NoContentResult();
                 },
                 cancellationToken);
 
         [FunctionName("LockRota")]
         public async Task<ActionResult> LockRota(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "groups/{groupId}/rotas/{rotaId}/lock")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "groups/{groupId}/rotas/{rotaId}/lock")] HttpRequest req,
             string groupId,
             string rotaId,
             ILogger logger,
@@ -142,13 +167,13 @@ namespace Timeboxed.Api.Controllers
 
                     await this.rotaService.LockRotaAsync(rotaIdGuid, cancellationToken);
 
-                    return new OkResult();
+                    return new NoContentResult();
                 },
                 cancellationToken);
 
         [FunctionName("UnlockRota")]
         public async Task<ActionResult> UnlockRota(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "groups/{groupId}/rotas/{rotaId}/unlock")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "groups/{groupId}/rotas/{rotaId}/unlock")] HttpRequest req,
             string groupId,
             string rotaId,
             ILogger logger,
@@ -165,7 +190,7 @@ namespace Timeboxed.Api.Controllers
 
                     await this.rotaService.UnlockRotaAsync(rotaIdGuid, cancellationToken);
 
-                    return new OkResult();
+                    return new NoContentResult();
                 },
                 cancellationToken);
 

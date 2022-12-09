@@ -1,26 +1,36 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Formik, Form } from 'formik';
 import { ExternalLinkIcon } from '@heroicons/react/solid';
 import { useRotaService } from '../../hooks';
 import { IContextualFormProps, IRota } from '../../models';
 import { rotaValidationSchema } from '../../schema';
 import { FormikInput, FormSection, SpinnerLoader } from '../Common';
-import { EmployeeMultiSelector, AddEmployeeModal } from '.';
 import { generateColour } from '../../services';
 import { IApiError } from '../../models/error.model';
+import AddEmployeeModal from './AddEmployeeModal';
+import EmployeeMultiSelector from './EmployeeMultiSelector';
 
-interface IRotaFormProps {
-  rota?: IRota | undefined
+interface IUpdateRotaFormProps {
+  rotaId: string
 }
 
-const RotaForm = ({ rota, ContextualSubmissionButton }: IRotaFormProps & IContextualFormProps) => {
+const UpdateRotaForm = ({ rotaId, ContextualSubmissionButton }: IUpdateRotaFormProps & IContextualFormProps) => {
 
+  const [rota, setRota] = useState<IRota | undefined>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<IApiError>()
 
   const [addEmployeesOpen, setAddEmployeesOpen] = useState(false)
 
-  const { addRota, updateRota } = useRotaService(setIsLoading, setError)
+  const { fetchRota, updateRota } = useRotaService(setIsLoading, setError)
+
+  useEffect(() => {
+    const _fetch = async () => {
+      setRota(await fetchRota(rotaId)) 
+    }
+
+    _fetch()
+  }, [rotaId, fetchRota])
 
   return (
     <>
@@ -36,10 +46,10 @@ const RotaForm = ({ rota, ContextualSubmissionButton }: IRotaFormProps & IContex
           }}
           validationSchema={rotaValidationSchema}
           onSubmit={(values) => {
-            rota ? updateRota(rota.id, values) : addRota(values)
+            updateRota(rota.id, values)
           }}
         >
-          {({ values, errors, touched, setFieldValue }) => (
+          {({ values, errors, touched, setFieldValue, dirty, isValid }) => (
             <Form>
               <FormSection title="Details">
               <div className="grid grid-cols-5 gap-2">
@@ -64,7 +74,7 @@ const RotaForm = ({ rota, ContextualSubmissionButton }: IRotaFormProps & IContex
                   <span>Add employees</span>
                   <ExternalLinkIcon className="w-5 h-5" />
                 </button>
-                {ContextualSubmissionButton()}
+                {ContextualSubmissionButton('Add Rota', undefined, dirty && isValid, isLoading)}
               </div>
             </Form>
           )}
@@ -78,4 +88,4 @@ const RotaForm = ({ rota, ContextualSubmissionButton }: IRotaFormProps & IContex
   )
 }
 
-export default RotaForm;
+export default UpdateRotaForm;

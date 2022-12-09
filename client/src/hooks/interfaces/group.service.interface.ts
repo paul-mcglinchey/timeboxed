@@ -1,8 +1,7 @@
 import { IGroupContext } from "../../contexts/interfaces"
-import { IGroup, IGroupRequest } from "../../models"
+import { IGroupRequest } from "../../models/group.model"
 
 export interface IGroupService extends IGroupContext {
-  getGroup: (groupId: string) => Promise<IGroup | undefined>
   addGroup: (values: IGroupRequest) => void
   updateGroup: (values: IGroupRequest, groupId: string | undefined) => void
   deleteGroup: (groupId: string | undefined) => void

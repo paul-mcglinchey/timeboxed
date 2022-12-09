@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { IEmployeeSchedule, ISchedule } from "../../models"
-import { ScheduleShiftInput } from ".";
 import { Button, Modal, FormikInput } from "../Common";
 import { FormikContextType, getIn, useFormikContext } from "formik";
 import { getDateOnly } from "../../services";
+import ScheduleShiftInput from "./ScheduleShiftInput";
 
 interface IScheduleTableRowItemProps {
   employeeSchedule: IEmployeeSchedule,

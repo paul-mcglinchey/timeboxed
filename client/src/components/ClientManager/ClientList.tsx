@@ -5,7 +5,7 @@ import { Paginator, Table, Prompter, SearchBar } from '../Common';
 import { ClientTableRow } from '.';
 import { Application, Permission } from '../../enums';
 import { clientTableHeaders } from '../../config';
-import { AuthContext, ClientContext } from '../../contexts';
+import { ClientContext, MetaInfoContext } from '../../contexts';
 
 interface IClientListProps {
   setAddClientOpen: Dispatch<SetStateAction<boolean>>
@@ -14,7 +14,7 @@ interface IClientListProps {
 const ClientList = ({ setAddClientOpen }: IClientListProps) => {
 
   const { clients, count, filter, setFilter, sortField, setSortField, sortDirection, setSortDirection, isLoading, pageNumber, setPageNumber, pageSize, setPageSize } = useContext(ClientContext)
-  const { hasPermission } = useContext(AuthContext)
+  const { hasPermission } = useContext(MetaInfoContext)
 
   const filterApplied = (): boolean => filter.value !== null
 

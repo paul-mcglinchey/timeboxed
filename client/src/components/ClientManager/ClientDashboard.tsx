@@ -2,11 +2,11 @@ import { useContext, useState } from 'react';
 import { Toolbar, Prompter, Button, Modal } from '../Common';
 import { AddClientForm, ClientList } from '.';
 import { Application, Permission } from '../../enums';
-import { AuthContext } from '../../contexts';
+import { MetaInfoContext } from '../../contexts';
 
 const ClientDashboard = () => {
   const [addClientOpen, setAddClientOpen] = useState(false)
-  const { hasPermission } = useContext(AuthContext)
+  const { hasPermission } = useContext(MetaInfoContext)
 
   return (
     <>

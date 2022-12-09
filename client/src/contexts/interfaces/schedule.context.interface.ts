@@ -6,5 +6,5 @@ export interface IScheduleContext extends ILoadable {
   getSchedules: () => ISchedule[]
   setSchedules: Dispatch<SetStateAction<ISchedule[]>>
   getCount: () => number
-  error: any | undefined
+  getSchedule: (date: Date) => ISchedule | undefined
 }

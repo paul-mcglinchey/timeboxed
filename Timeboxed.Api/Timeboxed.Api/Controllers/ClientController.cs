@@ -97,17 +97,17 @@ namespace Timeboxed.Api.Controllers
                         return new BadRequestObjectResult(new { message = "Fields missing from request" });
                     }
 
-                    var client = await this.clientService.AddClientAsync(requestBody, cancellationToken);
+                    var clientId = await this.clientService.AddClientAsync(requestBody, cancellationToken);
 
                     return new CreatedAtRouteResult(
                         nameof(this.GetClientById),
-                        new { groupId = client.GroupId.ToString(), clientId = client.Id.ToString() },
+                        new { groupId, clientId },
                         await this.clientService.GetClientsAsync(requestParameters, cancellationToken));
                 },
                 cancellationToken);
 
         [FunctionName("UpdateClient")]
-        public async Task<ActionResult<ClientResponse>> UpdateClient(
+        public async Task<ActionResult> UpdateClient(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "groups/{groupId}/clients/{clientId}")] HttpRequest req,
             string groupId,
             string clientId,
@@ -125,7 +125,9 @@ namespace Timeboxed.Api.Controllers
                         return new BadRequestObjectResult(new { message = "Client ID supplied is not a valid GUID" });
                     }
 
-                    return new OkObjectResult(await this.clientService.UpdateClientAsync(clientIdGuid, requestBody, cancellationToken));
+                    await this.clientService.UpdateClientAsync(clientIdGuid, requestBody, cancellationToken);
+
+                    return new NoContentResult();
                 },
                 cancellationToken);
 

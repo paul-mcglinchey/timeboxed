@@ -9,10 +9,12 @@ namespace Timeboxed.Api.Services.Interfaces
 {
     public interface IScheduleService
     {
-        public Task<ListResponse<ScheduleResponse>> GetRotaSchedulesAsync(Guid rotaIdGuid, CancellationToken cancellationToken);
+        public Task<ListResponse<ScheduleResponse>> GetRotaSchedulesAsync(Guid rotaId, CancellationToken cancellationToken);
 
-        public Task<ScheduleResponse> AddRotaScheduleAsync(Guid rotaIdGuid, AddEditScheduleRequest requestBody, CancellationToken cancellationToken);
+        public Task<ScheduleResponse> GetRotaScheduleByIdAsync(Guid rotaId, Guid scheduleId, CancellationToken cancellationToken);
 
-        public Task<ScheduleResponse> UpdateRotaScheduleAsync(Guid rotaIdGuid, Guid scheduleIdGuid, AddEditScheduleRequest requestBody, CancellationToken cancellationToken);
+        public Task AddRotaScheduleAsync(Guid rotaId, AddEditScheduleRequest requestBody, CancellationToken cancellationToken);
+
+        public Task UpdateRotaScheduleAsync(Guid rotaId, Guid scheduleId, AddEditScheduleRequest requestBody, CancellationToken cancellationToken);
     }
 }

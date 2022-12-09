@@ -55,13 +55,13 @@ namespace Timeboxed.Api.Controllers
                 cancellationToken);
 
         [FunctionName("CreateRotaSchedule")]
-        public async Task<ActionResult<ScheduleResponse>> CreateRotaSchedule(
+        public async Task<ActionResult<ListResponse<ScheduleResponse>>> CreateRotaSchedule(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "groups/{groupId}/rotas/{rotaId}/schedules")] HttpRequest req,
             string groupId,
             string rotaId,
             ILogger logger,
             CancellationToken cancellationToken) =>
-            await this.ExecuteAsync(
+            await this.ExecuteAsync<ListResponse<ScheduleResponse>>(
                 new List<int> { TimeboxedPermissions.AddEditDeleteRotas },
                 groupId,
                 async () =>
@@ -73,7 +73,9 @@ namespace Timeboxed.Api.Controllers
                         return new BadRequestObjectResult(new { message = "Rota ID supplied is not a valid GUID" });
                     }
 
-                    return new OkObjectResult(await this.scheduleService.AddRotaScheduleAsync(rotaIdGuid, requestBody, cancellationToken));
+                    await this.scheduleService.AddRotaScheduleAsync(rotaIdGuid, requestBody, cancellationToken);
+
+                    return new OkObjectResult(await this.scheduleService.GetRotaSchedulesAsync(rotaIdGuid, cancellationToken));
                 },
                 cancellationToken);
 
@@ -102,7 +104,9 @@ namespace Timeboxed.Api.Controllers
                         return new BadRequestObjectResult(new { message = "Schedule ID supplied is not a valid GUID" });
                     }
 
-                    return new OkObjectResult(await this.scheduleService.UpdateRotaScheduleAsync(rotaIdGuid, scheduleIdGuid, requestBody, cancellationToken));
+                    await this.scheduleService.UpdateRotaScheduleAsync(rotaIdGuid, scheduleIdGuid, requestBody, cancellationToken);
+
+                    return new OkObjectResult(await this.scheduleService.GetRotaScheduleByIdAsync(rotaIdGuid, scheduleIdGuid, cancellationToken));
                 },
                 cancellationToken);
     }

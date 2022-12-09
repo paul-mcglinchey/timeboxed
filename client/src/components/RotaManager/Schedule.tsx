@@ -1,18 +1,20 @@
 import { Dispatch, SetStateAction } from "react";
 import { FormikContextType, useFormikContext } from "formik";
 import { ISchedule } from "../../models";
-import { ScheduleTable, ScheduleSwitcher } from ".";
 import { SaveAsIcon } from "@heroicons/react/solid";
 import { Transition } from "@headlessui/react";
+import ScheduleSwitcher from "./ScheduleSwitcher";
+import ScheduleTable from "./ScheduleTable";
 
 interface IScheduleProps {
   currentWeek: { first: Date, last: Date, week: Date[] },
   editing: boolean
   currentWeekModifier: number
   setCurrentWeekModifier: Dispatch<SetStateAction<number>>
+  scheduleLoading: boolean
 }
 
-const Schedule = ({ currentWeek, editing, currentWeekModifier, setCurrentWeekModifier }: IScheduleProps) => {
+const Schedule = ({ currentWeek, editing, currentWeekModifier, setCurrentWeekModifier, scheduleLoading }: IScheduleProps) => {
 
   const { dirty, handleSubmit }: FormikContextType<ISchedule> = useFormikContext()
 
@@ -32,6 +34,7 @@ const Schedule = ({ currentWeek, editing, currentWeekModifier, setCurrentWeekMod
         startDate={currentWeek.first}
         endDate={currentWeek.last}
         modifier={currentWeekModifier}
+        scheduleLoading={scheduleLoading}
       />
       <ScheduleTable
         currentWeek={currentWeek}

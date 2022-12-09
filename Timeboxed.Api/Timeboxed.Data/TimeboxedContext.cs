@@ -65,8 +65,6 @@ namespace Timeboxed.Data
 
         public DbSet<EmployeeScheduleShift>? EmployeeScheduleShifts { get; set; }
 
-        public DbSet<EmployeePreferences>? EmployeePreferences { get; set; }
-
         public DbSet<EmployeeUnavailableDays>? EmployeeUnavailableDays { get; set; }
 
         public DbSet<EmployeeHoliday>? EmployeeHolidays { get; set; }
@@ -91,11 +89,7 @@ namespace Timeboxed.Data
             // Extension method for seeding base Applications, Roles & Permissions
             modelBuilder.Seed();
 
-            modelBuilder.Entity<Application>()
-                .HasMany<Permission>(a => a.Permissions)
-                .WithMany(p => p.Applications)
-                .UsingEntity<ApplicationPermission>();
-
+            // Groups
             modelBuilder.Entity<Group>()
                 .HasMany<Application>(g => g.Applications)
                 .WithMany(a => a.Groups)
@@ -131,24 +125,21 @@ namespace Timeboxed.Data
                 .HasOne<Group>(gct => gct.Group)
                 .WithMany();
 
+            // Rotas
+            modelBuilder.Entity<Rota>().HasMany<Employee>(r => r.Employees).WithMany(e => e.Rotas).UsingEntity<RotaEmployee>().HasKey(re => new { re.RotaId, re.EmployeeId });
+            modelBuilder.Entity<RotaEmployee>().HasOne<Rota>(re => re.Rota).WithMany().OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<RotaEmployee>().HasOne<Employee>(re => re.Employee).WithMany().OnDelete(DeleteBehavior.NoAction);
+
+            // Meta Info
             modelBuilder.Entity<Role>()
                 .HasMany<Permission>(r => r.Permissions)
                 .WithMany(p => p.Roles)
                 .UsingEntity<RolePermission>();
 
-            modelBuilder.Entity<Rota>()
-                .HasMany<RotaEmployee>(r => r.Employees)
-                .WithOne(re => re.Rota);
-
-            modelBuilder.Entity<RotaEmployee>()
-                .HasOne(re => re.Rota)
-                .WithMany(r => r.Employees)
-                .OnDelete(DeleteBehavior.ClientCascade);
-
-            modelBuilder.Entity<RotaEmployee>()
-                .HasOne(re => re.Employee)
-                .WithMany(e => e.Rotas)
-                .OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<Application>()
+                .HasMany<Permission>(a => a.Permissions)
+                .WithMany(p => p.Applications)
+                .UsingEntity<ApplicationPermission>();
         }
     }
 }

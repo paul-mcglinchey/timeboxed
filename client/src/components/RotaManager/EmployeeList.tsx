@@ -2,8 +2,8 @@ import { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { UserIcon } from "@heroicons/react/solid";
 import { IEmployee } from "../../models";
 import { Prompter, Table } from "../Common";
-import { EmployeeTableRow } from ".";
 import { EmployeeContext } from "../../contexts";
+import EmployeeTableRow from "./EmployeeTableRow";
 
 const headers = [
   { name: "Employee name", value: "name", interactive: true },

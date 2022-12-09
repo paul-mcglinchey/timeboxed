@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { Navigate } from "react-router"
-import { AuthContext } from "../contexts"
+import { MetaInfoContext } from "../contexts"
 import { Permission } from "../enums"
 
 interface IRestrictedRouteProps {
@@ -11,7 +11,7 @@ interface IRestrictedRouteProps {
 }
 
 const RestrictedRoute = ({ applicationId , permission, component, redirect = "/notpermitted" }: IRestrictedRouteProps): JSX.Element => {
-  const { hasPermission } = useContext(AuthContext)
+  const { hasPermission } = useContext(MetaInfoContext)
 
   return hasPermission(applicationId, permission) ? component : <Navigate to={redirect} />
 }

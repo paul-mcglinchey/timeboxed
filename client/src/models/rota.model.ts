@@ -4,21 +4,21 @@ import { ISchedule } from "./schedule.model";
 export interface IRota extends ITracking {
   id: string,
   name: string,
-  description: string | null,
-  closingHour: number | null,
+  description: string,
+  closingHour: number,
   schedules: ISchedule[],
   employees: string[],
   locked: boolean,
-  colour: string | null
+  colour: string
 }
 
 export interface IRotaRequest {
-  name: string | null,
-  description: string | null,
-  closingHour: number | null,
+  name: string,
+  description: string,
+  closingHour: number,
   employees: string[],
   locked?: boolean,
-  colour: string | null
+  colour: string
 }
 
 export interface IUpdateRotaEmployeesRequest {

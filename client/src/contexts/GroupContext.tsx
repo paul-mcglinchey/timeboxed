@@ -7,7 +7,6 @@ import { IGroupContext } from "./interfaces";
 import { IListResponse } from "../models/list-response.model";
 import { IApiError } from "../models/error.model";
 import { AuthContext } from "./AuthContext";
-import { MetaInfoContext } from "./MetaInfoContext";
 
 export const GroupContext = createContext<IGroupContext>({
   currentGroup: undefined,
@@ -16,9 +15,8 @@ export const GroupContext = createContext<IGroupContext>({
   setGroups: () => {},
   count: 0,
   setCount: () => {},
+  getGroup: () => undefined,
   getGroupUser: () => undefined,
-  getPermissions: () => [],
-  userHasPermission: () => false,
   userHasRole: () => false,
   isLoading: false,
   error: undefined
@@ -34,7 +32,6 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
   const currentGroup = currentGroupId ? groups.find(g => g.id === currentGroupId) : groups[0]
 
   const { user } = useContext(AuthContext)
-  const { getRole } = useContext(MetaInfoContext)
 
   const { buildRequest } = useRequestBuilderService()
   const { asyncHandler } = useAsyncHandler(setIsLoading)
@@ -66,17 +63,7 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
   }
 
   const getGroupUser = (userId: string, groupId?: string | undefined): IGroupUser | undefined => {
-    return groups.find(g => g.id === (groupId ?? currentGroupId))?.users.find(u => u.id === userId)
-  }
-
-  const getPermissions = (groupId: string, userId: string): number[] => {
-    return getGroup(groupId)?.users.find(gu => gu.userId === userId)?.roles.map(r => getRole(r)?.permissions).filter((p): p is number[] => !!p).flatMap(p => p) || []
-  }
-
-  const userHasPermission = (groupId: string, userId: string | undefined, permissionId: number | undefined): boolean => {
-    if (!userId || !permissionId) return false
-
-    return getPermissions(groupId, userId).includes(permissionId)
+    return groups.find(g => groupId ? groupId === g.id : currentGroupId === g.id)?.users.find(u => u.userId === userId)
   }
 
   const userHasRole = (groupId: string, userId: string | undefined, roleId: string | undefined): boolean => {
@@ -94,8 +81,6 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
     setCount,
     getGroup,
     getGroupUser,
-    getPermissions,
-    userHasPermission,
     userHasRole,
     isLoading,
     error

@@ -12,15 +12,8 @@ const useGroupService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setErr
   const { setGroups, setCount } = groupContext
   
   const { buildRequest } = useRequestBuilderService()
-  const { asyncHandler, asyncReturnHandler } = useAsyncHandler(setIsLoading)
+  const { asyncHandler } = useAsyncHandler(setIsLoading)
   const { handleResolution } = useResolutionService()
-
-  const getGroup = asyncReturnHandler<IGroup | undefined>(async (groupId: string) => {
-    const res = await fetch(endpoints.group(groupId), buildRequest())
-    const json: IGroup = await res.json()
-
-    return json
-  })
 
   const addGroup = asyncHandler(async (values: IGroupRequest) => {
     const res = await fetch(endpoints.groups, buildRequest('POST', undefined, values))
@@ -64,7 +57,7 @@ const useGroupService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setErr
     setGroups(groups => groups.map(g => g.id === groupId ? values : g))
   }
 
-  return { ...groupContext, getGroup, addGroup, updateGroup, deleteGroup }
+  return { ...groupContext, addGroup, updateGroup, deleteGroup }
 }
 
 export default useGroupService

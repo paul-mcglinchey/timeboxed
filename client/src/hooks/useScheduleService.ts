@@ -5,7 +5,6 @@ import { GroupContext, ScheduleContext } from "../contexts";
 import { endpoints } from '../config'
 import { addDays, subDays } from "date-fns";
 import { useAsyncHandler, useResolutionService, useRequestBuilderService } from "../hooks";
-import { getDateOnly } from "../services";
 import { IApiError } from "../models/error.model";
 
 const useScheduleService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setError: Dispatch<SetStateAction<IApiError | undefined>>): IScheduleService => {
@@ -17,8 +16,6 @@ const useScheduleService = (setIsLoading: Dispatch<SetStateAction<boolean>>, set
   const { asyncReturnHandler } = useAsyncHandler(setIsLoading)
   const { buildRequest } = useRequestBuilderService()
   const { handleResolution } = useResolutionService()
-
-  const getSchedule = (date: Date): ISchedule | undefined => getSchedules().find((schedule: ISchedule) => getDateOnly(new Date(schedule.startDate)) === getDateOnly(date))
 
   const updateSchedule = asyncReturnHandler<ISchedule | void>(async (values: IScheduleRequest, scheduleId: string,  rotaId: string): Promise<ISchedule | void> => {
     if (!currentGroup) throw new Error("Group not set")
@@ -78,7 +75,7 @@ const useScheduleService = (setIsLoading: Dispatch<SetStateAction<boolean>>, set
     return shifts.find(s => s.date === dateOnly)
   }
 
-  return { ...scheduleContext, getSchedule, getWeek, updateSchedule, createSchedule, getShift }
+  return { ...scheduleContext, getWeek, updateSchedule, createSchedule, getShift }
 }
 
 export default useScheduleService

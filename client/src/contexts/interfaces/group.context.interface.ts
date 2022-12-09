@@ -9,8 +9,7 @@ export interface IGroupContext extends ILoadable {
   setGroups: Dispatch<SetStateAction<IGroup[]>>
   count: number
   setCount: Dispatch<SetStateAction<number>>
+  getGroup: (groupId: string) => IGroup | undefined
   getGroupUser: (userId: string, groupId?: string | undefined) => IGroupUser | undefined
-  getPermissions: (groupId: string, userId: string) => number[]
-  userHasPermission: (groupId: string, userId: string | undefined, permissionId: number | undefined) => boolean
   userHasRole: (groupId: string, userId: string | undefined, roleId: string | undefined) => boolean
 }

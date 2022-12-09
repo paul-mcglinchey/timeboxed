@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction } from "react"
-import { Permission } from "../../enums"
 import { ILoadable, IUser } from "../../models"
 
 export interface IAuthContext extends ILoadable {
@@ -10,5 +9,4 @@ export interface IAuthContext extends ILoadable {
   getToken: () => string | undefined
   getCookie: () => IUser | undefined
   isAdmin: () => boolean
-  hasPermission: (applicationId: number, permission: Permission) => boolean
 }

@@ -17,9 +17,9 @@ const AddEmployeeForm = ({ ContextualSubmissionButton }: IContextualFormProps) =
   return (
     <Formik
       initialValues={{
-        firstName: null,
-        lastName: null,
-        primaryEmailAddress: null
+        firstName: '',
+        lastName: '',
+        primaryEmailAddress: ''
       }}
       validationSchema={addEmployeeValidationSchema}
       onSubmit={(values) => {

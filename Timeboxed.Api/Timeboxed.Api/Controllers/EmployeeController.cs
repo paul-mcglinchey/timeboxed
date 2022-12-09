@@ -57,6 +57,27 @@ namespace Timeboxed.Api.Controllers
                 },
                 cancellationToken);
 
+        [FunctionName("GetEmployeeById")]
+        public async Task<ActionResult<EmployeeResponse>> GetEmployeeById(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups/{groupId}/employees/{employeeId}")] HttpRequest req,
+            string groupId,
+            string employeeId,
+            ILogger logger,
+            CancellationToken cancellationToken) =>
+            await this.ExecuteAsync(
+                new List<int> { TimeboxedPermissions.ViewRotas },
+                groupId,
+                async () =>
+                {
+                    if (employeeId == null || !Guid.TryParse(employeeId, out Guid employeeIdGuid))
+                    {
+                        return new BadRequestObjectResult(new { message = "Employee ID supplied is not a valid GUID" });
+                    }
+
+                    return new OkObjectResult(await this.employeeService.GetEmployeeByIdAsync(employeeIdGuid, cancellationToken));
+                },
+                cancellationToken);
+
         [FunctionName("AddEmployee")]
         public async Task<ActionResult<EmployeeResponse>> AddEmployee(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "groups/{groupId}/employees")] HttpRequest req,
@@ -69,13 +90,19 @@ namespace Timeboxed.Api.Controllers
                 async () =>
                 {
                     var request = await ConstructRequestModelAsync<AddEmployeeRequest>(req);
+                    var requestParameters = req.DeserializeQueryParams<GetEmployeesRequest>();
 
                     if (request.FirstName == null || request.LastName == null || request.PrimaryEmailAddress == null)
                     {
                         return new BadRequestObjectResult(new { message = "Fields missing from request" });
                     }
 
-                    return new CreatedAtRouteResult("employees", await this.employeeService.AddEmployeeAsync(request, cancellationToken));
+                    var employeeId = await this.employeeService.AddEmployeeAsync(request, cancellationToken);
+
+                    return new CreatedAtRouteResult(
+                        nameof(this.GetEmployeeById),
+                        new { groupId, employeeId },
+                        await this.employeeService.GetEmployeesAsync(requestParameters, cancellationToken));
                 },
                 cancellationToken);
 
@@ -98,7 +125,9 @@ namespace Timeboxed.Api.Controllers
                         return new BadRequestObjectResult(new { message = "Employee ID supplied is not a valid GUID" });
                     }
 
-                    return new OkObjectResult(await this.employeeService.UpdateEmployeeAsync(employeeIdGuid, request, cancellationToken));
+                    await this.employeeService.UpdateEmployeeAsync(employeeIdGuid, request, cancellationToken);
+
+                    return new NoContentResult();
                 },
                 cancellationToken);
 
