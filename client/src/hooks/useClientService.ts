@@ -28,7 +28,7 @@ const useClientService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setEr
     const json: IClient = await res.json()
 
     return json
-  }), [asyncReturnHandler, buildRequest, groupId])
+  }), [asyncReturnHandler, buildRequest, groupId, setError])
 
   const addClient = asyncHandler(async (values: IClient) => {
     if (!groupId) throw new Error()

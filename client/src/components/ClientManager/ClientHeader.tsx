@@ -38,7 +38,7 @@ const ClientHeader = ({ client }: IClientHeaderProps) => {
 
   useEffect(() => {
     if (error?.message) addNotification(error.message, Notification.Error)
-  }, [error])
+  }, [error, addNotification])
 
   return (
     <div className="flex justify-between">
