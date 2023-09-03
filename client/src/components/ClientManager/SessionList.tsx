@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SessionTableRow } from ".";
 import { useClientService } from "../../hooks";
 import { IClient, ISession } from "../../models";
@@ -25,15 +25,15 @@ const SessionList = ({ client }: ISessionListProps) => {
 
   const { getSessions } = useClientService(setIsLoading, setError)
   
-  const fetchSessions = async (tagIdFilter?: string | undefined) => {
-    let response = await getSessions(client.id, tagIdFilter)
+  const fetchSessions = useCallback(async (tagIdFilter?: string | undefined) => {
+    const response = await getSessions(client.id, tagIdFilter)
     setSessions(response.items)
     setCount(response.count)
-  }
+  }, [])
 
   useEffect(() => {
     fetchSessions()
-  }, [])
+  }, [fetchSessions])
 
   return (
     <>

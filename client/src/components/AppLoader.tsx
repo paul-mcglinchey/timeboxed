@@ -1,11 +1,11 @@
 import { Transition } from "@headlessui/react"
-import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
+import { Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from "react"
 import { AuthContext, GroupContext, GroupProvider, MetaInfoContext, MetaInfoProvider } from "../contexts"
 import { IChildrenProps } from "../models"
 import { combineClassNames } from "../services"
 import { WideIcon } from "./Common"
 
-const AppLoader = ({ children }: { children: any }) => {
+const AppLoader = ({ children }: { children: ReactNode }) => {
 
   const [authCompleted, setAuthCompleted] = useState<boolean>(false)
   const [loadingCompleted, setLoadingCompleted] = useState<boolean>(false)

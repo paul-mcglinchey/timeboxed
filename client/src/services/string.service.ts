@@ -1,7 +1,7 @@
 export const getInitials = (phrase: string | undefined) => {
   if (!phrase) return "N/A"
 
-  var initials = "";
+  let initials = "";
   phrase.split(" ").forEach((w: string) => {
     initials += w[0];
   })

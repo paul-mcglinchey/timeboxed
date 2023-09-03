@@ -24,10 +24,10 @@ namespace Timeboxed.Api.Controllers.Base
             this.groupValidator = groupValidator;
         }
 
-        public async Task<ActionResult> ExecuteAsync(string groupId, Func<Task<ActionResult>> implementation, CancellationToken cancellationToken = default, [CallerMemberName] string functionName = null) =>
-            await this.ExecuteAsync(new List<int> { TimeboxedPermissions.ApplicationAccess }, groupId, implementation, cancellationToken, functionName);
+        public async Task<ActionResult> ExecuteAsync(string groupId, Func<Task<ActionResult>> implementation, CancellationToken cancellationToken = default, bool adminRequired = false, [CallerMemberName] string functionName = null) =>
+            await this.ExecuteAsync(new List<int> { TimeboxedPermissions.ApplicationAccess }, groupId, implementation, cancellationToken, adminRequired, functionName);
 
-        public async Task<ActionResult> ExecuteAsync(List<int> permissions, string groupId, Func<Task<ActionResult>> implementation, CancellationToken cancellationToken = default, [CallerMemberName] string functionName = null)
+        public async Task<ActionResult> ExecuteAsync(List<int> permissions, string groupId, Func<Task<ActionResult>> implementation, CancellationToken cancellationToken = default, bool adminRequired = false, [CallerMemberName] string functionName = null)
         {
             await this.groupValidator.Validate(groupId, cancellationToken);
 
@@ -35,13 +35,14 @@ namespace Timeboxed.Api.Controllers.Base
                 permissions,
                 async () => await implementation(),
                 cancellationToken,
+                adminRequired,
                 functionName);
         }
 
-        public async Task<ActionResult<TResult>> ExecuteAsync<TResult>(string groupId, Func<Task<ActionResult<TResult>>> implementation, CancellationToken cancellationToken, [CallerMemberName] string functionName = null) =>
-            await this.ExecuteAsync(new List<int> { TimeboxedPermissions.ApplicationAccess }, groupId, implementation, cancellationToken, functionName);
+        public async Task<ActionResult<TResult>> ExecuteAsync<TResult>(string groupId, Func<Task<ActionResult<TResult>>> implementation, CancellationToken cancellationToken, bool adminRequired = false, [CallerMemberName] string functionName = null) =>
+            await this.ExecuteAsync(new List<int> { TimeboxedPermissions.ApplicationAccess }, groupId, implementation, cancellationToken, adminRequired, functionName);
 
-        public async Task<ActionResult<TResult>> ExecuteAsync<TResult>(List<int> permissions, string groupId, Func<Task<ActionResult<TResult>>> implementation, CancellationToken cancellationToken = default, [CallerMemberName] string functionName = null)
+        public async Task<ActionResult<TResult>> ExecuteAsync<TResult>(List<int> permissions, string groupId, Func<Task<ActionResult<TResult>>> implementation, CancellationToken cancellationToken = default, bool adminRequired = false, [CallerMemberName] string functionName = null)
         {
             await this.groupValidator.Validate(groupId, cancellationToken);
 
@@ -49,6 +50,7 @@ namespace Timeboxed.Api.Controllers.Base
                 permissions,
                 async () => await implementation(),
                 cancellationToken,
+                adminRequired,
                 functionName);
         }
     }

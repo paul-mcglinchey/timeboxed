@@ -11,8 +11,6 @@ namespace Timeboxed.Api.Models.Requests
 
         public string Colour { get; set; }
 
-        public List<int> Applications { get; set; }
-
         public List<UpdateGroupUserRequest> GroupUsers { get; set; }
     }
 

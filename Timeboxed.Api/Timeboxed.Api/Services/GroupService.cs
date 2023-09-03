@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Models.Requests;
@@ -13,6 +12,7 @@ using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Exceptions;
 using Timeboxed.Data;
 using Timeboxed.Domain.Models;
+using Timeboxed.Api.Services.Projections;
 
 namespace Timeboxed.Api.Services
 {
@@ -34,7 +34,7 @@ namespace Timeboxed.Api.Services
             var groups = this.context.Groups
                 .Where(g => g.GroupUsers.Any(gu => gu.UserId.Equals(this.userContextProvider.UserId)))
                 .Where(g => g.GroupUsers.Any(gu => gu.HasJoined))
-                .Select(MapEFGroupToResponse);
+                .Select(Common.MapEFGroupToResponse);
 
             return new ListResponse<GroupResponse>
             {
@@ -48,7 +48,7 @@ namespace Timeboxed.Api.Services
             var groups = this.context.Groups
                 .Where(g => g.GroupUsers.Any(gu => gu.UserId.Equals(this.userContextProvider.UserId)))
                 .Where(g => g.GroupUsers.Any(gu => !gu.HasJoined))
-                .Select(MapEFGroupToResponse);
+                .Select(Common.MapEFGroupToResponse);
 
             return new ListResponse<GroupResponse>
             {
@@ -60,33 +60,22 @@ namespace Timeboxed.Api.Services
         public async Task<GroupResponse> GetGroupByIdAsync(Guid groupId, CancellationToken cancellationToken) =>
             await this.context.Groups
                 .Where(g => g.Id == groupId)
-                .Select(MapEFGroupToResponse)
+                .Select(Common.MapEFGroupToResponse)
                 .SingleOrDefaultAsync(cancellationToken)
             ?? throw new EntityNotFoundException($"Group {groupId} not found");
 
         public async Task<Guid> AddGroupAsync(AddGroupRequest request, CancellationToken cancellationToken)
         {
-            var roles = await this.context.Roles
-                .Where(r => r.ApplicationId == null || request.Applications.Contains(r.Application.Id))
-                .ToListAsync(cancellationToken);
-
-            var applications = await this.context.Applications
-                .Where(a => request.Applications.Contains(a.Id))
-                .ToListAsync();
-
             var groupUser = new GroupUser
             {
                 UserId = this.userContextProvider.UserId,
-                Roles = roles,
                 HasJoined = true,
-                Applications = applications,
             };
 
             var group = new Group(
                 request.Name,
                 request.Description,
                 request.Colour,
-                applications,
                 new List<GroupUser> { groupUser },
                 this.userContextProvider.UserId);
 
@@ -102,14 +91,12 @@ namespace Timeboxed.Api.Services
 
             var group = await this.context.Groups
                 .Where(g => g.Id == groupId)
-                .Include(g => g.Applications)
                 .SingleOrDefaultAsync(cancellationToken)
             ?? throw new EntityNotFoundException($"Group {groupId} not found");
 
             group.Name = request.Name;
             group.Description = request.Description;
             group.Colour = request.Colour;
-            group.Applications = await this.context.Applications.Where(a => request.Applications.Contains(a.Id)).ToListAsync(cancellationToken);
 
             group.AddTracking(this.userContextProvider.UserId);
 
@@ -137,25 +124,5 @@ namespace Timeboxed.Api.Services
 
         public async Task<bool> GroupNameExistsAsync(Guid groupId, string groupName, CancellationToken cancellationToken) =>
             await this.context.Groups.Where(g => !g.Id.Equals(groupId) && g.Name.Equals(groupName)).SingleOrDefaultAsync(cancellationToken) != null;
-
-        private static Expression<Func<Group, GroupResponse>> MapEFGroupToResponse => (Group g) => new GroupResponse
-        {
-            Id = g.Id,
-            Name = g.Name,
-            Description = g.Description,
-            Colour = g.Colour,
-            Applications = g.Applications.Select(a => a.Id).ToList(),
-            Users = g.GroupUsers.Select(gu => new GroupUserResponse
-            {
-                Id = gu.Id,
-                UserId = gu.UserId,
-                Username = gu.User.Username,
-                Email = gu.User.Email,
-                GroupId = gu.GroupId,
-                HasJoined = gu.HasJoined,
-                Roles = gu.Roles.Select(r => r.Id).ToList(),
-                Applications = gu.Applications.Select(gua => gua.Id).ToList()
-            }).ToList(),
-        };
     }
 }

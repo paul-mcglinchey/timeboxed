@@ -6,12 +6,11 @@ namespace Timeboxed.Domain.Models
     {
         public Group() { }
 
-        public Group(string name, string description, string colour, List<Application> applications, List<GroupUser> groupUsers, Guid userId)
+        public Group(string name, string description, string colour, List<GroupUser> groupUsers, Guid userId)
         {
             Name = name;
             Description = description;
             Colour = colour;
-            Applications = applications;
             GroupUsers = groupUsers;
 
             this.AddTracking(userId, true);

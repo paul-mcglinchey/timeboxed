@@ -1,7 +1,7 @@
 import { ArrowLeftIcon, TrashIcon, SquaresPlusIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { SquareIconButton, Dialog, Dropdown, SpinnerIcon, Modal, AddSessionForm } from "..";
+import { Dialog, Dropdown, SpinnerIcon, Modal, AddSessionForm } from "..";
 import { Notification } from "../../enums";
 import { useClientService, useNotification } from "../../hooks";
 import { IClientListResponse } from "../../models";
@@ -55,10 +55,8 @@ const ClientHeader = ({ client }: IClientHeaderProps) => {
   return (
     <div className="flex justify-between pb-4">
       <div className="inline-flex items-center space-x-2 dark:text-white text-gray-800 text-2xl font-semibold tracking-wider">
-        <Link to="/clients/dashboard">
-          <SquareIconButton Icon={ArrowLeftIcon} className="h-5 w-5 transform hover:scale-105 transition-all" />
-        </Link>
-        <Link to="/clients/dashboard">
+        <Link to="/clients/dashboard" className="flex items-center transform hover:scale-105 transition-all">
+          <ArrowLeftIcon className="h-5 w-5" />
           <span className="rounded-lg px-2 py-1">Clients</span>
         </Link>
         <span> / </span>

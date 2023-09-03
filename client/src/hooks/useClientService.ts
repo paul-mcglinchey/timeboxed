@@ -46,7 +46,7 @@ const useClientService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setEr
     const res = await fetch(`${endpoints.clients(groupId)}?${buildQueryString()}`, buildRequest('POST', undefined, values))
     const json: IClientsResponse = await res.json()
 
-    handleResolution(res, json, 'create', 'client', [() => updateClientsInContext(json)])
+    handleResolution(res, json, 'create', 'client')
   })
 
   const updateClient = asyncHandler(async (clientId: string, values: IClient) => {
@@ -63,7 +63,7 @@ const useClientService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setEr
     const res = await fetch(endpoints.client(clientId, groupId), buildRequest("DELETE"))
     const json: IClientsResponse = await res.json()
 
-    handleResolution(res, json, 'delete', 'client', [() => updateClientsInContext(json)])
+    handleResolution(res, json, 'delete', 'client')
   })
 
   const getSessions = asyncReturnHandler<IListResponse<ISession>>(async (clientId: string, tagId?: string) => {
@@ -110,11 +110,6 @@ const useClientService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setEr
 
     handleResolution(res, json, 'delete', 'session')
   })
-
-  const updateClientsInContext = (values: IClientsResponse) => {
-    setClients(values.items)
-    setCount(values.count)
-  }
 
   return { ...clientContext, getClient, getGroupClientTags, addClient, deleteClient, updateClient, getSessions, getSessionById, addSession, updateSession, deleteSession }
 }

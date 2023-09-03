@@ -3,9 +3,8 @@ import { useGroupService } from "../../hooks";
 import { IContextualFormProps } from "../../models";
 import { generateColour } from "../../services";
 import { groupValidationSchema } from "../../schema";
-import { ColourPicker, FormSection, FormikInput } from "../Common";
+import { ColourPicker, FormSection, FormikInput, FormikTextArea } from "../Common";
 import { FormikForm } from "../Common/FormikForm";
-import ApplicationMultiSelector from "./ApplicationMultiSelector";
 import { useState } from "react";
 import { IApiError } from "../../models/error.model";
 
@@ -21,12 +20,11 @@ const AddGroupForm = ({ ContextualSubmissionButton }: IContextualFormProps) => {
       initialValues={{
         name: '',
         description: '',
-        applications: [],
         colour: generateColour()
       }}
       validationSchema={groupValidationSchema}
       onSubmit={(values) => {
-        addGroup(values)
+        addGroup({ ...values })
       }}
     >
       {({ errors, touched, values, setFieldValue, isValid }) => (
@@ -36,13 +34,7 @@ const AddGroupForm = ({ ContextualSubmissionButton }: IContextualFormProps) => {
               <FormikInput name="name" label="Groupname" errors={errors.name} touched={touched.name} classes="flex flex-grow" />
               <ColourPicker square colour={values.colour} setColour={(pc) => setFieldValue('colour', pc)} />
             </div>
-            <FormikInput as="textarea" name="description" label="Description" errors={errors.description} touched={touched.description} />
-          </FormSection>
-          <FormSection title="Group Applications" classes="mb-6">
-            <ApplicationMultiSelector
-              formValues={values.applications}
-              setFieldValue={(a) => setFieldValue('applications', a)}
-            />
+            <FormikTextArea name="description" label="Description" errors={errors.description} touched={touched.description} />
           </FormSection>
           {ContextualSubmissionButton('Create group', undefined, isValid, isLoading)}
         </FormikForm>

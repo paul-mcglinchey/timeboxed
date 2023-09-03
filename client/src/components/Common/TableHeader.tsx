@@ -1,11 +1,16 @@
 import { IChildrenProps } from "../../models";
+import { combineClassNames } from "../../services";
 
-const TableHeader = ({ children }: IChildrenProps) => {
+interface ITableHeaderProps extends IChildrenProps {
+  hugRight?: boolean
+}
+
+const TableHeader = ({ children, hugRight = false }: ITableHeaderProps) => {
 
   return (
     <th
       scope="col"
-      className="py-3 px-6 text-xs tracking-wider text-left dark:text-gray-400 text-gray-800 uppercase"
+      className={combineClassNames("py-3 px-6 text-xs tracking-wider dark:text-gray-400 text-gray-800 uppercase", hugRight ? "text-right" : "text-left")}
     >
       {children}
     </th>

@@ -8,7 +8,7 @@ const sessionValidationSchema = Yup.object().shape({
   description: Yup.string()
     .max(10000, 'Too Long!'),
   sessionDate: Yup.date().min('01-01-1970'),
-  tags: Yup.array()
+  tags: Yup.array().max(5, 'A maximum of 5 tags are allowed')
 })
 
 export default sessionValidationSchema;

@@ -1,5 +1,5 @@
 import { NavMenu, SmartLink, Toolbar } from "../Common";
-import { SystemListCollectionPanel, ApplicationPanel, PermissionPanel } from ".";
+import { SystemListCollectionPanel, ApplicationPanel, PermissionPanel, GroupPanel } from ".";
 import { Navigate, PathMatch, Route, Routes } from "react-router";
 import { IChildrenProps } from "../../models";
 import { combineClassNames } from "../../services";
@@ -14,11 +14,13 @@ const AdminPanel = () => {
           <TabLink to="lists">Lists</TabLink>
           <TabLink to="applications">Applications</TabLink>
           <TabLink to="permissions">Permissions</TabLink>
+          <TabLink to="groups">Groups</TabLink>
         </div>
         <Routes>
           <Route path="lists" element={<SystemListCollectionPanel />} />
           <Route path="applications" element={<ApplicationPanel />} />
           <Route path="permissions" element={<PermissionPanel />} />
+          <Route path="groups" element={<GroupPanel />} />
           <Route path="/" element={<Navigate to="lists" />} />
         </Routes>
       </div>

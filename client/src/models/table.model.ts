@@ -1,9 +1,14 @@
 export interface ITableHeader {
-  headers: Array<{
-    name: string, value?: string, interactive?: boolean
-  }>
+  headers: ITableHeaderItem[]
 }
 
 export interface ITable  {
   isLoading: boolean
+}
+
+export interface ITableHeaderItem {
+  name: string,
+  value?: string,
+  interactive?: boolean,
+  hugRight?: boolean
 }

@@ -20,7 +20,7 @@ namespace Timeboxed.Core.AccessControl.Services
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IConfiguration configuration;
         private Guid? userId;
-        private User user;
+        private User? user;
 
         public HttpAuthenticator(ILogger<HttpAuthenticator> logger, TimeboxedContext context, JwtSecurityTokenHandler handler, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
@@ -31,7 +31,9 @@ namespace Timeboxed.Core.AccessControl.Services
             this.configuration = configuration;
         }
 
-        public Guid UserId => this.userId ?? throw new NotSupportedException("User ID cannot be used before authentication");
+        public Guid UserId => this.userId ?? throw new NotSupportedException("User ID cannot be accessed before authentication");
+
+        public User User => this.user ?? throw new NotSupportedException("User cannot be accessed before authentication");
 
         public async Task<bool> AuthenticateAsync()
         {

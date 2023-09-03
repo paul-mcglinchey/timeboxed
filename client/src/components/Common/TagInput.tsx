@@ -3,25 +3,44 @@ import { InputLabel, TagButton } from "."
 import { ITag } from "../../models"
 import { combineClassNames } from "../../services"
 import { v4 as uuid } from 'uuid'
+import { FieldHookConfig, useField } from "formik"
 
 interface ITagInputProps {
+  name: string
   tags: ITag[]
   availableTags: ITag[]
-  onChange: (tag: ITag[]) => void
+  update: (tags: ITag[]) => void
   label: string
   disabled?: boolean
+  errors: any,
+  touched: any
 }
 
-const TagInput = ({ tags, availableTags, onChange, label, disabled = false }: ITagInputProps) => {
+const TagInput = ({
+  name,
+  tags,
+  availableTags,
+  update,
+  label,
+  errors,
+  touched,
+  disabled = false
+}: ITagInputProps & FieldHookConfig<string>) => {
+  const [field, meta, helpers] = useField(name)
 
   const [tagsValue, setTagsValue] = useState<string | null>(null)
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    touch()
+    setTagsValue(e.target.value)
+  }
 
   const handleTagInputKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault()
       updateTags()
     }
-  }, [onChange, tags, tagsValue, availableTags])
+  }, [update, tags, tagsValue, availableTags])
 
   const updateTags = () => {
     let value = tagsValue?.trim()
@@ -39,16 +58,28 @@ const TagInput = ({ tags, availableTags, onChange, label, disabled = false }: IT
       }
 
       setTagsValue(null)
-    } 
+    }
   }
 
   const addTag = (tag: ITag) => {
-    onChange([...tags, tag])
+    touch()
+    update([...tags, tag])
+  }
+
+  const removeTag = (tag: ITag) => {
+    touch()
+    update(tags.filter(t => t.id !== tag.id))
+  }
+
+  const touch = () => {
+    if (!meta.touched) {
+      helpers.setTouched(true)
+    }
   }
 
   const filteredTags: ITag[] = availableTags
-    .filter(at => 
-      (at.value.toLowerCase().includes(tagsValue?.toLowerCase() ?? '') &&
+    .filter(at =>
+    (at.value.toLowerCase().includes(tagsValue?.toLowerCase() ?? '') &&
       (!tags.map(t => t.id).includes(at.id))))
     .slice(0, 5)
 
@@ -61,20 +92,20 @@ const TagInput = ({ tags, availableTags, onChange, label, disabled = false }: IT
   }, [handleTagInputKeyDown])
 
   return (
-    <div className="relative mt-8 gap-y-2 flex flex-col">
+    <div className="relative mt-10 gap-y-2 flex flex-col">
       <div className={combineClassNames(
         "flex border-b dark:border-gray-300/20 border-gray-800/20"
       )}>
         <div className="flex items-center gap-1 flex-wrap">
           {tags.map(tag => {
             return (
-              <TagButton key={tag.id} tag={tag} onClick={() => onChange(tags.filter(t => t.id !== tag.id))} />
+              <TagButton key={tag.id} tag={tag} onClick={() => removeTag(tag)} />
             )
           })}
           <input
             id="tag-input"
             className={combineClassNames(
-              "shrink placeholder-transparent h-10 px-1 peer min-w-0",
+              "placeholder-transparent h-8 px-1 peer flex-1 min-w-0",
               "bg-transparent",
               "focus-visible:outline-none",
               "autofill:shadow-fill-gray-700 autofill:text-fill-gray-100"
@@ -83,8 +114,17 @@ const TagInput = ({ tags, availableTags, onChange, label, disabled = false }: IT
             placeholder={label}
             disabled={disabled}
             value={tagsValue ?? ''}
-            onChange={(e) => setTagsValue(e.target.value)}
+            onChange={(e) => handleChange(e)}
           />
+          {touched && errors && (
+            <span
+              className={combineClassNames(
+                "absolute -top-5 right-1 text-sm font-semibold text-rose-500 transition-all pointer-events-none"
+              )}
+            >
+              {errors}
+            </span>
+          )}
         </div>
         <InputLabel
           htmlFor="tag-input"
@@ -95,7 +135,7 @@ const TagInput = ({ tags, availableTags, onChange, label, disabled = false }: IT
       <div className="flex gap-1 items-center">
         <span className="text-sm">Suggested tags: </span>
         {filteredTags.map((tag: ITag) => (
-          <TagButton key={tag.id} tag={tag} onClick={() => onChange([...tags, tag])} tagSize="small" />
+          <TagButton key={tag.id} tag={tag} onClick={() => addTag(tag)} tagSize="small" />
         ))}
       </div>
     </div>

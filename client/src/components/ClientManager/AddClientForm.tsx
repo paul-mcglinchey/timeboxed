@@ -7,7 +7,11 @@ import { useState } from "react";
 import { IApiError } from "../../models/error.model";
 import { FormikForm } from "../Common/FormikForm";
 
-const AddClientForm = ({ ContextualSubmissionButton }: IContextualFormProps) => {
+interface IAddClientFormProps extends IContextualFormProps {
+  submissionAction: () => Promise<void>
+}
+
+const AddClientForm = ({ submissionAction, ContextualSubmissionButton }: IAddClientFormProps) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<IApiError>()
@@ -22,8 +26,9 @@ const AddClientForm = ({ ContextualSubmissionButton }: IContextualFormProps) => 
         primaryEmailAddress: ''
       }}
       validationSchema={addClientValidationSchema}
-      onSubmit={(values, actions) => {
-        addClient(values)
+      onSubmit={async (values, actions) => {
+        await addClient(values)
+        await submissionAction()
         actions.resetForm()
       }}
     >

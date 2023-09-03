@@ -58,6 +58,9 @@ namespace Timeboxed.Api
 
             builder.Services.AddTransient<IGroupContextProvider, GroupContextProvider>();
             builder.Services.AddTransient<IUserContextProvider, UserContextProvider>();
+
+            // Admin services
+            builder.Services.AddTransient<IAdminGroupService, AdminGroupService>();
         }
 
         private void ConfigureNewtonsoft()

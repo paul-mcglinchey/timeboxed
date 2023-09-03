@@ -3,12 +3,11 @@ import { useGroupService } from "../../hooks";
 import { IContextualFormProps, IGroup } from "../../models";
 import { generateColour } from "../../services";
 import { groupValidationSchema } from "../../schema";
-import { ColourPicker, FormSection, Modal, FormikInput, Button, SpinnerLoader } from "../Common";
+import { ColourPicker, FormSection, Modal, FormikInput, Button, SpinnerLoader, FormikTextArea } from "../Common";
 import { useEffect, useState } from "react";
 import { FormikForm } from "../Common/FormikForm";
 import { IApiError } from "../../models/error.model";
 
-import ApplicationMultiSelector from "./ApplicationMultiSelector";
 import UserInvites from "./UserInvites";
 import GroupUserEntry from "./GroupUserEntry";
 
@@ -41,12 +40,11 @@ const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFo
           initialValues={{
             name: group.name || '',
             description: group.description || '',
-            applications: group.applications || [],
             colour: group.colour || generateColour()
           }}
           validationSchema={groupValidationSchema}
           onSubmit={(values) => {
-            updateGroup(values, group.id)
+            updateGroup({ ...group, ...values }, group.id)
           }}
         >
           {({ errors, touched, values, setFieldValue, isValid }) => (
@@ -56,13 +54,7 @@ const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFo
                   <FormikInput name="name" label="Groupname" errors={errors.name} touched={touched.name} classes="flex flex-grow" />
                   <ColourPicker square colour={values.colour} setColour={(pc) => setFieldValue('colour', pc)} />
                 </div>
-                <FormikInput as="textarea" name="description" label="Description" errors={errors.description} touched={touched.description} />
-              </FormSection>
-              <FormSection title="Group Applications" classes="mb-6">
-                <ApplicationMultiSelector
-                  formValues={values.applications}
-                  setFieldValue={(a) => setFieldValue('applications', a)}
-                />
+                <FormikTextArea name="description" label="Description" errors={errors.description} touched={touched.description} />
               </FormSection>
               <FormSection title="Users" titleActionComponent={<Button action={toggleInviteUserOpen} content="Invite" type="button" />}>
                 {group.users

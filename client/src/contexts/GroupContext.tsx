@@ -9,6 +9,7 @@ import { IApiError } from "../models/error.model";
 import { AuthContext } from "./AuthContext";
 
 export const GroupContext = createContext<IGroupContext>({
+  fetchGroups: () => new Promise(() => {}),
   currentGroup: undefined,
   setCurrentGroupId: () => {},
   groups: [],
@@ -37,19 +38,19 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
   const { asyncHandler } = useAsyncHandler(setIsLoading)
   const isMounted = useIsMounted()
 
+  const fetchGroups = asyncHandler(async () => {
+    var res = await fetch(endpoints.groups, buildRequest())
+    var json: IListResponse<IGroup> = await res.json()
+
+    if (!res.ok && res.status < 500) return setError(await res.json())
+
+    setGroups(json.items)
+    setCount(json.count)
+  })
+
   useEffect(() => {
-    const _fetch = asyncHandler(async () => {
-      var res = await fetch(endpoints.groups, buildRequest())
-      var json: IListResponse<IGroup> = await res.json()
-
-      if (!res.ok && res.status < 500) return setError(await res.json())
-
-      setGroups(json.items)
-      setCount(json.count)
-    })
-    
     if (isMounted()) {
-      _fetch()
+      fetchGroups()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
@@ -73,6 +74,7 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
   }
 
   const contextValue = {
+    fetchGroups,
     currentGroup,
     setCurrentGroupId,
     groups,

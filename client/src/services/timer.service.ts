@@ -9,14 +9,14 @@ interface IQueue {
 }
 
 export const delay = (fn: () => void, t: number) => {
-  var queue: IQueue[] = [], self: ISelf, timer: number | null;
+  let queue: IQueue[] = [], self: ISelf, timer: number | null;
 
   const schedule = (fn: () => void, t: number) => {
     timer = setTimeout(() => {
       timer = null;
       fn();
       if (queue.length) {
-        var item = queue.shift();
+        const item = queue.shift();
         item && schedule(item.fn, item.t);
       }
     }, t)

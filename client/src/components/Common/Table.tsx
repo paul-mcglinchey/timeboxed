@@ -26,8 +26,8 @@ Table.Header = ({ headers }: ITableHeader) => {
     <thead className="dark:bg-gray-800 bg-gray-300">
       <tr>
         {headers.map((h, i) => (
-          <TableHeader key={i}>
-            <span>{h.name}</span>
+          <TableHeader key={i} hugRight={h.hugRight}>
+            {h.name}
           </TableHeader>
         ))}
       </tr>
@@ -40,15 +40,13 @@ Table.SortableHeader = ({ headers, sortField, sortDirection, setSortField, setSo
     <thead className="dark:bg-gray-800 bg-gray-300">
       <tr>
         {headers.map((h, i) => (
-          <TableHeader key={i}>
+          <TableHeader key={i} hugRight={h.hugRight}>
             {h.interactive ? (
               <TableInteractiveHeader sortField={sortField} sortDirection={sortDirection} setSortField={setSortField} setSortDirection={setSortDirection} key={i} value={h.value}>
                 {h.name}
               </TableInteractiveHeader>
             ) : (
-              <span>
-                {h.name}
-              </span>
+              h.name
             )}
           </TableHeader>
         ))}

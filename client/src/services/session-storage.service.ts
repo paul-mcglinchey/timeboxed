@@ -2,16 +2,16 @@ export const getItemInStorage = (itemName: string): string | undefined => {
   return sessionStorage.getItem(itemName) || undefined;
 }
 
-export const setItemInStorage = (itemName: string, data: any) => {
+export const setItemInStorage = (itemName: string, data: string) => {
   sessionStorage.setItem(itemName, data);
 }
 
 export const getJsonItemInStorage = (itemName: string): string | undefined => {
-  let data = sessionStorage.getItem(itemName);
+  const data = sessionStorage.getItem(itemName);
   return JSON.parse(data || "");
 }
 
-export const setJsonItemInStorage = (itemName: string, data: any) => {
+export const setJsonItemInStorage = (itemName: string, data: string) => {
   sessionStorage.setItem(itemName, JSON.stringify(data));
 }
 

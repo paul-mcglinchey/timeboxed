@@ -55,7 +55,7 @@ export const ClientProvider = ({ children }: IClientProviderProps) => {
     queryString += `pageNumber=${pageNumber}&pageSize=${pageSize}&`;
     queryString += `sortField=${sortField}&sortDirection=${sortDirection}`
 
-    if (filter.value) queryString += `${queryString.includes('?') ? '&' : '?'}${filter.name}=${filter.value}`
+    if (filter.value) queryString += `&${filter.name}=${filter.value}`
   
     return queryString;
   }, [filter, pageNumber, pageSize, sortField, sortDirection])

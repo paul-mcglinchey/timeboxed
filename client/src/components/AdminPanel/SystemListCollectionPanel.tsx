@@ -7,11 +7,12 @@ import { generateColour } from "../../services"
 import { endpoints } from "../../config"
 import { Button, Dialog, Fetch, FetchError, SpinnerIcon } from "../Common"
 import { EditableSubPanelTitle, ListItem, Panel, SubPanel, SubPanelContent } from "."
+import { IApiError } from "../../models/error.model"
 
 const SystemListCollectionPanel = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [error, setError] = useState<any>()
+  const [error, setError] = useState<IApiError | undefined>()
   const { buildRequest } = useRequestBuilderService()
   const { init, update } = useListCollectionService()
 
@@ -107,7 +108,7 @@ const SystemListCollectionPanel = () => {
                 <SpinnerIcon className="w-6 h-6" />
               ) : (
                 error ? (
-                  <FetchError error={error} isLoading={isLoading} toggleRefresh={() => {}} />
+                  <FetchError error={error} isLoading={isLoading} refetch={() => new Promise(() => {})} />
                 ) : (
                   <div className="flex justify-center p-10">
                     <button className="font-bold text-xl tracking-wider hover:text-gray-600 transition-colors" type="button" onClick={() => init()}>System list collection has not been created yet, click here to create it</button>

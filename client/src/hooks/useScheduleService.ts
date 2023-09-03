@@ -54,23 +54,23 @@ const useScheduleService = (setIsLoading: Dispatch<SetStateAction<boolean>>, set
   }
 
   const getWeek = (weekModifier: number): { first: Date, last: Date, week: Date[] } => {
-    let current = new Date();
-    let today = new Date(Date.UTC(current.getUTCFullYear(), current.getUTCMonth(), current.getUTCDate()))
+    const current = new Date();
+    const today = new Date(Date.UTC(current.getUTCFullYear(), current.getUTCMonth(), current.getUTCDate()))
     today.setDate(today.getDate() + (weekModifier * 7));
 
     // Using custom index here to ensure that the current week is not calculated off of Sunday being the first day
-    let mondayAsFirstDayIndex = [6, 0, 1, 2, 3, 4, 5];
+    const mondayAsFirstDayIndex = [6, 0, 1, 2, 3, 4, 5];
 
-    let first = subDays(today, (mondayAsFirstDayIndex[today.getDay()] || 0))
-    let last = addDays(first, 6)
+    const first = subDays(today, (mondayAsFirstDayIndex[today.getDay()] || 0))
+    const last = addDays(first, 6)
 
-    let week: Date[] = mondayAsFirstDayIndex.map((_d, i) => addDays(first, i))
+    const week: Date[] = mondayAsFirstDayIndex.map((_d, i) => addDays(first, i))
 
     return { first, last, week };
   }
 
   const getShift = (shifts: IScheduleShift[], date: Date): IScheduleShift | undefined => {
-    let dateOnly = date.toISOString().split("T")[0]
+    const dateOnly = date.toISOString().split("T")[0]
 
     return shifts.find(s => s.date === dateOnly)
   }

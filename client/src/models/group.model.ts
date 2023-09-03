@@ -1,7 +1,7 @@
 export interface IGroupRequest {
   name: string
   description: string
-  applications: number[]
+  applications?: number[]
   colour: string
 }
 

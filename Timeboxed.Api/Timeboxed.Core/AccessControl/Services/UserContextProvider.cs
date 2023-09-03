@@ -1,4 +1,5 @@
 ﻿using Timeboxed.Core.AccessControl.Interfaces;
+using Timeboxed.Domain.Models;
 
 namespace Timeboxed.Core.AccessControl.Services
 {
@@ -12,5 +13,7 @@ namespace Timeboxed.Core.AccessControl.Services
         }
 
         public Guid UserId => this.authenticator.UserId;
+
+        public User User => this.authenticator.User;
     }
 }

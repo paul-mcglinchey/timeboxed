@@ -141,7 +141,7 @@ const ListboxLabel = ({ classes, label, showLabel = false }: IListboxLabelProps)
 const ListboxButton = ({ classes, children }: IHasCustomClasses & IChildrenProps) => {
   return (
     <Listbox.Button className={combineClassNames(
-      "h-10 w-full relative py-2 pl-3 pr-10 text-left bg-gray-900 rounded focus:outline-none focus-visible:outline-blue-500 focus-visible:outline-1",
+      "h-10 w-full relative py-2 pl-3 pr-10 text-left rounded focus:outline-none focus-visible:outline-blue-500 focus-visible:outline-1",
       classes
     )}>
       <span className="block truncate tracking-wider">
@@ -160,7 +160,7 @@ const ListboxButton = ({ classes, children }: IHasCustomClasses & IChildrenProps
 const ListboxOptions = forwardRef(({ classes, children }: IHasCustomClasses & IChildrenProps, ref: Ref<HTMLElement> | undefined) => {
   return (
     <Listbox.Options ref={ref} className={combineClassNames(
-      "w-full focus:outline-none absolute origin-top-right right-0 z-50 mt-1 overflow-auto rounded-md py-1 text-base ring-1 ring-black ring-opacity-5",
+      "focus:outline-none absolute origin-top-right right-0 z-50 mt-1 overflow-auto rounded-md py-1 text-base ring-1 ring-black ring-opacity-5",
       "bg-gray-200 dark:bg-slate-800",
       classes
     )}>

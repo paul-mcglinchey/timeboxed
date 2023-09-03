@@ -3,6 +3,7 @@ import { IGroup, IGroupUser } from "../../models"
 import { ILoadable } from "../../models/loadable.model"
 
 export interface IGroupContext extends ILoadable {
+  fetchGroups: () => Promise<void>
   currentGroup: IGroup | undefined
   setCurrentGroupId: Dispatch<SetStateAction<string | undefined>>
   groups: IGroup[]

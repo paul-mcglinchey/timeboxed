@@ -2,10 +2,10 @@ import { Formik } from 'formik';
 import { sessionValidationSchema } from '../../schema';
 import { IContextualFormProps, IGroupClientTagResponse, ISession } from '../../models';
 import { useClientService } from '../../hooks';
-import { CustomDate, FormikInput, TagInput } from '..';
+import { FormikInput, FormikTextArea, TagInput } from '..';
 import { IApiError } from '../../models/error.model';
 import { FormikForm } from '../Common/FormikForm';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface IUpdateSessionFormProps {
   selectedSession: ISession
@@ -21,20 +21,20 @@ const UpdateSessionForm = ({ selectedSession, submissionAction, ContextualSubmis
 
   const { getSessionById, updateSession, getGroupClientTags } = useClientService(setIsLoading, setError)
 
-  const fetchSession = async () => {
+  const fetchSession = useCallback(async () => {
     let session = await getSessionById(selectedSession.clientId, selectedSession.id)
     setSession(session)
-  }
+  }, [selectedSession])
 
-  const fetchTags = async () => {
+  const fetchTags = useCallback(async () => {
     let tags = await getGroupClientTags()
     setGroupClientTags(tags)
-  }
+  }, [])
 
   useEffect(() => {
     fetchTags()
     fetchSession()
-  }, [selectedSession])
+  }, [fetchTags, fetchSession, selectedSession])
 
   return (
     <>
@@ -55,9 +55,9 @@ const UpdateSessionForm = ({ selectedSession, submissionAction, ContextualSubmis
           {({ values, errors, touched, dirty, isValid, setFieldValue }) => (
             <FormikForm error={error}>
               <FormikInput name="title" label="Title" errors={errors.title} touched={touched.title} />
-              <FormikInput as="textarea" name="description" label="Description" errors={errors.description} touched={touched.description} />
-              <FormikInput id="sessiondate" type="date" name="sessionDate" label="Session Date" errors={errors.sessionDate} touched={touched.sessionDate} component={CustomDate} />
-              <TagInput tags={values.tags} availableTags={groupClientTags} label="Tags" onChange={(tags) => setFieldValue('tags', tags)} />
+              <FormikTextArea name="description" label="Description" errors={errors.description} touched={touched.description} />
+              <FormikInput id="sessiondate" type="date" name="sessionDate" label="Session Date" errors={errors.sessionDate} touched={touched.sessionDate} />
+              <TagInput name="tags" tags={values.tags} availableTags={groupClientTags} label="Tags" update={(tags) => setFieldValue('tags', tags)} errors={errors.tags} touched={touched.tags} />
               {ContextualSubmissionButton('Save changes', undefined, dirty && isValid, isLoading)}
             </FormikForm>
           )}

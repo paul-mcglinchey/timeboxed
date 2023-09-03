@@ -15,10 +15,19 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backg
 
   const [filterValue, setFilterValue] = useState<string | null>(null)
 
+  const clearFilter = () => {
+    setFilterValue(null)
+    setFilter(f => ({ ...f, value: null }))
+  }
+
   const updateFilterField = (filterField: IFilterableField) => {
     setFilter(f => ({ ...f, ...filterField }))
   }
 
+  const handleSearchBarOnBlur = () => {
+    setFilter(f => ({ ...f, value: filterValue }))
+  }
+  
   const handleWindowKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.ctrlKey && e.key === 'k') {
       e.preventDefault()
@@ -59,17 +68,18 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backg
           placeholder="Search entries..."
           value={filterValue ?? ''}
           onChange={(e) => setFilterValue(e.target.value)}
+          onBlur={handleSearchBarOnBlur}
           className={combineClassNames(
-            "flex flex-1 py-2 px-4 pl-0 sm:pl-20 focus:sm:pl-0 focus-visible:outline-none focus:outline-none caret-blue-500 text-gray-400 peer rounded-r-md sm:rounded-none border-0 focus:border-0",
+            "flex flex-1 py-2 px-4 pl-0 sm:pl-20 focus:sm:pl-0 focus-visible:outline-none focus:outline-none caret-blue-500 dark:text-gray-400 text-gray-800 peer rounded-r-md sm:rounded-none border-0 focus:border-0 align-middle",
             !initialFilterField && filterableFields.length === 0 && "rounded-r-md",
             backgroundColorClasses
           )}
         />
-        <div className="absolute hidden sm:block p-1 top-2 font-bold uppercase dark:text-white text-gray-900 text-xs rounded-md transform origin-left peer-focus:scale-x-0 transition-transform select-none">
+        <div className="absolute hidden sm:block p-1 top-2 font-bold uppercase dark:text-white text-gray-500 text-xs rounded-md transform origin-left peer-focus:scale-x-0 transition-transform select-none">
           Ctrl + K
         </div>
         {filterValue && (
-          <button onClick={() => setFilterValue(null)} className="absolute right-2 top-3 focus:outline outline-1 outline-offset-1 outline-blue-500 rounded text-gray-500">
+          <button onClick={clearFilter} className="absolute right-2 top-3 focus:outline outline-1 outline-offset-1 outline-blue-500 rounded text-gray-500">
             <XMarkIcon className="w-4 h-4" />
           </button>
         )}
@@ -81,7 +91,7 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backg
           label="Searchable fields"
           classes="hidden sm:block"
           buttonClasses="dark:bg-gray-800 bg-gray-300 dark:hover:bg-gray-700 hover:bg-gray-400 transition-colors p-4 rounded-none rounded-r-md"
-          optionsClasses="w-40"
+          optionsClasses="w-auto"
           onUpdate={(item) => updateFilterField({ label: item.label, name: item.value })}
         />
       )}

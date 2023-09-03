@@ -32,6 +32,13 @@ const useGroupService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setErr
     handleResolution(res, json, 'update', 'group', [() => updateGroupInContext(groupId, json)])
   })
 
+  const adminUpdateGroup = asyncHandler(async (values: IGroupRequest, groupId: string) => {
+    const res = await fetch(endpoints.admin.group(groupId), buildRequest('PUT', undefined, values))
+    if (!res.ok && res.status < 500) return setError(await res.json())
+
+    handleResolution(res, null, 'update', 'group')
+  })
+
   const deleteGroup = asyncHandler(async (groupId: string | undefined) => {
     if (!groupId) throw new Error('Group ID not set')
     
@@ -57,7 +64,7 @@ const useGroupService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setErr
     setGroups(groups => groups.map(g => g.id === groupId ? values : g))
   }
 
-  return { ...groupContext, addGroup, updateGroup, deleteGroup }
+  return { ...groupContext, addGroup, updateGroup, adminUpdateGroup, deleteGroup }
 }
 
 export default useGroupService

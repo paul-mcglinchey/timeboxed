@@ -36,12 +36,14 @@ namespace Timeboxed.Core.FunctionWrappers
             List<TPermission> requiredPermissions,
             Func<Task<ActionResult>> implementation,
             CancellationToken cancellationToken,
-            [CallerMemberName] string functionName = null) => (await this.ExecuteAsync<object>(requiredPermissions, async () => await implementation(), cancellationToken, functionName)).Result;
+            bool adminRequired = false,
+            [CallerMemberName] string functionName = null) => (await this.ExecuteAsync<object>(requiredPermissions, async () => await implementation(), cancellationToken, adminRequired, functionName)).Result;
 
         public async Task<ActionResult<TResult>> ExecuteAsync<TResult>(
             List<TPermission> requiredPermissions,
             Func<Task<ActionResult<TResult>>> implementation,
             CancellationToken cancellationToken,
+            bool adminRequired = false,
             [CallerMemberName] string functionName = null)
         {
             try
@@ -66,7 +68,7 @@ namespace Timeboxed.Core.FunctionWrappers
 
             try
             {
-                if (!await this.userAuthorizationService.IsAuthorised(requiredPermissions))
+                if (!await this.userAuthorizationService.IsAuthorised(requiredPermissions, adminRequired))
                 {
                     this.logger.LogDebug("401: Unable to authorize");
                     return new StatusCodeResult((int)HttpStatusCode.Unauthorized);

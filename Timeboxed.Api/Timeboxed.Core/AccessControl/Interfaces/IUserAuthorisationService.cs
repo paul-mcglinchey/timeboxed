@@ -2,6 +2,6 @@
 {
     public interface IUserAuthorisationService<TPermission>
     {
-        Task<bool> IsAuthorised(List<TPermission> requiredPermissions);
+        Task<bool> IsAuthorised(List<TPermission> requiredPermissions, bool adminRequired = false);
     }
 }

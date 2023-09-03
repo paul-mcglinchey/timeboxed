@@ -1,19 +1,23 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { dashboardLinks } from "../../config";
-import { NavMenu, Toolbar } from "../Common";
-import { useApplicationService } from "../../hooks";
+import { NavMenu, SpinnerLoader, Toolbar } from "../Common";
+import { useApplicationService, useGroupService } from "../../hooks";
 import { IApplication } from "../../models";
 
 import GroupPrompter from "../Groups/GroupPrompter";
 import GroupModal from "../Groups/GroupModal";
 import AppCard from "./AppCard";
-import { AuthContext, GroupContext } from "../../contexts";
+import { AuthContext } from "../../contexts";
+import { IApiError } from "../../models/error.model";
 
 const Dashboard = () => {
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<IApiError | undefined>()
+
   const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
 
   const { user } = useContext(AuthContext)
-  const { count, currentGroup } = useContext(GroupContext)
+  const { fetchGroups, count, currentGroup } = useGroupService(setLoading, setError)
   const { getApplication } = useApplicationService()
 
   const getUserAccessibleApps = (): IApplication[] => {
@@ -27,6 +31,10 @@ const Dashboard = () => {
     return userAccessibleApps.map(uaa => getApplication(uaa)).filter((a): a is IApplication => !!a)
   }
 
+  useEffect(() => {
+    fetchGroups()
+  }, [])
+  
   return (
     <>
       <NavMenu links={dashboardLinks} />
@@ -48,9 +56,15 @@ const Dashboard = () => {
             </div>
           </>
         ) : (
-          <>
-            <GroupPrompter action={() => setAddGroupOpen(true)} />
-          </>
+          loading ? (
+            <SpinnerLoader />
+          ) : (
+            error ? (
+              <span>{error.message}</span>
+            ) : (
+              <GroupPrompter action={() => setAddGroupOpen(true)} />
+            )
+          )
         )}
       </div>
       <GroupModal

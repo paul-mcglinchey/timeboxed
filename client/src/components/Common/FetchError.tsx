@@ -3,10 +3,10 @@ import { SpinnerIcon } from "..";
 interface IFetchErrorProps {
   error: { message?: string } | undefined,
   isLoading: boolean,
-  toggleRefresh: () => void
+  refetch: () => Promise<void>
 }
 
-const FetchError = ({ error, isLoading, toggleRefresh }: IFetchErrorProps) => {
+const FetchError = ({ error, isLoading, refetch }: IFetchErrorProps) => {
 
   return (
     <>
@@ -22,7 +22,7 @@ const FetchError = ({ error, isLoading, toggleRefresh }: IFetchErrorProps) => {
           </div>
           <div className="md:px-4 py-4">
             <span>We ran into a problem fetching your data, </span>
-            <button onClick={() => toggleRefresh()} className="font-bold text-red-300 hover:text-red-500">
+            <button onClick={refetch} className="font-bold text-red-300 hover:text-red-500">
               try again?
             </button>
           </div>
