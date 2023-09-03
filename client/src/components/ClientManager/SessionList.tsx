@@ -3,7 +3,7 @@ import { SessionTableRow } from ".";
 import { useClientService } from "../../hooks";
 import { IClient, ISession } from "../../models";
 import { IApiError } from "../../models/error.model";
-import { SearchBar, SpinnerLoader, Table } from "../Common";
+import { SpinnerLoader, Table } from "../Common";
 
 interface ISessionListProps {
   client: IClient
@@ -23,11 +23,9 @@ const SessionList = ({ client }: ISessionListProps) => {
   const [count, setCount] = useState<number>(0)
   const [sessions, setSessions] = useState<ISession[]>([])
 
-  const [tagIdFilter, setTagIdFilter] = useState<string | undefined>()
-
   const { getSessions } = useClientService(setIsLoading, setError)
   
-  const fetchSessions = async () => {
+  const fetchSessions = async (tagIdFilter?: string | undefined) => {
     let response = await getSessions(client.id, tagIdFilter)
     setSessions(response.items)
     setCount(response.count)
@@ -35,13 +33,12 @@ const SessionList = ({ client }: ISessionListProps) => {
 
   useEffect(() => {
     fetchSessions()
-  }, [tagIdFilter])
+  }, [])
 
   return (
     <>
       {count > 0 ? (
         <div className="flex flex-col flex-grow space-y-4">
-          <SearchBar setFilter={value => setTagIdFilter(value)} />
           <Table isLoading={isLoading}>
             <Table.Header headers={headers} />
             <Table.Body>
