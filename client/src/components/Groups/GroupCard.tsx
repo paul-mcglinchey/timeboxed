@@ -34,6 +34,11 @@ const GroupCard = ({ g }: IGroupCardProps) => {
     updatePreferences({ defaultGroup: isDefaultGroup() ? undefined : g.id })
   }
 
+  const handleDelete = async () => {
+    deleteGroup(g.id)
+    setDeleteGroupOpen(false)
+  }
+
   useEffect(() => {
     if (error) addNotification(error.message, Notification.Error) 
   }, [error, addNotification])
@@ -68,7 +73,7 @@ const GroupCard = ({ g }: IGroupCardProps) => {
       <Dialog
         isOpen={deleteGroupOpen}
         close={() => setDeleteGroupOpen(false)}
-        positiveActions={[() => deleteGroup(g.id), () => setDeleteGroupOpen(false)]}
+        positiveAction={handleDelete}
         title="Delete group"
         description="This action will delete the group for all users"
         content="If you choose to continue you and all other users of this group will no longer have access to it or any of it's application data"

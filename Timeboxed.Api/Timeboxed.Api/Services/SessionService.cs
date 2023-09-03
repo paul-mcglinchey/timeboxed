@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace Timeboxed.Api.Services
             this.groupContextProvider = groupContextProvider;
         }
 
-        public async Task<ListResponse<SessionResponse>> GetClientSessionsAsync(Guid clientId, CancellationToken cancellationToken)
+        public async Task<ListResponse<SessionResponse>> GetClientSessionsAsync(Guid clientId, GetSessionsRequest request, CancellationToken cancellationToken)
         {
             var sessionsQuery = this.context.Sessions
                 .Where(s => Guid.Equals(s.ClientId, clientId))
@@ -38,8 +39,13 @@ namespace Timeboxed.Api.Services
                     Title = s.Title,
                     Description = s.Description,
                     SessionDate = s.SessionDate,
-                    Tags = s.Tags.Select(t => t.GroupClientTag.Value).ToList(),
+                    Tags = s.Tags.Select(t => new GroupClientTagResponse { Id = t.GroupClientTagId, Value = t.GroupClientTag.Value }).ToList(),
                 });
+
+            if (request.TagId != null)
+            {
+                sessionsQuery = sessionsQuery.Where(s => s.Tags.Any(t => t.Id == request.TagId));    
+            } 
 
             return new ListResponse<SessionResponse>
             {
@@ -58,13 +64,14 @@ namespace Timeboxed.Api.Services
                     Id = s.Id,
                     Title = s.Title,
                     Description = s.Description,
-                    Tags = s.Tags.Select(t => t.GroupClientTag.Value ).ToList()
+                    SessionDate = s.SessionDate,
+                    Tags = s.Tags.Select(t => new GroupClientTagResponse { Id = t.GroupClientTagId, Value = t.GroupClientTag.Value }).ToList(),
                 })
                 .SingleOrDefaultAsync(cancellationToken)
             ?? throw new EntityNotFoundException($"Session {sessionId} not found");
         }
 
-        public async Task<SessionResponse> AddClientSessionAsync(Guid clientId, AddSessionRequest request, CancellationToken cancellationToken)
+        public async Task<SessionResponse> AddClientSessionAsync(Guid clientId, AddUpdateSessionRequest request, CancellationToken cancellationToken)
         {
             var client = await this.context.Clients
                 .Where(c => c.Id == clientId)
@@ -78,15 +85,28 @@ namespace Timeboxed.Api.Services
                 clientId,
                 this.userContextProvider.UserId);
 
-            session.Tags = request.Tags.Select(t => new SessionTag 
-            { 
-                GroupClientTag = new GroupClientTag 
-                { 
-                    Id = t.GroupClientTagId ?? Guid.NewGuid(),
-                    GroupId = this.groupContextProvider.GroupId,
-                    Value = t.Value 
-                } 
-            }).ToList();
+            // get existing tags
+            var existingTags = await this.context.GroupClientTags
+                .Where(gct => request.Tags.Select(t => t.Id).Contains(gct.Id))
+                .ToListAsync(cancellationToken);
+
+            var existingTagIds = existingTags.Select(t => t.Id).ToList();
+
+            // add new tags to the context
+            var newTags = request.Tags.Where(t => !existingTagIds.Contains(t.Id)).ToList();
+            this.context.GroupClientTags.AddRange(newTags.Select(nt => new GroupClientTag 
+            {
+                Id = nt.Id,
+                GroupId = this.groupContextProvider.GroupId,
+                Value = nt.Value,
+            }));
+
+            // add all tags (existing and new) to the session
+            var tags = new List<SessionTag>();
+            tags.AddRange(existingTags.Select(et => new SessionTag { GroupClientTag = et, SessionId = session.Id }));
+            tags.AddRange(newTags.Select(nt => new SessionTag { GroupClientTagId = nt.Id, SessionId = session.Id }));
+
+            session.Tags = tags;
 
             this.context.Sessions.Add(session);
             await this.context.SaveChangesAsync(cancellationToken);
@@ -94,26 +114,43 @@ namespace Timeboxed.Api.Services
             return session;
         }
 
-        public async Task<SessionResponse> UpdateClientSessionAsync(Guid sessionId, UpdateSessionRequest request, CancellationToken cancellationToken)
+        public async Task<SessionResponse> UpdateClientSessionAsync(Guid sessionId, AddUpdateSessionRequest request, CancellationToken cancellationToken)
         {
             var session = await this.context.Sessions
                 .Where(s => s.Id == sessionId)
                 .Include(s => s.Tags)
+                    .ThenInclude(t => t.GroupClientTag)
                 .SingleOrDefaultAsync(cancellationToken)
             ?? throw new EntityNotFoundException($"Session {sessionId} not found");
 
             session.Title = request.Title;
             session.Description = request.Description;
             session.SessionDate = request.SessionDate;
-            session.Tags = request.Tags.Select(t => new SessionTag
+            
+            // get existing tags
+            var existingTags = await this.context.GroupClientTags
+                .Where(gct => request.Tags.Select(t => t.Id).Contains(gct.Id))
+                .ToListAsync(cancellationToken);
+            var existingTagIds = existingTags.Select(et => et.Id);
+
+            // add new tags to the context
+            var newTags = request.Tags.Where(t => !existingTagIds.Contains(t.Id)).ToList();
+            this.context.GroupClientTags.AddRange(newTags.Select(nt => new GroupClientTag 
             {
-                GroupClientTag = new GroupClientTag
-                {
-                    Id = t.GroupClientTagId ?? Guid.NewGuid(),
-                    GroupId = this.groupContextProvider.GroupId,
-                    Value = t.Value
-                }
-            }).ToList();
+                Id = nt.Id,
+                GroupId = this.groupContextProvider.GroupId,
+                Value = nt.Value,
+            }));
+
+            session.Tags.Clear();
+
+            // add all tags (existing and new) to the session
+            var tags = new List<SessionTag>();
+            tags.AddRange(existingTags.Select(et => new SessionTag { GroupClientTag = et, SessionId = session.Id }));
+            tags.AddRange(newTags.Select(nt => new SessionTag { GroupClientTagId = nt.Id, SessionId = session.Id }));
+            
+            session.Tags = tags;
+
             session.AddTracking(this.userContextProvider.UserId);
 
             await this.context.SaveChangesAsync(cancellationToken);

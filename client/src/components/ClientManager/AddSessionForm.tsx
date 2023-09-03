@@ -1,25 +1,36 @@
 import { Formik } from 'formik';
 import { sessionValidationSchema } from '../../schema';
-import { IClientListResponse, IContextualFormProps } from '../../models';
+import { IClientListResponse, IContextualFormProps, IGroupClientTagResponse } from '../../models';
 import { useClientService } from '../../hooks';
 import { CustomDate, FormikInput, TagInput } from '..';
 import { IApiError } from '../../models/error.model';
 import { FormikForm } from '../Common/FormikForm';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const currentDate = new Date();
 const currentDateAsString = currentDate.toISOString().split('T')[0];
 
-interface IAddSessionProps {
+interface IAddSessionFormProps {
   client: IClientListResponse
+  submissionAction?: () => Promise<void> | void
 }
 
-const AddSessionForm = ({ client, ContextualSubmissionButton }: IAddSessionProps & IContextualFormProps) => {
+const AddSessionForm = ({ client, submissionAction, ContextualSubmissionButton }: IAddSessionFormProps & IContextualFormProps) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<IApiError>()
+  const [clientGroupTags, setGroupClientTags] = useState<IGroupClientTagResponse[]>([])
 
-  const { addSession } = useClientService(setIsLoading, setError)
+  const { addSession, getGroupClientTags } = useClientService(setIsLoading, setError)
+
+  const fetchTags = async () => {
+    let tags = await getGroupClientTags()
+    setGroupClientTags(tags)
+  }
+
+  useEffect(() => {
+    fetchTags()
+  }, [])
 
   return (
     <Formik
@@ -30,18 +41,18 @@ const AddSessionForm = ({ client, ContextualSubmissionButton }: IAddSessionProps
         tags: []
       }}
       validationSchema={sessionValidationSchema}
-      onSubmit={(values, { resetForm }) => {
-        addSession(client.id, { ...values });
-        resetForm();
+      onSubmit={async (values) => {
+        await addSession(client.id, { ...values });
+        submissionAction && await submissionAction()
       }}
     >
       {({ values, errors, touched, dirty, isValid, setFieldValue }) => (
         <FormikForm error={error}>
           <FormikInput name="title" label="Title" errors={errors.title} touched={touched.title} />
           <FormikInput as="textarea" name="description" label="Description" errors={errors.description} touched={touched.description} />
-          <FormikInput type="date" name="sessionDate" label="Session Date" errors={errors.sessionDate} touched={touched.sessionDate} component={CustomDate} />
-          <TagInput tags={values.tags} label="Tags" onChange={(tags) => setFieldValue('tags', tags)} />
-          {ContextualSubmissionButton('Add session', undefined, dirty && isValid, undefined, isLoading)}
+          <FormikInput id="sessiondate" type="date" name="sessionDate" label="Session Date" errors={errors.sessionDate} touched={touched.sessionDate} component={CustomDate} />
+          <TagInput tags={values.tags} availableTags={clientGroupTags} label="Tags" onChange={(tags) => setFieldValue('tags', tags)} />
+          {ContextualSubmissionButton('Add session', undefined, dirty && isValid, isLoading)}
         </FormikForm>
       )}
     </Formik>

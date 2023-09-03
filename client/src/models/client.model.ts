@@ -1,6 +1,6 @@
-import { ISession, ITracking } from "."
+import { ITracking } from "."
 
-export interface IClient extends ITracking {
+export interface IClient extends IClientListResponse {
   id: string
   firstName: string | null,
   middleNames: string | string[] | null,
@@ -16,7 +16,6 @@ export interface IClient extends ITracking {
   country: string | null,
   postCode: string | null,
   birthDate: string | null
-  sessions: ISession[]
   colour: string
 }
 
@@ -44,9 +43,9 @@ export interface IUpdateClientRequest {
 
 export interface IClientListResponse extends ITracking {
   id: string
-  firstName: string
-  lastName: string
-  primaryEmailAddress: string
+  firstName: string | null
+  lastName: string | null
+  primaryEmailAddress: string | null
   sessions: string[]
   colour: string
 }
@@ -58,4 +57,9 @@ export interface IClientsResponse {
 
 export interface IClientResponse {
   client: IClient
+}
+
+export interface IGroupClientTagResponse {
+  id: string
+  value: string
 }

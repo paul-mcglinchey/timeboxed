@@ -1,15 +1,17 @@
 import { FC } from "react"
 import { IChildrenProps, IProps } from "../../models"
 import { combineClassNames } from "../../services"
+import SpinnerIcon from "./SpinnerIcon"
 
 interface IDialogButtonProps {
-  actions: (() => void)[]
+  onClick: () => Promise<void> | void
   disabled?: boolean
   type?: "button" | "submit" | "reset"
   Icon?: FC<IProps> | null | undefined,
+  loading?: boolean | undefined
 }
 
-const DialogButton = ({ actions, disabled = false, type = "button", Icon, children }: IDialogButtonProps & IChildrenProps) => {
+const DialogButton = ({ onClick, disabled = false, type = "button", Icon, loading = false, children }: IDialogButtonProps & IChildrenProps) => {
   return (
     <button
       type={type}
@@ -20,8 +22,9 @@ const DialogButton = ({ actions, disabled = false, type = "button", Icon, childr
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2",
         disabled && "opacity-60", "dark:hover:bg-blue-700 hover:bg-blue-600 disabled:pointer-events-none"
       )}
-      onClick={() => actions.forEach(a => a())}
+      onClick={() => onClick()}
     >
+      {loading && <SpinnerIcon className="h-4 w-4 text-current mr-2 self-center" />}
       {children}
       {Icon && <Icon className="h-4 w-4 text-current ml-2"/>}
     </button>

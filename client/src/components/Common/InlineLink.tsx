@@ -13,9 +13,9 @@ const InlineLink = ({ children, color, to, isActive }: IInlineLinkProps) => {
     <Link 
       to={to} 
       className={combineClassNames(
-        "flex flex-nowrap items-center space-x-2 uppercase text-sm px-2 py-1 font-medium tracking-wider hover:bg-gray-800 rounded-lg", 
-        isActive && "bg-gray-800",
-        color  
+        "flex flex-nowrap items-center space-x-2 uppercase text-sm px-2 py-1 font-semibold tracking-wider dark:hover:bg-gray-800 hover:bg-gray-300 rounded-lg", 
+        isActive && "dark:bg-gray-800 bg-gray-300",
+        color
       )}
     >
       {children}

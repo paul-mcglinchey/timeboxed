@@ -5,7 +5,7 @@ import {
   Routes,
   useParams
 } from "react-router";
-import { ClientHeader, ClientOverview } from ".";
+import { ClientHeader, ClientOverview, SessionList } from ".";
 import { useClientService } from "../../hooks";
 import { IClient } from "../../models";
 import { IApiError } from "../../models/error.model";
@@ -38,6 +38,7 @@ const ClientPage = () => {
           <ClientHeader client={client} />
           <Routes>
             <Route path="view" element={<ClientOverview client={client} />} />
+            <Route path="sessions" element={<SessionList client={client} />} />
             <Route path="*/*" element={<Navigate to="view" />} />
           </Routes>
         </div>

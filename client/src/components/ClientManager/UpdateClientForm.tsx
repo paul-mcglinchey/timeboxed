@@ -10,9 +10,10 @@ import { IApiError } from "../../models/error.model";
 
 interface IUpdateClientFormProps {
   clientId: string
+  submissionAction?: () => Promise<void> | void
 }
 
-const UpdateClientForm = ({ clientId, ContextualSubmissionButton }: IUpdateClientFormProps & IContextualFormProps) => {
+const UpdateClientForm = ({ clientId, submissionAction, ContextualSubmissionButton }: IUpdateClientFormProps & IContextualFormProps) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<IApiError>()
@@ -51,8 +52,9 @@ const UpdateClientForm = ({ clientId, ContextualSubmissionButton }: IUpdateClien
             colour: client.colour || generateColour()
           }}
           validationSchema={updateClientValidationSchema}
-          onSubmit={(values) => {
-            updateClient(client.id, values)
+          onSubmit={async (values) => {
+            await updateClient(client.id, values)
+            submissionAction && await submissionAction()
           }}
         >
           {({ errors, touched, isValid }) => (
@@ -63,7 +65,7 @@ const UpdateClientForm = ({ clientId, ContextualSubmissionButton }: IUpdateClien
                 <FormikInput name="lastName" label="Last name" errors={errors.lastName} touched={errors.lastName} />
                 <FormikInput name="primaryEmailAddress" label="Email" errors={errors.primaryEmailAddress} touched={touched.primaryEmailAddress} />
                 <FormikInput name="primaryPhoneNumber" label="Phone number" errors={errors.primaryPhoneNumber} touched={touched.primaryPhoneNumber} />
-                <FormikInput type="date" name="birthDate" label="Date of Birth" component={CustomDate} errors={errors.birthDate} touched={touched.birthDate} />
+                <FormikInput id="birthdate" type="date" name="birthDate" label="Date of Birth" component={CustomDate} errors={errors.birthDate} touched={touched.birthDate} />
               </FormSection>
               <FormSection title="Address" expanded={addressExpanded} expanderAction={() => setAddressExpanded(!addressExpanded)}>
                 <Transition

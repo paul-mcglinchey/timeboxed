@@ -17,10 +17,10 @@ interface IDropdownProps {
 
 const Dropdown = ({ label = "Options", options = [] }: IDropdownProps) => {
   return (
-    <Menu as="div" className="relative inline-block text-left text-white w-full">
+    <Menu as="div" className="relative inline-block text-left dark:text-white text-gray-800 w-full">
       <Menu.Button className={combineClassNames(
         "flex justify-center items-center w-full rounded-md",
-        "bg-gray-800 hover:text-blue-400 transition-colours text-base font-semibold focus:outline-none focus:text-blue-500",
+        "dark:bg-gray-800 bg-gray-200 hover:text-blue-400 transition-colours text-base font-semibold focus:outline-none focus:text-blue-500",
         "px-1 py-0.5", "md:px-4"
       )}>
         <div className="hidden md:block">
@@ -40,7 +40,7 @@ const Dropdown = ({ label = "Options", options = [] }: IDropdownProps) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="z-50 flex flex-col origin-top-right absolute right-0 mt-2 rounded-md bg-gray-800 focus:outline-none">
+        <Menu.Items className="z-50 flex flex-col origin-top-right absolute right-0 mt-2 rounded dark:bg-blue-900 bg-blue-100 focus:outline-none shadow-md">
           {options.map((o: IOption, key: number) => (
             <Menu.Item key={key}>
               {({ active }) => (

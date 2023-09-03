@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Timeboxed.Data;
 
@@ -11,9 +12,10 @@ using Timeboxed.Data;
 namespace Timeboxed.Data.Migrations
 {
     [DbContext(typeof(TimeboxedContext))]
-    partial class TimeboxedContextModelSnapshot : ModelSnapshot
+    [Migration("20230902162859_NullableSessionDate")]
+    partial class NullableSessionDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

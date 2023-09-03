@@ -19,6 +19,11 @@ const EmployeeTableRow = ({ employee }: IEmployeeTableRowProps) => {
 
   const { deleteEmployee } = useEmployeeService(setIsLoading, setError)
 
+  const handleDelete = async () => {
+    deleteEmployee(employee.id)
+    setDeleteEmployeeOpen(false)
+  }
+
   return (
     <>
       {employee ? (
@@ -40,7 +45,7 @@ const EmployeeTableRow = ({ employee }: IEmployeeTableRowProps) => {
               <Dialog
                 isOpen={deleteEmployeeOpen}
                 close={() => setDeleteEmployeeOpen(false)}
-                positiveActions={[() => deleteEmployee(employee.id), () => setDeleteEmployeeOpen(false)]}
+                positiveAction={handleDelete}
                 title="Delete employee"
                 description="This action will delete the employee from the current group"
                 content="If you choose to continue you'll no longer have access to this employee in future schedules - this won't affect schedules created in the past."

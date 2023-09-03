@@ -6,7 +6,7 @@ namespace Timeboxed.Domain.Models
     {
         public Session() { }
 
-        public Session(string title, DateTime sessionDate, Guid clientId, Guid userId)
+        public Session(string title, DateTime? sessionDate, Guid clientId, Guid userId)
         {
             this.Id = Guid.NewGuid();
             this.Title = title;
@@ -28,7 +28,7 @@ namespace Timeboxed.Domain.Models
 
         public ICollection<SessionTag> Tags { get; set; } = new List<SessionTag>();
 
-        public DateTime SessionDate { get; set; }
+        public DateTime? SessionDate { get; set; }
     }
 
     public class SessionTag

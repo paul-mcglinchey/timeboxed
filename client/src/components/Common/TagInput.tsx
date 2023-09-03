@@ -1,27 +1,56 @@
 import { useCallback, useEffect, useState } from "react"
-import { InputLabel } from "."
+import { InputLabel, TagButton } from "."
+import { ITag } from "../../models"
 import { combineClassNames } from "../../services"
+import { v4 as uuid } from 'uuid'
 
 interface ITagInputProps {
-  tags: string[]
-  onChange: (tag: string[]) => void
+  tags: ITag[]
+  availableTags: ITag[]
+  onChange: (tag: ITag[]) => void
   label: string
   disabled?: boolean
 }
 
-const TagInput = ({ tags, onChange, label, disabled = false }: ITagInputProps) => {
+const TagInput = ({ tags, availableTags, onChange, label, disabled = false }: ITagInputProps) => {
 
   const [tagsValue, setTagsValue] = useState<string | null>(null)
 
   const handleTagInputKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === 'Enter') {
       e.preventDefault()
-      if (tagsValue && tagsValue.trim().length > 0) {
-        onChange([...tags, tagsValue.trim()])
-        setTagsValue(null)
-      } 
+      updateTags()
     }
-  }, [onChange, tags, tagsValue])
+  }, [onChange, tags, tagsValue, availableTags])
+
+  const updateTags = () => {
+    let value = tagsValue?.trim()
+
+    if (value && value.length > 0) {
+      // try and find the current valued tag in the existing tags
+      let existingTag = availableTags.find(at => at.value === value)
+
+      // if an existing tag was found matching the current value then use the existing value
+      // otherwise generate a new tag
+      if (existingTag) {
+        addTag(existingTag)
+      } else {
+        addTag({ id: uuid(), value: value })
+      }
+
+      setTagsValue(null)
+    } 
+  }
+
+  const addTag = (tag: ITag) => {
+    onChange([...tags, tag])
+  }
+
+  const filteredTags: ITag[] = availableTags
+    .filter(at => 
+      (at.value.toLowerCase().includes(tagsValue?.toLowerCase() ?? '') &&
+      (!tags.map(t => t.id).includes(at.id))))
+    .slice(0, 5)
 
   useEffect(() => {
     document.getElementById("tag-input")?.addEventListener('keydown', handleTagInputKeyDown)
@@ -32,36 +61,42 @@ const TagInput = ({ tags, onChange, label, disabled = false }: ITagInputProps) =
   }, [handleTagInputKeyDown])
 
   return (
-    <div className="relative mt-8">
+    <div className="relative mt-8 gap-y-2 flex flex-col">
       <div className={combineClassNames(
-        "flex border-b-2 border-gray-300/20"
+        "flex border-b dark:border-gray-300/20 border-gray-800/20"
       )}>
-        <div className="flex items-center">
-          {tags.map((tag: string, i: number) => {
+        <div className="flex items-center gap-1 flex-wrap">
+          {tags.map(tag => {
             return (
-              <button type="button" onClick={() => onChange(tags.filter(t => t !== tag))} key={i} className="inline-block mx-1 bg-blue-700 px-1 rounded">{tag}</button>
+              <TagButton key={tag.id} tag={tag} onClick={() => onChange(tags.filter(t => t.id !== tag.id))} />
             )
           })}
+          <input
+            id="tag-input"
+            className={combineClassNames(
+              "shrink placeholder-transparent h-10 px-1 peer min-w-0",
+              "bg-transparent",
+              "focus-visible:outline-none",
+              "autofill:shadow-fill-gray-700 autofill:text-fill-gray-100"
+            )}
+            type="string"
+            placeholder={label}
+            disabled={disabled}
+            value={tagsValue ?? ''}
+            onChange={(e) => setTagsValue(e.target.value)}
+          />
         </div>
-        <input
-          id="tag-input"
-          className={combineClassNames(
-            "flex flex-1 placeholder-transparent h-10 px-1 peer",
-            "bg-transparent",
-            "focus-visible:outline-none",
-            "autofill:shadow-fill-gray-700 autofill:text-fill-gray-100"
-          )}
-          type="string"
-          placeholder={label}
-          disabled={disabled}
-          value={tagsValue ?? ''}
-          onChange={(e) => setTagsValue(e.target.value)}
-        />
         <InputLabel
           htmlFor="tag-input"
           label={label}
           visibilityConditions={[tags.length === 0]}
         />
+      </div>
+      <div className="flex gap-1 items-center">
+        <span className="text-sm">Suggested tags: </span>
+        {filteredTags.map((tag: ITag) => (
+          <TagButton key={tag.id} tag={tag} onClick={() => onChange([...tags, tag])} tagSize="small" />
+        ))}
       </div>
     </div>
   )

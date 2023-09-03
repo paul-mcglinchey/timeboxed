@@ -1,16 +1,19 @@
 import { combineClassNames } from "../../services"
 
 interface IInputProps {
+  id: string | undefined
   type: string
   placeholder: string
   disabled: boolean
 }
 
-const Input = ({ type, placeholder, disabled, ...props }: IInputProps) => {
+const Input = ({ id = undefined, type, placeholder, disabled, ...props }: IInputProps) => {
   return (
     <input
+      id={id}
       className={combineClassNames(
-        "peer placeholder-transparent"
+        "peer placeholder-transparent",
+        "dark:text-gray-200 text-gray-900"
       )}
       {...props}
       type={type}

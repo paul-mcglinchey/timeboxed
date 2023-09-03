@@ -14,6 +14,7 @@ interface IClientProviderProps extends IChildrenProps {
 export const ClientContext = createContext<IClientContext>({
   clients: [],
   setClients: () => {},
+  fetchClients: () => new Promise<void>(() => {}),
   count: 0,
   setCount: () => {},
   sortField: undefined,
@@ -88,6 +89,7 @@ export const ClientProvider = ({ children }: IClientProviderProps) => {
   const contextValue = {
     clients,
     setClients,
+    fetchClients,
     count,
     setCount,
     sortField,

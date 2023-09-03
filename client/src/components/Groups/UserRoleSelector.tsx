@@ -57,7 +57,7 @@ const UserRoleSelector = ({ group, groupUser, ContextualSubmissionButton }: IUse
               />
             ))}
           </div>
-          {ContextualSubmissionButton('Update user', undefined, isValid, undefined, isLoading)}
+          {ContextualSubmissionButton('Update user', undefined, isValid, isLoading)}
         </FormikForm>
       )}
     </Formik>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Models.Requests;
@@ -12,6 +13,8 @@ namespace Timeboxed.Api.Services.Interfaces
         public Task<ListResponse<ClientListResponse>> GetClientsAsync(GetClientsRequest requestParameters, CancellationToken cancellationToken);
 
         public Task<ClientResponse> GetClientByIdAsync(Guid clientId, CancellationToken cancellationToken);
+
+        public Task<List<GroupClientTagResponse>> GetGroupClientTagsAsync(CancellationToken cancellationToken);
 
         public Task<Guid> AddClientAsync(AddClientRequest request, CancellationToken cancellationToken);
 

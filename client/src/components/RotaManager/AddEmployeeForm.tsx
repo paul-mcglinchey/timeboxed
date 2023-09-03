@@ -32,7 +32,7 @@ const AddEmployeeForm = ({ ContextualSubmissionButton }: IContextualFormProps) =
           <FormikInput name="lastName" label="Last name" errors={errors.lastName} touched={touched.lastName} />
           <FormikInput name="primaryEmailAddress" label="Email" errors={errors.primaryEmailAddress} touched={touched.primaryEmailAddress} />
 
-          {ContextualSubmissionButton('Add employee', undefined, undefined, undefined, isLoading)}
+          {ContextualSubmissionButton('Add employee', undefined, undefined, isLoading)}
         </FormikForm>
       )}
     </Formik>

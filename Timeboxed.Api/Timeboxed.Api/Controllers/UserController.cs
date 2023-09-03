@@ -10,6 +10,7 @@ using Timeboxed.Api.Models.Requests;
 using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
+using Timeboxed.Core.Controllers.ActionResults;
 using Timeboxed.Core.Extensions;
 using Timeboxed.Core.FunctionWrappers;
 using Timeboxed.Data;
@@ -54,12 +55,12 @@ namespace Timeboxed.Api.Controllers
 
                     if (request.Username == null || request.Email == null || request.Password == null)
                     {
-                        return new BadRequestObjectResult(new { message = "Fields missing from request." });
+                        return new BadRequest("Fields missing from request.");
                     }
 
                     if (await this.userService.UserExistsAsync(request.Email, request.Username, cancellationToken))
                     {
-                        return new BadRequestObjectResult(new { message = "Username or email is already in use." });
+                        return new BadRequest("Username or email is already in use.");
                     }
 
                     return new OkObjectResult(await this.userService.SignupAsync(request, cancellationToken));
@@ -78,19 +79,19 @@ namespace Timeboxed.Api.Controllers
 
                     if (request?.UsernameOrEmail == null || request?.Password == null)
                     {
-                        return new BadRequestObjectResult("Fields missing from request.");
+                        return new BadRequest("Fields missing from request.");
                     }
 
                     if (!await this.userService.UserExistsAsync(request.UsernameOrEmail, cancellationToken))
                     {
-                        return new BadRequestObjectResult("Incorrect email or username.");
+                        return new BadRequest("Incorrect email or username.");
                     }
 
                     var user = await this.userService.LoginAsync(request, cancellationToken);
 
                     return user != null
                         ? new OkObjectResult(user)
-                        : new UnauthorizedResult();
+                        : new BadRequest("Incorrect password");
                 },
                 cancellationToken);
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -32,7 +33,7 @@ namespace Timeboxed.Api.Services
 
         public async Task<ListResponse<ClientListResponse>> GetClientsAsync(GetClientsRequest requestParameters, CancellationToken cancellationToken)
         {
-            var clientQuery = this.context.Clients.Where(c => this.groupContextProvider.GroupId == c.GroupId);
+            var clientQuery = this.context.Clients.Where(c => this.groupContextProvider.GroupId == c.GroupId && !c.Deleted);
 
             clientQuery = ApplyFilter(clientQuery, requestParameters);
             clientQuery = ApplySort(clientQuery, requestParameters);
@@ -51,8 +52,14 @@ namespace Timeboxed.Api.Services
             await this.context.Clients
                 .Where(c => c.Id == clientId && c.GroupId == this.groupContextProvider.GroupId)
                 .Select(MapEFClientToResponse)
-                .SingleOrDefaultAsync() 
+                .SingleOrDefaultAsync(cancellationToken) 
             ?? throw new EntityNotFoundException($"Client {clientId} not found");
+
+        public async Task<List<GroupClientTagResponse>> GetGroupClientTagsAsync(CancellationToken cancellationToken) =>
+            await this.context.GroupClientTags
+                .Where(gct => gct.GroupId == this.groupContextProvider.GroupId)
+                .Select(gct => new GroupClientTagResponse { Id = gct.Id, Value = gct.Value })
+                .ToListAsync(cancellationToken);
 
         public async Task<Guid> AddClientAsync(AddClientRequest request, CancellationToken cancellationToken)
         {
@@ -106,7 +113,7 @@ namespace Timeboxed.Api.Services
                 .SingleOrDefaultAsync(cancellationToken)
             ?? throw new EntityNotFoundException($"Client {clientId} not found");
 
-            this.context.Clients.Remove(client);
+            client.Deleted = true;
             await this.context.SaveChangesAsync(cancellationToken);
 
             return client.Id;

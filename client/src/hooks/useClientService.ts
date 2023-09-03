@@ -1,10 +1,11 @@
-import { IClient, IClientListResponse, IClientsResponse, ISession, IUpdateSessionRequest } from "../models"
+import { IClient, IClientsResponse, IGroupClientTagResponse, ISession, IUpdateSessionRequest } from "../models"
 import { ClientContext, GroupContext } from "../contexts"
 import { endpoints } from '../config'
 import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '.'
 import { Dispatch, SetStateAction, useContext, useMemo } from "react"
 import { IClientService } from "./interfaces"
 import { IApiError } from "../models/error.model"
+import { IListResponse } from "../models/list-response.model"
 
 const useClientService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setError: Dispatch<SetStateAction<IApiError | undefined>>): IClientService => {
 
@@ -30,6 +31,15 @@ const useClientService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setEr
     return json
   }), [asyncReturnHandler, buildRequest, groupId, setError])
 
+  const getGroupClientTags = asyncReturnHandler<IGroupClientTagResponse[]>(async () => {
+    if (!groupId) throw new Error()
+
+    const res = await fetch(endpoints.clienttags(groupId), buildRequest('GET'))
+    const json: IGroupClientTagResponse[] = await res.json()
+
+    return json
+  })
+
   const addClient = asyncHandler(async (values: IClient) => {
     if (!groupId) throw new Error()
 
@@ -43,9 +53,8 @@ const useClientService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setEr
     if (!groupId) throw new Error()
 
     const res = await fetch(endpoints.client(clientId, groupId), buildRequest('PUT', undefined, values))
-    const json = await res.json()
 
-    handleResolution(res, json, 'update', 'client', [() => updateClientInContext(clientId, json)])
+    handleResolution(res, null, 'update', 'client')
   })
 
   const deleteClient = asyncHandler(async (clientId: string) => {
@@ -55,6 +64,24 @@ const useClientService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setEr
     const json: IClientsResponse = await res.json()
 
     handleResolution(res, json, 'delete', 'client', [() => updateClientsInContext(json)])
+  })
+
+  const getSessions = asyncReturnHandler<IListResponse<ISession>>(async (clientId: string, tagId?: string) => {
+    if (!groupId) throw new Error()
+
+    const res = await fetch(endpoints.sessions(clientId, groupId, tagId), buildRequest('GET'))
+    const json: ISession[] = await res.json()
+
+    return json
+  })
+
+  const getSessionById = asyncReturnHandler<ISession>(async (clientId: string, sessionId: string) => {
+    if (!groupId) throw new Error()
+  
+    const res = await fetch(endpoints.session(clientId, groupId, sessionId), buildRequest('GET'))
+    const json: ISession = await res.json()
+
+    return json
   })
 
   const addSession = asyncHandler(async (clientId: string, values: ISession) => {
@@ -89,15 +116,7 @@ const useClientService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setEr
     setCount(values.count)
   }
 
-  const updateClientInContext = (clientId: string, values: IClientListResponse) => {
-    setClients(clients => {
-      return clients.map(c => {
-        return c.id === clientId ? { ...c, ...values } : c
-      })
-    })
-  }
-
-  return { ...clientContext, getClient, addClient, deleteClient, updateClient, addSession, updateSession, deleteSession }
+  return { ...clientContext, getClient, getGroupClientTags, addClient, deleteClient, updateClient, getSessions, getSessionById, addSession, updateSession, deleteSession }
 }
 
 export default useClientService

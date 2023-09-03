@@ -1,5 +1,7 @@
 import { QuestionMarkCircleIcon } from "@heroicons/react/solid"
-import { FieldHookConfig, useField } from "formik"
+import { format } from "date-fns"
+import { FieldHookConfig, useField, useFormikContext } from "formik"
+import { useEffect } from "react"
 import { Input, InputLabel } from "."
 import { combineClassNames } from "../../services"
 
@@ -24,9 +26,31 @@ const FormikInput = ({
 }: IFormikInputProps & FieldHookConfig<string>) => {
   const [field] = useField(props)
 
+  const { setFieldValue } = useFormikContext()
+  
+  const handleDateInputKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'T' || e.key === 't') {
+      setFieldValue(field.name, format(new Date(), 'yyy-MM-dd'))
+    }
+  }
+
+  useEffect(() => {
+    if (type === "date" && props.id) {
+      let dateInput = document.getElementById(props.id)
+      dateInput?.addEventListener('keydown', handleDateInputKeyDown)
+    }
+
+    return () => {
+      if (props.id) {
+        document.getElementById(props.id)?.removeEventListener('keydown', handleDateInputKeyDown)
+      }
+    }
+  }, [handleDateInputKeyDown, props, type])
+
   return (
     <div className={combineClassNames("mt-8 relative", classes)}>
       <Input
+        id={props.id}
         type={type}
         placeholder={label}
         disabled={disabled}

@@ -5,7 +5,7 @@ const TableHeader = ({ children }: IChildrenProps) => {
   return (
     <th
       scope="col"
-      className="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-400 uppercase"
+      className="py-3 px-6 text-xs tracking-wider text-left dark:text-gray-400 text-gray-800 uppercase"
     >
       {children}
     </th>

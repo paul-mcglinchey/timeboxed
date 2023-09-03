@@ -15,6 +15,7 @@ using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
+using Timeboxed.Core.Extensions;
 using Timeboxed.Core.FunctionWrappers;
 using Timeboxed.Data.Constants;
 
@@ -51,7 +52,9 @@ namespace Timeboxed.Api.Controllers
                         return new BadRequestObjectResult(new { message = "Client ID supplied is not a valid GUID" });
                     }
 
-                    return new OkObjectResult(await this.sessionService.GetClientSessionsAsync(clientIdGuid, cancellationToken));
+                    var request = req.DeserializeQueryParams<GetSessionsRequest>();
+
+                    return new OkObjectResult(await this.sessionService.GetClientSessionsAsync(clientIdGuid, request, cancellationToken));
                 },
                 cancellationToken);
 
@@ -94,7 +97,7 @@ namespace Timeboxed.Api.Controllers
                 groupId,
                 async () =>
                 {
-                    var request = await ConstructRequestModelAsync<AddSessionRequest>(req);
+                    var request = await ConstructRequestModelAsync<AddUpdateSessionRequest>(req);
 
                     if (clientId == null || !Guid.TryParse(clientId, out Guid clientIdGuid))
                     {
@@ -103,7 +106,7 @@ namespace Timeboxed.Api.Controllers
 
                     var session = await this.sessionService.AddClientSessionAsync(clientIdGuid, request, cancellationToken);
 
-                    return new CreatedAtRouteResult(nameof(this.GetClientSessionById), session.Id, await this.sessionService.GetClientSessionsAsync(clientIdGuid, cancellationToken));
+                    return new CreatedAtRouteResult(nameof(this.GetClientSessionById), session.Id);
                 },
                 cancellationToken);
 
@@ -120,7 +123,7 @@ namespace Timeboxed.Api.Controllers
                 groupId,
                 async () =>
                 {
-                    var requestBody = await ConstructRequestModelAsync<UpdateSessionRequest>(req);
+                    var requestBody = await ConstructRequestModelAsync<AddUpdateSessionRequest>(req);
 
                     if (clientId == null || !Guid.TryParse(clientId, out Guid clientIdGuid))
                     {

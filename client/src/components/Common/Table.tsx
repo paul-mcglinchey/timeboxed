@@ -23,7 +23,7 @@ const Table = ({
 
 Table.Header = ({ headers }: ITableHeader) => {
   return (
-    <thead className="bg-gray-800">
+    <thead className="dark:bg-gray-800 bg-gray-300">
       <tr>
         {headers.map((h, i) => (
           <TableHeader key={i}>
@@ -37,7 +37,7 @@ Table.Header = ({ headers }: ITableHeader) => {
 
 Table.SortableHeader = ({ headers, sortField, sortDirection, setSortField, setSortDirection }: ITableHeader & ISortable) => {
   return (
-    <thead className="bg-gray-800">
+    <thead className="dark:bg-gray-800 bg-gray-300">
       <tr>
         {headers.map((h, i) => (
           <TableHeader key={i}>
@@ -59,7 +59,7 @@ Table.SortableHeader = ({ headers, sortField, sortDirection, setSortField, setSo
 
 Table.Body = ({ children }: IChildrenProps) => {
   return (
-    <tbody className="divide-y divide-gray-700">
+    <tbody className="divide-y dark:divide-gray-700 divide-gray-300">
       {children}
     </tbody>
   )

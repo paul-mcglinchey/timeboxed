@@ -44,7 +44,7 @@ const AddGroupForm = ({ ContextualSubmissionButton }: IContextualFormProps) => {
               setFieldValue={(a) => setFieldValue('applications', a)}
             />
           </FormSection>
-          {ContextualSubmissionButton('Create group', undefined, isValid, true, isLoading)}
+          {ContextualSubmissionButton('Create group', undefined, isValid, isLoading)}
         </FormikForm>
       )
       }

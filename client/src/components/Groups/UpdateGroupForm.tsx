@@ -49,7 +49,7 @@ const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFo
             updateGroup(values, group.id)
           }}
         >
-          {({ errors, touched, values, setFieldValue, isValid, dirty }) => (
+          {({ errors, touched, values, setFieldValue, isValid }) => (
             <FormikForm error={error}>
               <FormSection title="Details">
                 <div className="flex items-end space-x-2">
@@ -84,7 +84,7 @@ const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFo
                   )}
                 </Modal>
               </FormSection>
-              {ContextualSubmissionButton('Update group', undefined, isValid, dirty, isLoading)}
+              {ContextualSubmissionButton('Update group', undefined, isValid, isLoading)}
             </FormikForm>
           )}
         </Formik >

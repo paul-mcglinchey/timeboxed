@@ -5,6 +5,7 @@ export interface ITag {
 
 export interface ISession {
   id: string
+  clientId: string
   title: string,
   description: string | null,
   tags: ITag[],

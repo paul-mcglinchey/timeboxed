@@ -78,6 +78,22 @@ namespace Timeboxed.Api.Controllers
                 },
                 cancellationToken);
 
+        [FunctionName("GetClientSessionTags")]
+        public async Task<ActionResult<List<GroupClientTagResponse>>> GetClientSessionTags(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups/{groupId}/client-tags")] HttpRequest req,
+            string groupId,
+            ILogger logger,
+            CancellationToken cancellationToken) =>
+            await this.ExecuteAsync(
+                new List<int> { TimeboxedPermissions.ViewClients },
+                groupId,
+                async () => 
+                {
+                    var tags = await this.clientService.GetGroupClientTagsAsync(cancellationToken);
+                    
+                    return new OkObjectResult(tags);
+                });
+
         [FunctionName("AddClient")]
         public async Task<ActionResult<ListResponse<ClientListResponse>>> AddClient(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "groups/{groupId}/clients")] HttpRequest req,
@@ -90,7 +106,6 @@ namespace Timeboxed.Api.Controllers
                 async () =>
                 {
                     var requestBody = await req.ConstructRequestModelAsync<AddClientRequest>();
-                    var requestParameters = req.DeserializeQueryParams<GetClientsRequest>();
 
                     if (requestBody.FirstName == null || requestBody.LastName == null || requestBody.PrimaryEmailAddress == null)
                     {
@@ -99,10 +114,7 @@ namespace Timeboxed.Api.Controllers
 
                     var clientId = await this.clientService.AddClientAsync(requestBody, cancellationToken);
 
-                    return new CreatedAtRouteResult(
-                        nameof(this.GetClientById),
-                        new { groupId, clientId },
-                        await this.clientService.GetClientsAsync(requestParameters, cancellationToken));
+                    return new CreatedAtRouteResult(nameof(this.GetClientById), new { groupId, clientId });
                 },
                 cancellationToken);
 

@@ -19,10 +19,8 @@ const useAuthService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setErro
 
   const login = asyncHandler(async (user: IUserRequest) => {
     const res = await fetch(endpoints.login, buildRequest('POST', undefined, user))
-
-    if (res.status === 401) throw new Error("Invalid user details")
     
-    if (!res.ok && res.status < 500) setError(await res.json())
+    if (!res.ok && res.status < 500) return setError(await res.json())
 
     const json = await res.json()
 

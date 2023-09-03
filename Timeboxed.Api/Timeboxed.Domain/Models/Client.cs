@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Timeboxed.Domain.Models.Common;
+using Timeboxed.Domain.Models.Interfaces;
 
 namespace Timeboxed.Domain.Models
 {
-    public class Client : Tracking
+    public class Client : Tracking, IDeletable
     {
         public Client() { }
 
@@ -63,5 +64,7 @@ namespace Timeboxed.Domain.Models
         public Guid GroupId { get; set; }
         
         public virtual Group Group { get; set; }
+
+        public bool Deleted { get; set; }
     }
 }

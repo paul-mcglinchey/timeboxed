@@ -1,14 +1,14 @@
-import { ArrowLeftIcon, TrashIcon } from "@heroicons/react/solid";
+import { ArrowLeftIcon, TrashIcon, ViewGridAddIcon } from "@heroicons/react/solid";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { SquareIconButton, Dialog, Dropdown, SpinnerIcon } from "..";
+import { SquareIconButton, Dialog, Dropdown, SpinnerIcon, Modal, AddSessionForm } from "..";
 import { Notification } from "../../enums";
 import { useClientService, useNotification } from "../../hooks";
-import { IClient } from "../../models";
+import { IClientListResponse } from "../../models";
 import { IApiError } from "../../models/error.model";
 
 interface IClientHeaderProps {
-  client: IClient
+  client: IClientListResponse
 }
 
 const ClientHeader = ({ client }: IClientHeaderProps) => {
@@ -20,13 +20,14 @@ const ClientHeader = ({ client }: IClientHeaderProps) => {
   const navigate = useNavigate();
   const { addNotification } = useNotification()
 
+  const [addSessionOpen, setAddSessionOpen] = useState(false);
   const [deleteClientOpen, setDeleteClientOpen] = useState(false);
-  const { deleteClient } = useClientService(setIsLoading, setError)
+  const { fetchClients, deleteClient } = useClientService(setIsLoading, setError)
 
   const getRouteName = () => {
     switch (pathname.split('/').pop()) {
-      case "addsession":
-        return " / Add session";
+      case "sessions":
+        return " / Sessions";
       case "edit":
         return " / Edit";
       case "view":
@@ -36,18 +37,29 @@ const ClientHeader = ({ client }: IClientHeaderProps) => {
     }
   }
 
+  const handleDelete = async () => {
+    await deleteClient(client.id)
+    setDeleteClientOpen(false)
+    navigate('/clients/dashboard')
+  }
+
+  const handleAddSession = async () => {
+    await fetchClients()
+    setAddSessionOpen(false)
+  }
+
   useEffect(() => {
     if (error?.message) addNotification(error.message, Notification.Error)
   }, [error, addNotification])
 
   return (
-    <div className="flex justify-between">
-      <div className="inline-flex items-center space-x-2 text-white text-2xl font-semibold tracking-wider">
+    <div className="flex justify-between pb-4">
+      <div className="inline-flex items-center space-x-2 dark:text-white text-gray-800 text-2xl font-semibold tracking-wider">
         <Link to="/clients/dashboard">
           <SquareIconButton Icon={ArrowLeftIcon} className="h-5 w-5 transform hover:scale-105 transition-all" />
         </Link>
         <Link to="/clients/dashboard">
-          <span className="rounded-lg bg-gray-800 px-2 py-1">Clients</span>
+          <span className="rounded-lg px-2 py-1">Clients</span>
         </Link>
         <span> / </span>
         <span className="text-green-500">
@@ -58,13 +70,24 @@ const ClientHeader = ({ client }: IClientHeaderProps) => {
       </div>
       <div>
         <Dropdown options={[
-          { label: 'Delete', action: () => setDeleteClientOpen(true), Icon: TrashIcon },
+          { label: 'Add session', action: () => setAddSessionOpen(true), Icon: ViewGridAddIcon },
+          { label: 'Delete client', action: () => setDeleteClientOpen(true), Icon: TrashIcon },
         ]} />
       </div>
+      <Modal
+        title="Add session"
+        description="This dialog can be used to add sessions to existing clients"
+        isOpen={addSessionOpen}
+        close={() => setAddSessionOpen(false)}
+      >
+        {(ConfirmationButton) => (
+          <AddSessionForm client={client} ContextualSubmissionButton={ConfirmationButton} submissionAction={handleAddSession} />
+        )}
+      </Modal>
       <Dialog
         isOpen={deleteClientOpen}
         close={() => setDeleteClientOpen(false)}
-        positiveActions={[() => deleteClient(client.id), () => setDeleteClientOpen(false), () => navigate('/clients/dashboard')]}
+        positiveAction={handleDelete}
         title="Delete client"
         description="This action will delete the client from the current group"
         content="If you choose to continue you'll no longer have access to this client - all sessions belonging to the client will also become innaccessible."

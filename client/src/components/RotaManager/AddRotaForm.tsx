@@ -60,7 +60,7 @@ const AddRotaForm = ({ ContextualSubmissionButton }: IContextualFormProps) => {
                 <span>Add employees</span>
                 <ExternalLinkIcon className="w-5 h-5" />
               </button>
-              {ContextualSubmissionButton('Add Rota', undefined, undefined, undefined, isLoading)}
+              {ContextualSubmissionButton('Add Rota', undefined, undefined, isLoading)}
             </div>
           </FormikForm>
         )}

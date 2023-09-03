@@ -7,8 +7,7 @@ const sessionValidationSchema = Yup.object().shape({
     .required('Required'),
   description: Yup.string()
     .max(10000, 'Too Long!'),
-  sessionDate: Yup.date()
-    .required('Required'),
+  sessionDate: Yup.date().min('01-01-1970'),
   tags: Yup.array()
 })
 

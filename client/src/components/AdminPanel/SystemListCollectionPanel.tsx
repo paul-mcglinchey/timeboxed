@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { FieldArray, Form, Formik } from "formik"
+import { FieldArray, FieldArrayRenderProps, Form, Formik } from "formik"
 import { PlusIcon } from "@heroicons/react/solid"
 import { useFetch, useRequestBuilderService, useListCollectionService } from "../../hooks"
 import { IFetch, IList, IListCollection, IListValue } from "../../models"
@@ -16,6 +16,11 @@ const SystemListCollectionPanel = () => {
   const { init, update } = useListCollectionService()
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+
+  const handleDelete = async (arrayHelpers: FieldArrayRenderProps, index: number) => {
+    arrayHelpers.remove(index)
+    setDeleteDialogOpen(false)
+  }
 
   return (
     <Fetch
@@ -56,7 +61,7 @@ const SystemListCollectionPanel = () => {
                                   <Dialog
                                     isOpen={deleteDialogOpen}
                                     close={() => setDeleteDialogOpen(false)}
-                                    positiveActions={[() => arrayHelpers.remove(index), () => setDeleteDialogOpen(false)]}
+                                    positiveAction={() => handleDelete(arrayHelpers, index)}
                                     title="Delete system list"
                                     description="This action will delete the system list"
                                     content="If you choose to continue the system list will be deleted - this could cause application breaking problems."

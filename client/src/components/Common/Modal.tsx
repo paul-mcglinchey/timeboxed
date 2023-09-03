@@ -1,15 +1,14 @@
 import { Fragment, ReactNode, useState } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 import { combineClassNames } from "../../services";
-import { DialogButton, Checkbox, SpinnerIcon } from ".";
+import { DialogButton, Checkbox } from ".";
 
 interface IModalProps {
   children?: (
     SubmissionButton: (
       content?: string | undefined, 
-      actions?: (() => void)[] | undefined,
+      action?: () => Promise<void> | void,
       submissionGate?: boolean,
-      shouldClose?: boolean,
       isLoading?: boolean
     ) => ReactNode
   ) => JSX.Element
@@ -25,6 +24,14 @@ interface IModalProps {
 const Modal = ({ children, title, description, isOpen, close, level = 1, allowAddMultiple = false, wide = false }: IModalProps) => {
 
   const [keepOpen, setKeepOpen] = useState<boolean>(false)
+
+  const handlePositiveAction = async (action?: () => Promise<void> | void) => {
+    if (action) await action()
+
+    if (!keepOpen) {
+      close()
+    }
+  }
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -56,7 +63,7 @@ const Modal = ({ children, title, description, isOpen, close, level = 1, allowAd
                   <Dialog.Title as="h2" className="text-2xl font-semibold leading-6 text-color-header">
                     {title}
                   </Dialog.Title>
-                  <DialogButton actions={[close]}>
+                  <DialogButton onClick={close}>
                     Cancel
                   </DialogButton>
                 </div>
@@ -64,10 +71,10 @@ const Modal = ({ children, title, description, isOpen, close, level = 1, allowAd
                   {description}
                 </Dialog.Description>
 
-                {children && children((content, actions, submissionGate = true, shouldClose = true, isLoading) =>
+                {children && children((content, action, submissionGate = true, isLoading) =>
                   <div className={`flex mt-4 ${allowAddMultiple ? 'justify-between' : 'justify-end'}`}>
                     {allowAddMultiple && <Checkbox id="addMultiple" label="Add multiple" onChange={() => setKeepOpen(!keepOpen)} checked={keepOpen} />}
-                    <DialogButton disabled={!submissionGate} Icon={isLoading ? SpinnerIcon : undefined} type="submit" actions={[...((keepOpen || !shouldClose) ? [] : [close]), ...actions || []]}>{content || 'Submit'}</DialogButton>
+                    <DialogButton disabled={!submissionGate} type="submit" onClick={() => handlePositiveAction(action)} loading={isLoading}>{content || 'Submit'}</DialogButton>
                   </div>
                 )}
               </Dialog.Panel>

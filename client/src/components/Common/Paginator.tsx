@@ -57,7 +57,7 @@ const Paginator = ({ pageSize, pageNumber, setPageNumber, setPageSize, totalItem
       <div className="flex items-center">
         {pageSizes.map((ps, i) => (
           <button
-            className={`px-2 pb-1 font-semibold hover:text-gray-200 ${ps === pageSize ? 'text-gray-200' : 'text-gray-600'}`}
+            className={`px-2 pb-1 font-semibold hover:text-gray-200 ${ps === pageSize ? 'dark:text-gray-200 text-blue-500' : 'text-gray-600'}`}
             onClick={() => updatePageSize(ps)}
             key={i}>
             {ps}

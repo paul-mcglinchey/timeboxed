@@ -17,6 +17,7 @@ export { default as CustomDate } from './CustomDate'
 export { default as FormikInput } from './FormikInput'
 export { default as Input } from './Input'
 export { default as TagInput } from './TagInput'
+export { default as TagButton } from './TagButton'
 export { default as InputLabel } from './InputLabel'
 export { default as StyledNumericField } from './StyledNumericField'
 

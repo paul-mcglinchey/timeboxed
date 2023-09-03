@@ -5,14 +5,24 @@ import { DialogButton } from "."
 interface IDialogProps {
   isOpen: boolean
   close: () => void
-  positiveActions: (() => void)[]
+  positiveAction: () => Promise<void> | void
   title: string
   description: string
   content: string
   keepOpen?: boolean
+  loading?: boolean
 }
 
-const Dialog = ({ isOpen, close, positiveActions, title, description, content, keepOpen = false }: IDialogProps) => {
+const Dialog = ({ isOpen, close, positiveAction, title, description, content, keepOpen = false, loading = false }: IDialogProps) => {
+
+  const handlePositiveAction = async () => {
+    await positiveAction()
+    
+    if (!keepOpen) {
+      close()
+    }
+  }
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <HeadlessDialog as="div" className="relative z-10 text-color-paragraph" onClose={close}>
@@ -56,10 +66,10 @@ const Dialog = ({ isOpen, close, positiveActions, title, description, content, k
                 </div>
 
                 <div className="mt-8 flex justify-between">
-                  <DialogButton actions={[close]}>
+                  <DialogButton onClick={close}>
                     Cancel
                   </DialogButton>
-                  <DialogButton actions={[...positiveActions, ...(keepOpen ? [] : [close])]}>
+                  <DialogButton onClick={handlePositiveAction} loading={loading}>
                     Got it, thanks!
                   </DialogButton>
                 </div>

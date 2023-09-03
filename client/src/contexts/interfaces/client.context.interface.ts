@@ -4,6 +4,7 @@ import { IFilter, ISortable, ILoadable, IPageable, IClientListResponse } from '.
 export interface IClientContext extends ISortable, ILoadable, IPageable {
   clients: IClientListResponse[]
   setClients: Dispatch<SetStateAction<IClientListResponse[]>>
+  fetchClients: () => Promise<void>
   count: number
   setCount: Dispatch<SetStateAction<number>>
   filter: IFilter,

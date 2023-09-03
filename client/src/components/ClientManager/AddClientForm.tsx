@@ -22,8 +22,9 @@ const AddClientForm = ({ ContextualSubmissionButton }: IContextualFormProps) => 
         primaryEmailAddress: ''
       }}
       validationSchema={addClientValidationSchema}
-      onSubmit={(values) => {
+      onSubmit={(values, actions) => {
         addClient(values)
+        actions.resetForm()
       }}
     >
       {({ errors, touched, dirty, isValid }) => (
@@ -31,7 +32,7 @@ const AddClientForm = ({ ContextualSubmissionButton }: IContextualFormProps) => 
           <FormikInput name="firstName" label="First name" errors={errors.firstName} touched={touched.firstName} />
           <FormikInput name="lastName" label="Last name" errors={errors.lastName} touched={touched.lastName} />
           <FormikInput name="primaryEmailAddress" label="Email" errors={errors.primaryEmailAddress} touched={touched.primaryEmailAddress} />
-          {ContextualSubmissionButton('Add client', undefined, dirty && isValid, undefined, isLoading)}
+          {ContextualSubmissionButton('Add client', undefined, dirty && isValid, isLoading)}
         </FormikForm>
       )}
     </Formik>
