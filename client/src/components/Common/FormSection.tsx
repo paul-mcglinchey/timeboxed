@@ -1,4 +1,4 @@
-import { ChevronUpIcon } from "@heroicons/react/solid";
+import { ChevronUpIcon } from "@heroicons/react/24/solid";
 import { ReactNode } from "react";
 import { IChildrenProps } from "../../models";
 import { combineClassNames } from "../../services";

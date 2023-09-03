@@ -1,6 +1,6 @@
 import { Fragment, useContext } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { MenuIcon, FireIcon, XIcon, MoonIcon, SunIcon } from '@heroicons/react/solid';
+import { Bars3Icon, FireIcon, XMarkIcon, MoonIcon, SunIcon } from '@heroicons/react/24/solid';
 import { Link, resolvePath, matchPath } from 'react-router-dom';
 import { combineClassNames } from '../../services';
 import { useTheme } from '../../hooks';
@@ -37,9 +37,9 @@ const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
                 <Disclosure.Button className="lg:hidden rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
-                    <XIcon className="block h-8 w-8" aria-hidden="true" />
+                    <XMarkIcon className="block h-8 w-8" aria-hidden="true" />
                   ) : (
-                    <MenuIcon className="block h-8 w-8" aria-hidden="true" />
+                    <Bars3Icon className="block h-8 w-8" aria-hidden="true" />
                   )}
                 </Disclosure.Button>
                 {/* Brand Logo */}
@@ -160,7 +160,7 @@ const NavMenu = ({ links = [], hideGroupSelector }: INavMenuProps) => {
               <div className="flex items-center justify-between h-16 mt-2">
                 <Disclosure.Button className="items-center rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="sr-only">Close main menu</span>
-                  <XIcon className="block h-8 w-8" aria-hidden="true" />
+                  <XMarkIcon className="block h-8 w-8" aria-hidden="true" />
                 </Disclosure.Button>
                 <Disclosure.Button as={SmartLink} to="/dashboard">
                   <WideIcon

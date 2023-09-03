@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { EyeIcon, LockClosedIcon, LockOpenIcon, PencilIcon, TrashIcon, UsersIcon } from "@heroicons/react/solid";
+import { EyeIcon, LockClosedIcon, LockOpenIcon, PencilIcon, TrashIcon, UsersIcon } from "@heroicons/react/24/solid";
 import { useFormikContext } from "formik";
 import { IRota } from "../../models";
 import { useNotification, useRotaService } from "../../hooks";

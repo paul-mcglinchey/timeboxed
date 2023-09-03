@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from "@heroicons/react/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { combineClassNames } from "../../services";
 import { forwardRef, Ref } from "react";
 import { colours } from "../../config";

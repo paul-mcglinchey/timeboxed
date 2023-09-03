@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { FormikContextType, useFormikContext } from "formik";
 import { ISchedule } from "../../models";
-import { SaveAsIcon } from "@heroicons/react/solid";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/solid";
 import { Transition } from "@headlessui/react";
 import ScheduleSwitcher from "./ScheduleSwitcher";
 import ScheduleTable from "./ScheduleTable";
@@ -57,7 +57,7 @@ const Schedule = ({ currentWeek, editing, currentWeekModifier, setCurrentWeekMod
           You have unsaved changes
         </div>
         <div>
-          <SaveAsIcon className="w-8 h-8" />
+          <ArrowUpTrayIcon className="w-8 h-8" />
         </div>
       </Transition>
     </div>

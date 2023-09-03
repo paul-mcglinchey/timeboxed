@@ -1,4 +1,4 @@
-import { ViewGridAddIcon } from '@heroicons/react/outline';
+import { SquaresPlusIcon } from '@heroicons/react/24/outline';
 import { IClientListResponse } from '../../models';
 import { InlineLink, InlineButton, TableRow, TableRowItem, Modal, UpdateClientForm, AddSessionForm, Dialog } from '..';
 import { useContext, useEffect, useState } from 'react';
@@ -6,7 +6,7 @@ import { GroupContext } from '../../contexts';
 import { useClientService, useNotification } from '../../hooks';
 import { IApiError } from '../../models/error.model';
 import { Notification } from '../../enums';
-import { PlusIcon } from '@heroicons/react/solid';
+import { PlusIcon } from '@heroicons/react/24/solid';
 
 const ClientTableRow = ({ client }: { client: IClientListResponse }) => {
 
@@ -68,7 +68,7 @@ const ClientTableRow = ({ client }: { client: IClientListResponse }) => {
           ) : (
             <InlineButton action={() => setAddSessionOpen(true)} color="dark:text-green-500 text-green-600">
               <div className="whitespace-nowrap">Add session</div>
-              <ViewGridAddIcon className="w-6 h-6" />
+              <SquaresPlusIcon className="w-6 h-6" />
             </InlineButton>
           )}
         </div>

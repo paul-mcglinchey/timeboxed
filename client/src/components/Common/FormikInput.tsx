@@ -1,4 +1,4 @@
-import { QuestionMarkCircleIcon } from "@heroicons/react/solid"
+import { QuestionMarkCircleIcon } from "@heroicons/react/24/solid"
 import { format } from "date-fns"
 import { FieldHookConfig, useField, useFormikContext } from "formik"
 import { useEffect } from "react"

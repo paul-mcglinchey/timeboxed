@@ -1,4 +1,4 @@
-import { SearchIcon, XIcon } from "@heroicons/react/solid";
+import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { IFilter, IFilterableField } from "../../models";
 import { combineClassNames } from "../../services";
@@ -51,7 +51,7 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backg
         )}
         onClick={() => setFilter(f => ({ ...f, value: filterValue }))}
       >
-        <SearchIcon className="w-5 h-5" />
+        <MagnifyingGlassIcon className="w-5 h-5" />
       </button>
       <div className="flex flex-1 relative">
         <input
@@ -60,7 +60,7 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backg
           value={filterValue ?? ''}
           onChange={(e) => setFilterValue(e.target.value)}
           className={combineClassNames(
-            "flex flex-1 py-2 px-4 pl-0 sm:pl-20 focus:sm:pl-0 focus-visible:outline-none caret-blue-500 text-gray-400 peer rounded-r-md sm:rounded-none",
+            "flex flex-1 py-2 px-4 pl-0 sm:pl-20 focus:sm:pl-0 focus-visible:outline-none focus:outline-none caret-blue-500 text-gray-400 peer rounded-r-md sm:rounded-none border-0 focus:border-0",
             !initialFilterField && filterableFields.length === 0 && "rounded-r-md",
             backgroundColorClasses
           )}
@@ -70,7 +70,7 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backg
         </div>
         {filterValue && (
           <button onClick={() => setFilterValue(null)} className="absolute right-2 top-3 focus:outline outline-1 outline-offset-1 outline-blue-500 rounded text-gray-500">
-            <XIcon className="w-4 h-4" />
+            <XMarkIcon className="w-4 h-4" />
           </button>
         )}
       </div>

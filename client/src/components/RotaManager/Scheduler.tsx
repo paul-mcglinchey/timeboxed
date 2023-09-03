@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Formik } from "formik";
-import { UserAddIcon } from "@heroicons/react/solid";
+import { UserPlusIcon } from "@heroicons/react/24/solid";
 import { useNotification, useScheduleService } from "../../hooks";
 import { Prompter } from "../Common";
 import { IRota, ISchedule, IScheduleShiftRequest } from "../../models";
@@ -66,7 +66,7 @@ const Scheduler = ({ rota }: ISchedulerResponse) => {
               <Prompter
                 title="This rota doesn't have any employees assigned"
                 action={() => { }}
-                Icon={UserAddIcon}
+                Icon={UserPlusIcon}
               />
             )}
           </div>

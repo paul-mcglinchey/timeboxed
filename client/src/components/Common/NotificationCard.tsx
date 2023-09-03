@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useState } from 'react';
 import { Transition } from '@headlessui/react';
-import { XIcon } from '@heroicons/react/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { combineClassNames } from '../../services';
 import { INotification } from '../../models';
 import { useDelayedRendering, useIsMounted } from '../../hooks';
@@ -43,7 +43,7 @@ const NotificationCard = ({ notification, removeNotification }: INotificationCar
       <div className="flex justify-between space-x-2 items-center">
         <span className="font-bold">{notification.message}</span>
         <button onClick={() => close()} className="flex items-center">
-          <XIcon className="w-5 h-5 text-gray-500" />
+          <XMarkIcon className="w-5 h-5 text-gray-500" />
         </button>
       </div>
     </Transition>

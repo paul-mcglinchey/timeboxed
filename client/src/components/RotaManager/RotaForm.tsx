@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Formik, Form } from 'formik';
-import { ExternalLinkIcon } from '@heroicons/react/solid';
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
 import { useRotaService } from '../../hooks';
 import { IContextualFormProps, IRota } from '../../models';
 import { rotaValidationSchema } from '../../schema';
@@ -72,7 +72,7 @@ const UpdateRotaForm = ({ rotaId, ContextualSubmissionButton }: IUpdateRotaFormP
                   className="flex items-center space-x-2 uppercase text-sm text-gray-300 hover:bg-gray-900 px-4 py-1 rounded-lg transition-all font-bold"
                 >
                   <span>Add employees</span>
-                  <ExternalLinkIcon className="w-5 h-5" />
+                  <ArrowTopRightOnSquareIcon className="w-5 h-5" />
                 </button>
                 {ContextualSubmissionButton('Add Rota', undefined, dirty && isValid, isLoading)}
               </div>

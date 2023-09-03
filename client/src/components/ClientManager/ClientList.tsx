@@ -1,5 +1,5 @@
 import { Dispatch, Fragment, SetStateAction, useContext } from 'react';
-import { UserAddIcon } from '@heroicons/react/solid';
+import { UserPlusIcon } from '@heroicons/react/24/solid';
 import { IClientListResponse, IFilterableField } from '../../models';
 import { Paginator, Table, Prompter, SearchBar } from '../Common';
 import { ClientTableRow } from '.';
@@ -47,7 +47,7 @@ const ClientList = ({ setAddClientOpen }: IClientListProps) => {
       ) : (
         !isLoading && (
           hasPermission(Application.ClientManager, Permission.AddEditDeleteClients) ? (
-            <Prompter title="Add a client to get started" Icon={UserAddIcon} action={() => setAddClientOpen(true)} />
+            <Prompter title="Add a client to get started" Icon={UserPlusIcon} action={() => setAddClientOpen(true)} />
           ) : (
             <Prompter title="There are no clients added to this group yet" />
           )

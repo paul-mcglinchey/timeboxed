@@ -1,5 +1,5 @@
 import { Transition } from "@headlessui/react"
-import { XIcon } from "@heroicons/react/solid"
+import { XMarkIcon } from "@heroicons/react/24/solid"
 import { Form } from "formik"
 import { Fragment, useEffect, useState } from "react"
 import { IChildrenProps, IProps } from "../../models"
@@ -39,7 +39,7 @@ export const FormikForm = ({ error, children, ...props }: IFormikFormProps & ICh
             {error && error.message}
           </span>
           <button type="button" onClick={dismissError}>
-            <XIcon className="w-5 h-5 text-red-500" />
+            <XMarkIcon className="w-5 h-5 text-red-500" />
           </button>
         </div>
       </Transition>

@@ -1,6 +1,6 @@
-import { forwardRef, LegacyRef, useEffect, useState } from "react"
+import { forwardRef, Ref, useEffect, useState } from "react"
 import { Listbox } from "@headlessui/react"
-import { CheckIcon, SelectorIcon } from "@heroicons/react/solid"
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/solid"
 import { combineClassNames } from "../../services"
 import { FadeInOut } from "./Transitions"
 import { IChildrenProps, IListboxOption } from "../../models"
@@ -148,7 +148,7 @@ const ListboxButton = ({ classes, children }: IHasCustomClasses & IChildrenProps
         {children}
       </span>
       <span className="absolute inset-y-0 right-0 flex items-center pr-2">
-        <SelectorIcon
+        <ChevronUpDownIcon
           className="h-5 w-5 dark:group-hover:text-blue-500 group-hover:text-blue-900 transition-colors"
           aria-hidden="true"
         />
@@ -157,7 +157,7 @@ const ListboxButton = ({ classes, children }: IHasCustomClasses & IChildrenProps
   )
 }
 
-const ListboxOptions = forwardRef(({ classes, children }: IHasCustomClasses & IChildrenProps, ref: LegacyRef<HTMLUListElement>) => {
+const ListboxOptions = forwardRef(({ classes, children }: IHasCustomClasses & IChildrenProps, ref: Ref<HTMLElement> | undefined) => {
   return (
     <Listbox.Options ref={ref} className={combineClassNames(
       "w-full focus:outline-none absolute origin-top-right right-0 z-50 mt-1 overflow-auto rounded-md py-1 text-base ring-1 ring-black ring-opacity-5",

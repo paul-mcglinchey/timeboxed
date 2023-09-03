@@ -1,4 +1,4 @@
-import { MenuIcon, ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/outline';
+import { Bars3Icon, ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/24/solid';
 import { IChildrenProps, ISortable } from '../../models';
 import { SquareIcon } from '.';
 import { SortDirection } from '../../enums';
@@ -20,7 +20,7 @@ const TableInteractiveHeader = ({
     if (sortField === value) {
       return sortDirection === "descending" ? ArrowDownIcon : ArrowUpIcon;
     } else {
-      return MenuIcon;
+      return Bars3Icon;
     }
   }
 

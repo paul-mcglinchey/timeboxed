@@ -1,4 +1,4 @@
-import { UsersIcon } from "@heroicons/react/outline";
+import { UsersIcon } from "@heroicons/react/24/outline";
 
 interface IGroupInfoDisplayProps {
   groupCount: number

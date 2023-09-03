@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { TableIcon } from '@heroicons/react/solid';
+import { TableCellsIcon } from '@heroicons/react/24/solid';
 import { IRota } from '../../models';
 import { Prompter, SpinnerLoader, Table } from '../Common';
 import { Application, Permission } from '../../enums';
@@ -38,7 +38,7 @@ const RotaList = () => {
             <SpinnerLoader />
           ) : (
             hasPermission(Application.RotaManager, Permission.AddEditDeleteRotas) ? (
-              <Prompter title="Add a rota to get started" Icon={TableIcon} action={() => setAddRotaOpen(true)} />
+              <Prompter title="Add a rota to get started" Icon={TableCellsIcon} action={() => setAddRotaOpen(true)} />
             ) : (
               <Prompter title="There are no rotas added to this group yet" />
             )

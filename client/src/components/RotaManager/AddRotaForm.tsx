@@ -1,4 +1,4 @@
-import { ExternalLinkIcon } from "@heroicons/react/solid"
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/24/solid"
 import { Formik } from "formik"
 import { useState } from "react"
 import { useRotaService } from "../../hooks"
@@ -58,7 +58,7 @@ const AddRotaForm = ({ ContextualSubmissionButton }: IContextualFormProps) => {
                 className="flex items-center space-x-2 uppercase text-sm text-gray-300 hover:bg-gray-900 px-4 py-1 rounded-lg transition-all font-bold"
               >
                 <span>Add employees</span>
-                <ExternalLinkIcon className="w-5 h-5" />
+                <ArrowTopRightOnSquareIcon className="w-5 h-5" />
               </button>
               {ContextualSubmissionButton('Add Rota', undefined, undefined, isLoading)}
             </div>

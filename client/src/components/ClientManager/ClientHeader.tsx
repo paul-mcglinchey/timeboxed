@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, TrashIcon, ViewGridAddIcon } from "@heroicons/react/solid";
+import { ArrowLeftIcon, TrashIcon, SquaresPlusIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SquareIconButton, Dialog, Dropdown, SpinnerIcon, Modal, AddSessionForm } from "..";
@@ -70,7 +70,7 @@ const ClientHeader = ({ client }: IClientHeaderProps) => {
       </div>
       <div>
         <Dropdown options={[
-          { label: 'Add session', action: () => setAddSessionOpen(true), Icon: ViewGridAddIcon },
+          { label: 'Add session', action: () => setAddSessionOpen(true), Icon: SquaresPlusIcon },
           { label: 'Delete client', action: () => setDeleteClientOpen(true), Icon: TrashIcon },
         ]} />
       </div>

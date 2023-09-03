@@ -1,4 +1,4 @@
-import { CSSProperties, Ref, useCallback, useEffect, useState } from "react"
+import { CSSProperties, ReactNode, Ref, useCallback, useEffect, useState } from "react"
 import { combineClassNames } from "../../services"
 
 interface IGridSelectorProps<T> {
@@ -7,7 +7,7 @@ interface IGridSelectorProps<T> {
   initialSelected: T
   style?: (item: T) => CSSProperties
   classes?: string
-  children?: () => JSX.Element
+  children?: ReactNode
   handleItemClick: (item: T) => void  
 }
 

@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from "@heroicons/react/solid";
+import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 import { combineClassNames } from "../../services";
 

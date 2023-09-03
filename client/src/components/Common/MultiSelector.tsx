@@ -1,4 +1,4 @@
-import { CheckIcon } from "@heroicons/react/solid"
+import { CheckIcon } from "@heroicons/react/24/solid"
 import { FieldArray } from "formik"
 import { combineClassNames } from "../../services"
 

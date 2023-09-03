@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { Form, FormikContextType, useFormikContext } from "formik";
-import { LockClosedIcon } from "@heroicons/react/solid";
+import { LockClosedIcon } from "@heroicons/react/24/solid";
 import { IEmployeeSchedule, ISchedule } from "../../models";
 import { Button } from "../Common";
 import { getInitials } from "../../services";

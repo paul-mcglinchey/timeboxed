@@ -5,7 +5,8 @@ const textFill = require("tailwindcss-text-fill");
 const shadowFill = require("tailwindcss-shadow-fill");
 const forms = require('@tailwindcss/forms');
 
-module.exports = {
+/** @type {import('tailwindcss').Config} */
+export default {
   darkMode: 'class',
   content: [
     "./public/index.html", "./src/**/*.{js,jsx,ts,tsx}",
@@ -66,3 +67,4 @@ module.exports = {
   },
   plugins: [forms, autofill, textFill, shadowFill],
 }
+

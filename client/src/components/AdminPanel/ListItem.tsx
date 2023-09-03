@@ -1,5 +1,5 @@
 import { Field } from "formik"
-import { TrashIcon } from "@heroicons/react/solid"
+import { TrashIcon } from "@heroicons/react/24/solid"
 import { generateColour } from "../../services"
 import { Button, ColourPicker } from "../Common"
 

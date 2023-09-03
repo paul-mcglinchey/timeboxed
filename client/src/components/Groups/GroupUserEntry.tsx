@@ -1,4 +1,4 @@
-import { PencilIcon } from "@heroicons/react/solid"
+import { PencilIcon } from "@heroicons/react/24/solid"
 import { useState, useContext } from "react"
 import { GroupContext } from "../../contexts"
 import { Role } from "../../enums"

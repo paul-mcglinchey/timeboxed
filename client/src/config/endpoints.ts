@@ -1,7 +1,7 @@
-console.log(process.env)
+console.log(import.meta.env)
 
-const BASE_API_URL = process.env['REACT_APP_API_URL'] || 'http://localhost:3001/api/';
-const DOTNET_API_URL = process.env['NODE_ENV'] === 'development' ? 'http://localhost:7193/api/' : process.env['REACT_APP_DOTNET_API_URL']
+const BASE_API_URL = import.meta.env['REACT_APP_API_URL'] || 'http://localhost:3001/api/';
+const DOTNET_API_URL = import.meta.env.NODE_ENV === 'development' ? 'http://localhost:7193/api/' : import.meta.env.VITE_DOTNET_API_URL
 
 export const endpoints = {
     "origin": BASE_API_URL,

@@ -97,7 +97,7 @@ const UpdateClientForm = ({ clientId, submissionAction, ContextualSubmissionButt
           <div>Loading...</div>
         ) : (
           error && (
-            <div>{error}</div>
+            <div>{error.message}</div>
           )
         )
       )}

@@ -1,4 +1,4 @@
-import { CalendarIcon, CheckCircleIcon } from "@heroicons/react/outline";
+import { CalendarIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
 import { useContext, useState } from "react";
 import { GroupContext } from "../../contexts";
 import { useInterval } from "../../hooks";

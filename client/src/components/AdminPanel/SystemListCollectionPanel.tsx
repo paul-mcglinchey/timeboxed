@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { FieldArray, FieldArrayRenderProps, Form, Formik } from "formik"
-import { PlusIcon } from "@heroicons/react/solid"
+import { PlusIcon } from "@heroicons/react/24/solid"
 import { useFetch, useRequestBuilderService, useListCollectionService } from "../../hooks"
 import { IFetch, IList, IListCollection, IListValue } from "../../models"
 import { generateColour } from "../../services"

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Combobox } from "@headlessui/react"
-import { CheckIcon, SelectorIcon } from "@heroicons/react/solid"
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/24/solid"
 import { combineClassNames } from "../../services"
 import { FadeInOut } from "./Transitions"
 
@@ -42,7 +42,7 @@ export const ComboboxMultiSelector = <T extends any>({ items, initialSelected, l
         onChange={() => { }}
       />
       <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-        <SelectorIcon
+        <ChevronUpDownIcon
           className="h-5 w-5 text-gray-400"
           aria-hidden="true"
         />
@@ -65,7 +65,7 @@ export const ComboboxMultiSelector = <T extends any>({ items, initialSelected, l
               {({ selected }) => (
                 <>
                   <span className={`block truncate font-semibold`}>
-                    {item[labelFieldName as keyof T]}
+                    {item[labelFieldName as keyof T] as string}
                   </span>
                   {selected && (
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-500">

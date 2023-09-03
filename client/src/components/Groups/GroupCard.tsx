@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { TrashIcon, DotsVerticalIcon, PencilIcon, HeartIcon as HeartSolid } from '@heroicons/react/solid';
-import { HeartIcon } from '@heroicons/react/outline';
+import { TrashIcon, EllipsisVerticalIcon, PencilIcon, HeartIcon as HeartSolid } from '@heroicons/react/24/solid';
+import { HeartIcon } from '@heroicons/react/24/outline';
 import { IGroup } from '../../models';
 import { useAuthService, useGroupService, useNotification } from '../../hooks';
 import { Dialog, SpinnerIcon, SquareIconButton } from '../Common';
@@ -55,7 +55,7 @@ const GroupCard = ({ g }: IGroupCardProps) => {
             {isLoading && <SpinnerIcon className="h-5 w-5" />}
             <SquareIconButton Icon={isDefaultGroup() ? HeartSolid : HeartIcon} action={() => toggleDefaultGroup()} />
             <SquareIconButton Icon={PencilIcon} action={() => setEditGroupOpen(true)} />
-            <SquareIconButton Icon={DotsVerticalIcon} action={() => toggleCardFlipped()} className={`transform transition-all duration-500 ${cardFlipped ? 'rotate-180' : 'rotate-0'}`} />
+            <SquareIconButton Icon={EllipsisVerticalIcon} action={() => toggleCardFlipped()} className={`transform transition-all duration-500 ${cardFlipped ? 'rotate-180' : 'rotate-0'}`} />
           </div>
         </div>
         <div className="flex justify-between items-end my-4">
