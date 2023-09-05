@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react"
-import { InputLabel, TagButton } from "."
+import { InputLabel, SpinnerIcon, TagButton } from "."
 import { ITag } from "../../models"
 import { combineClassNames } from "../../services"
 import { v4 as uuid } from 'uuid'
 import { FieldHookConfig, useField } from "formik"
+import { HelperMessage } from "./HelperMessage"
 
 interface ITagInputProps {
   name: string
@@ -12,8 +13,10 @@ interface ITagInputProps {
   update: (tags: ITag[]) => void
   label: string
   disabled?: boolean
-  errors: any,
+  errors: any
   touched: any
+  loading?: boolean
+  helperMessage?: string
 }
 
 const TagInput = ({
@@ -24,9 +27,11 @@ const TagInput = ({
   label,
   errors,
   touched,
-  disabled = false
+  disabled = false,
+  loading = false,
+  helperMessage
 }: ITagInputProps & FieldHookConfig<string>) => {
-  const [field, meta, helpers] = useField(name)
+  const [, meta, helpers] = useField(name)
 
   const [tagsValue, setTagsValue] = useState<string | null>(null)
 
@@ -92,10 +97,27 @@ const TagInput = ({
   }, [handleTagInputKeyDown])
 
   return (
-    <div className="relative mt-10 gap-y-2 flex flex-col">
+    <div className="flex flex-col">
       <div className={combineClassNames(
-        "flex border-b dark:border-gray-300/20 border-gray-800/20"
+        "flex flex-col border-b dark:border-gray-300/20 border-gray-800/20"
       )}>
+        <InputLabel
+          htmlFor="tag-input"
+          label={label}
+        >
+          {touched && errors && (
+            <span
+              className={combineClassNames(
+                "text-sm font-semibold text-rose-500 pointer-events-none"
+              )}
+            >
+              {errors}
+            </span>
+          )}
+          {helperMessage && (
+            <HelperMessage message={helperMessage} />
+          )}
+        </InputLabel>
         <div className="flex items-center gap-1 flex-wrap">
           {tags.map(tag => {
             return (
@@ -105,7 +127,7 @@ const TagInput = ({
           <input
             id="tag-input"
             className={combineClassNames(
-              "placeholder-transparent h-8 px-1 peer flex-1 min-w-0",
+              "placeholder-transparent h-8 px-1 flex-1 min-w-0",
               "bg-transparent",
               "focus-visible:outline-none",
               "autofill:shadow-fill-gray-700 autofill:text-fill-gray-100"
@@ -116,27 +138,17 @@ const TagInput = ({
             value={tagsValue ?? ''}
             onChange={(e) => handleChange(e)}
           />
-          {touched && errors && (
-            <span
-              className={combineClassNames(
-                "absolute -top-5 right-1 text-sm font-semibold text-rose-500 transition-all pointer-events-none"
-              )}
-            >
-              {errors}
-            </span>
-          )}
         </div>
-        <InputLabel
-          htmlFor="tag-input"
-          label={label}
-          visibilityConditions={[tags.length === 0]}
-        />
       </div>
       <div className="flex gap-1 items-center">
-        <span className="text-sm">Suggested tags: </span>
-        {filteredTags.map((tag: ITag) => (
-          <TagButton key={tag.id} tag={tag} onClick={() => addTag(tag)} tagSize="small" />
-        ))}
+        <span className="inline-flex items-center text-sm">Suggested tags: </span>
+        {loading ? (
+          <SpinnerIcon className="w-4 h-4" />
+        ) : (
+          filteredTags.map((tag: ITag) => (
+            <TagButton key={tag.id} tag={tag} onClick={() => addTag(tag)} tagSize="small" />
+          ))
+        )}
       </div>
     </div>
   )

@@ -12,8 +12,7 @@ const Input = ({ id = undefined, type, placeholder, disabled, ...props }: IInput
     <input
       id={id}
       className={combineClassNames(
-        "peer placeholder-transparent",
-        "dark:text-gray-200 text-gray-900"
+        "flex-grow dark:text-gray-200 text-gray-900"
       )}
       {...props}
       type={type}

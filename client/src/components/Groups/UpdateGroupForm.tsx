@@ -51,7 +51,7 @@ const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFo
             <FormikForm error={error}>
               <FormSection title="Details">
                 <div className="flex items-end space-x-2">
-                  <FormikInput name="name" label="Groupname" errors={errors.name} touched={touched.name} classes="flex flex-grow" />
+                  <FormikInput name="name" label="Groupname" errors={errors.name} touched={touched.name} />
                   <ColourPicker square colour={values.colour} setColour={(pc) => setFieldValue('colour', pc)} />
                 </div>
                 <FormikTextArea name="description" label="Description" errors={errors.description} touched={touched.description} />

@@ -1,22 +1,26 @@
+import { IChildrenProps } from "../../models"
 import { combineClassNames } from "../../services"
 
-interface IInputLabelProps {
+interface IInputLabelProps extends IChildrenProps {
   htmlFor: string
   label: string
-  visibilityConditions?: boolean[]
 }
 
-const InputLabel = ({ htmlFor, label, visibilityConditions = [] }: IInputLabelProps) => {
+const InputLabel = ({ htmlFor, label, children }: IInputLabelProps) => {
   return (
-    <label
-      htmlFor={htmlFor}
-      className={combineClassNames(
-        "absolute -top-5 left-1 text-sm font-semibold dark:text-gray-400 transition-all pointer-events-none",
-        visibilityConditions.every(vc => vc) && "peer-placeholder-shown:text-gray-900/30 dark:peer-placeholder-shown:text-gray-100/60 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-800 peer-placeholder-shown:top-2 peer-placeholder-shown:left-3.5"
-      )}
-    >
-      {label}
-    </label>
+    <div className="inline-flex justify-between items-center">
+      <label
+        htmlFor={htmlFor}
+        className={combineClassNames(
+          "text-xs dark:text-gray-400 pointer-events-none"
+        )}
+      >
+        {label}
+      </label>
+      <div className="flex gap-2 items-center">
+        {children}
+      </div>
+    </div>
   )
 }
 

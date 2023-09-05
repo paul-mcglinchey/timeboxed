@@ -7,6 +7,7 @@ import { IClient, IContextualFormProps } from "../../models";
 import { CustomDate, FormikInput, FormSection } from "..";
 import { updateClientValidationSchema } from "../../schema/clientValidationSchema";
 import { IApiError } from "../../models/error.model";
+import FormGrouping from "../Common/FormGrouping";
 
 interface IUpdateClientFormProps {
   clientId: string
@@ -60,12 +61,14 @@ const UpdateClientForm = ({ clientId, submissionAction, ContextualSubmissionButt
           {({ errors, touched, isValid }) => (
             <Form>
               <FormSection title="Details">
-                <FormikInput name="firstName" label="First name" errors={errors.firstName} touched={touched.firstName} />
-                <FormikInput name="middleNames" label="Middle Names" errors={errors.middleNames} touched={errors.middleNames} />
-                <FormikInput name="lastName" label="Last name" errors={errors.lastName} touched={errors.lastName} />
-                <FormikInput name="primaryEmailAddress" label="Email" errors={errors.primaryEmailAddress} touched={touched.primaryEmailAddress} />
-                <FormikInput name="primaryPhoneNumber" label="Phone number" errors={errors.primaryPhoneNumber} touched={touched.primaryPhoneNumber} />
-                <FormikInput id="birthdate" type="date" name="birthDate" label="Date of Birth" component={CustomDate} errors={errors.birthDate} touched={touched.birthDate} />
+                <FormGrouping>
+                  <FormikInput name="firstName" label="First name" errors={errors.firstName} touched={touched.firstName} />
+                  <FormikInput name="middleNames" label="Middle Names" errors={errors.middleNames} touched={errors.middleNames} />
+                  <FormikInput name="lastName" label="Last name" errors={errors.lastName} touched={errors.lastName} />
+                  <FormikInput name="primaryEmailAddress" label="Email" errors={errors.primaryEmailAddress} touched={touched.primaryEmailAddress} />
+                  <FormikInput name="primaryPhoneNumber" label="Phone number" errors={errors.primaryPhoneNumber} touched={touched.primaryPhoneNumber} />
+                  <FormikInput id="birthdate" type="date" name="birthDate" label="Date of Birth" component={CustomDate} errors={errors.birthDate} touched={touched.birthDate} />
+                </FormGrouping>
               </FormSection>
               <FormSection title="Address" expanded={addressExpanded} expanderAction={() => setAddressExpanded(!addressExpanded)}>
                 <Transition
@@ -76,16 +79,18 @@ const UpdateClientForm = ({ clientId, submissionAction, ContextualSubmissionButt
                   leave="transition ease-in duration-200"
                   leaveFrom="transform opacity-100 scale-y-100"
                   leaveTo="transform opacity-0 scale-y-0"
-                  className="origin-top"
+                  className="origin-top flex flex-col gap-8"
                 >
-                  <FormikInput name="firstLine" label="Address Line 1" errors={errors?.firstLine} touched={touched?.firstLine} />
-                  <FormikInput name="secondLine" label="Address Line 2" errors={errors?.secondLine} touched={touched?.secondLine} />
-                  <FormikInput name="thirdLine" label="Address Line 3" errors={errors?.thirdLine} touched={touched?.thirdLine} />
-                  <div className="grid grid-cols-3 gap-2">
-                    <FormikInput name="city" label="City" errors={errors?.city} touched={touched?.city} />
-                    <FormikInput name="country" label="Country" errors={errors?.country} touched={touched?.country} />
-                    <FormikInput name="postCode" label="Post Code" errors={errors?.postCode} touched={touched?.postCode} />
-                  </div>
+                  <FormGrouping>
+                    <FormikInput name="firstLine" label="Address Line 1" errors={errors?.firstLine} touched={touched?.firstLine} />
+                    <FormikInput name="secondLine" label="Address Line 2" errors={errors?.secondLine} touched={touched?.secondLine} />
+                    <FormikInput name="thirdLine" label="Address Line 3" errors={errors?.thirdLine} touched={touched?.thirdLine} />
+                    <div className="grid grid-cols-3 gap-2">
+                      <FormikInput name="city" label="City" errors={errors?.city} touched={touched?.city} />
+                      <FormikInput name="country" label="Country" errors={errors?.country} touched={touched?.country} />
+                      <FormikInput name="postCode" label="Post Code" errors={errors?.postCode} touched={touched?.postCode} />
+                    </div>
+                  </FormGrouping>
                 </Transition>
               </FormSection>
               {ContextualSubmissionButton(client ? 'Update client' : 'Add client', undefined, isValid)}

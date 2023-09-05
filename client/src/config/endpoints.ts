@@ -1,6 +1,6 @@
 console.log(import.meta.env)
 
-const DOTNET_API_URL = import.meta.env.NODE_ENV === 'development' ? 'http://localhost:7193/api/' : import.meta.env.VITE_DOTNET_API_URL
+const DOTNET_API_URL = import.meta.env.NODE_ENV === 'development' ? 'http://localhost:7071/api/' : import.meta.env.VITE_DOTNET_API_URL
 
 export const endpoints = {
     metainfo: (groupId?: string) => DOTNET_API_URL + `metainfo${groupId ? `?${groupId}` : ''}`,

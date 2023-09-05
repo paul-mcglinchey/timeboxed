@@ -6,17 +6,14 @@ import { IContextualFormProps } from "../../models";
 import { useState } from "react";
 import { IApiError } from "../../models/error.model";
 import { FormikForm } from "../Common/FormikForm";
+import FormGrouping from "../Common/FormGrouping";
 
-interface IAddClientFormProps extends IContextualFormProps {
-  submissionAction: () => Promise<void>
-}
-
-const AddClientForm = ({ submissionAction, ContextualSubmissionButton }: IAddClientFormProps) => {
+const AddClientForm = ({ ContextualSubmissionButton }: IContextualFormProps) => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<IApiError>()
 
-  const { addClient } = useClientService(setIsLoading, setError)
+  const { addClient, fetchClients } = useClientService(setIsLoading, setError)
 
   return (
     <Formik
@@ -28,15 +25,17 @@ const AddClientForm = ({ submissionAction, ContextualSubmissionButton }: IAddCli
       validationSchema={addClientValidationSchema}
       onSubmit={async (values, actions) => {
         await addClient(values)
-        await submissionAction()
+        await fetchClients()
         actions.resetForm()
       }}
     >
       {({ errors, touched, dirty, isValid }) => (
-        <FormikForm error={error} className="flex flex-1 flex-col space-y-8 text-gray-200">
-          <FormikInput name="firstName" label="First name" errors={errors.firstName} touched={touched.firstName} />
-          <FormikInput name="lastName" label="Last name" errors={errors.lastName} touched={touched.lastName} />
-          <FormikInput name="primaryEmailAddress" label="Email" errors={errors.primaryEmailAddress} touched={touched.primaryEmailAddress} />
+        <FormikForm error={error}>
+          <FormGrouping>
+            <FormikInput name="firstName" label="First name" errors={errors.firstName} touched={touched.firstName} />
+            <FormikInput name="lastName" label="Last name" errors={errors.lastName} touched={touched.lastName} />
+            <FormikInput name="primaryEmailAddress" label="Email" errors={errors.primaryEmailAddress} touched={touched.primaryEmailAddress} />
+          </FormGrouping>
           {ContextualSubmissionButton('Add client', undefined, dirty && isValid, isLoading)}
         </FormikForm>
       )}

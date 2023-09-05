@@ -10,7 +10,7 @@ import { IListResponse } from "../models/list-response.model"
 const useClientService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setError: Dispatch<SetStateAction<IApiError | undefined>>): IClientService => {
 
   const clientContext = useContext(ClientContext)
-  const { setClients, setCount, buildQueryString } = clientContext
+  const { buildQueryString } = clientContext
   const { currentGroup } = useContext(GroupContext)
 
   const { buildRequest } = useRequestBuilderService()

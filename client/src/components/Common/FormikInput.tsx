@@ -1,9 +1,9 @@
-import { QuestionMarkCircleIcon } from "@heroicons/react/24/solid"
 import { format } from "date-fns"
 import { FieldHookConfig, useField, useFormikContext } from "formik"
 import { useEffect } from "react"
 import { Input, InputLabel } from "."
 import { combineClassNames } from "../../services"
+import { HelperMessage } from "./HelperMessage"
 
 interface IFormikInputProps {
   label: string
@@ -27,7 +27,7 @@ const FormikInput = ({
   const [field] = useField(props)
 
   const { setFieldValue } = useFormikContext()
-  
+
   const handleDateInputKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'T' || e.key === 't') {
       setFieldValue(field.name, format(new Date(), 'yyy-MM-dd'))
@@ -48,37 +48,33 @@ const FormikInput = ({
   }, [handleDateInputKeyDown, props, type])
 
   return (
-    <div className={combineClassNames("mt-8 relative", classes)}>
-      <Input
-        id={props.id}
-        type={type}
-        placeholder={label}
-        disabled={disabled}
-        {...field}
-      />
-      <InputLabel
-        htmlFor={field.name}
-        label={label}
-      />
-
-      {touched && errors && (
-        <span
-          className={combineClassNames(
-            "absolute -top-5 right-1 text-sm font-semibold text-rose-500 transition-all pointer-events-none"
-          )}
+    <div className={combineClassNames("flex flex-grow", classes)}>
+      <div className="flex flex-col flex-grow">
+        <InputLabel
+          htmlFor={field.name}
+          label={label}
         >
-          {errors}
-        </span>
-      )}
-
-      {helperMessage && (
-        <div className="absolute right-2 top-2.5">
-          <QuestionMarkCircleIcon className="w-6 h-6 text-blue-500 peer hover:opacity-80 transition-all" />
-          <div className="absolute w-48 bg-gray-300 dark:bg-slate-500 text-xs font-semibold p-2 shadow-sm rounded-md origin-top-right right-0 top-7 hidden peer-hover:block">
-            {helperMessage}
-          </div>
-        </div>
-      )}
+          {touched && errors && (
+            <span
+              className={combineClassNames(
+                "text-sm font-semibold text-rose-500 pointer-events-none"
+              )}
+            >
+              {errors}
+            </span>
+          )}
+          {helperMessage && (
+            <HelperMessage message={helperMessage} />
+          )}
+        </InputLabel>
+        <Input
+          id={props.id}
+          type={type}
+          placeholder={label}
+          disabled={disabled}
+          {...field}
+        />
+      </div>
     </div>
   )
 }
