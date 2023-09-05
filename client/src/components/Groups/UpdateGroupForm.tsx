@@ -10,6 +10,7 @@ import { IApiError } from "../../models/error.model";
 
 import UserInvites from "./UserInvites";
 import GroupUserEntry from "./GroupUserEntry";
+import FormGrouping from "../Common/FormGrouping";
 
 interface IUpdateGroupFormProps {
   groupId: string
@@ -50,11 +51,13 @@ const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFo
           {({ errors, touched, values, setFieldValue, isValid }) => (
             <FormikForm error={error}>
               <FormSection title="Details">
-                <div className="flex items-end space-x-2">
-                  <FormikInput name="name" label="Groupname" errors={errors.name} touched={touched.name} />
-                  <ColourPicker square colour={values.colour} setColour={(pc) => setFieldValue('colour', pc)} />
-                </div>
-                <FormikTextArea name="description" label="Description" errors={errors.description} touched={touched.description} />
+                <FormGrouping>
+                  <div className="flex items-end space-x-2">
+                    <FormikInput name="name" label="Groupname" errors={errors.name} touched={touched.name} />
+                    <ColourPicker square colour={values.colour} setColour={(pc) => setFieldValue('colour', pc)} />
+                  </div>
+                  <FormikTextArea name="description" label="Description" errors={errors.description} touched={touched.description} />
+                </FormGrouping>
               </FormSection>
               <FormSection title="Users" titleActionComponent={<Button action={toggleInviteUserOpen} content="Invite" type="button" />}>
                 {group.users

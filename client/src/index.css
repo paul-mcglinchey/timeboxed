@@ -9,6 +9,7 @@ body {
 }
 
 @layer base {
+  button[id="tags-input"],
   [type="text"],
   [type="email"],
   [type="url"],
@@ -25,7 +26,24 @@ body {
   [multiple],
   textarea,
   select {
-    @apply w-full dark:text-gray-100 dark:bg-slate-800 border-gray-300/20 font-semibold rounded ring-0 focus:ring-1 focus:border-blue-500;
+    @apply
+      w-full
+      dark:text-gray-100
+      bg-white
+      dark:bg-slate-800
+      border-gray-300/20
+      font-semibold
+      rounded
+      border-0
+      focus:border-0
+      focus:outline
+      focus:outline-offset-0
+      focus:outline-2
+      focus:outline-blue-500
+      focus-within:outline
+      focus-within:outline-offset-0
+      focus-within:outline-2
+      focus-within:outline-blue-500;
   }
   [type="checkbox"],
   [type="radio"] {

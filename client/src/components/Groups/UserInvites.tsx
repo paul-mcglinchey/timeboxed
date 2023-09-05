@@ -6,6 +6,7 @@ import { IApiError } from "../../models/error.model"
 import userInviteValidationSchema from "../../schema/userInviteValidationSchema"
 import { Button, FormikInput, SpinnerIcon } from "../Common"
 import { FormikForm } from "../Common/FormikForm"
+import FormGrouping from "../Common/FormGrouping"
 
 interface IUserInvitesProps {
   g: IGroup
@@ -31,12 +32,14 @@ const UserInvites = ({ g }: IUserInvitesProps) => {
       >
         {({ errors, touched }) => (
           <FormikForm error={error}>
-            <div className="flex items-end space-x-2">
-              <FormikInput name="usernameOrEmail" label="Username or Email" errors={errors.usernameOrEmail} touched={touched.usernameOrEmail} classes="flex flex-grow" />
-              <div className="pb-1.5">
-                <Button content="Invite" buttonType="Tertiary" Icon={isLoading ? SpinnerIcon : null} />
+            <FormGrouping>
+              <div className="flex items-end gap-2">
+                <FormikInput name="usernameOrEmail" label="Username or Email" errors={errors.usernameOrEmail} touched={touched.usernameOrEmail} classes="flex flex-grow" />
+                <div className="pb-1.5">
+                  <Button content="Invite" buttonType="Tertiary" Icon={isLoading ? SpinnerIcon : null} />
+                </div>
               </div>
-            </div>
+            </FormGrouping>
           </FormikForm>
         )}
       </Formik>

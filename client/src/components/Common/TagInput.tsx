@@ -32,7 +32,6 @@ const TagInput = ({
   helperMessage
 }: ITagInputProps & FieldHookConfig<string>) => {
   const [, meta, helpers] = useField(name)
-
   const [tagsValue, setTagsValue] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,6 +87,10 @@ const TagInput = ({
       (!tags.map(t => t.id).includes(at.id))))
     .slice(0, 5)
 
+  const focusInput = () => {
+    document.getElementById("tag-input")?.focus();
+  }
+
   useEffect(() => {
     document.getElementById("tag-input")?.addEventListener('keydown', handleTagInputKeyDown)
 
@@ -98,26 +101,24 @@ const TagInput = ({
 
   return (
     <div className="flex flex-col">
-      <div className={combineClassNames(
-        "flex flex-col border-b dark:border-gray-300/20 border-gray-800/20"
-      )}>
-        <InputLabel
-          htmlFor="tag-input"
-          label={label}
-        >
-          {touched && errors && (
-            <span
-              className={combineClassNames(
-                "text-sm font-semibold text-rose-500 pointer-events-none"
-              )}
-            >
-              {errors}
-            </span>
-          )}
-          {helperMessage && (
-            <HelperMessage message={helperMessage} />
-          )}
-        </InputLabel>
+      <InputLabel
+        htmlFor="tag-input"
+        label={label}
+      >
+        {touched && errors && (
+          <span
+            className={combineClassNames(
+              "text-sm font-semibold text-rose-500 pointer-events-none"
+            )}
+          >
+            {errors}
+          </span>
+        )}
+        {helperMessage && (
+          <HelperMessage message={helperMessage} />
+        )}
+      </InputLabel>
+      <button id="tags-input" className="py-1 px-2.5" type="button" onClick={focusInput}>
         <div className="flex items-center gap-1 flex-wrap">
           {tags.map(tag => {
             return (
@@ -139,7 +140,7 @@ const TagInput = ({
             onChange={(e) => handleChange(e)}
           />
         </div>
-      </div>
+      </button>
       <div className="flex gap-1 items-center">
         <span className="inline-flex items-center text-sm">Suggested tags: </span>
         {loading ? (

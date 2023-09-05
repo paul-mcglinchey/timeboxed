@@ -7,6 +7,7 @@ import { ColourPicker, FormSection, FormikInput, FormikTextArea } from "../Commo
 import { FormikForm } from "../Common/FormikForm";
 import { useState } from "react";
 import { IApiError } from "../../models/error.model";
+import FormGrouping from "../Common/FormGrouping";
 
 const AddGroupForm = ({ ContextualSubmissionButton }: IContextualFormProps) => {
 
@@ -30,11 +31,13 @@ const AddGroupForm = ({ ContextualSubmissionButton }: IContextualFormProps) => {
       {({ errors, touched, values, setFieldValue, isValid }) => (
         <FormikForm error={error}>
           <FormSection title="Details">
-            <div className="flex items-end space-x-2">
-              <FormikInput name="name" label="Groupname" errors={errors.name} touched={touched.name} classes="flex flex-grow" />
-              <ColourPicker square colour={values.colour} setColour={(pc) => setFieldValue('colour', pc)} />
-            </div>
-            <FormikTextArea name="description" label="Description" errors={errors.description} touched={touched.description} />
+            <FormGrouping>
+              <div className="flex items-end space-x-2">
+                <FormikInput name="name" label="Groupname" errors={errors.name} touched={touched.name} classes="flex flex-grow" />
+                <ColourPicker square colour={values.colour} setColour={(pc) => setFieldValue('colour', pc)} />
+              </div>
+              <FormikTextArea name="description" label="Description" errors={errors.description} touched={touched.description} />
+            </FormGrouping>
           </FormSection>
           {ContextualSubmissionButton('Create group', undefined, isValid, isLoading)}
         </FormikForm>

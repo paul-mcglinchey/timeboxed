@@ -57,7 +57,7 @@ const FormikInput = ({
           {touched && errors && (
             <span
               className={combineClassNames(
-                "text-sm font-semibold text-rose-500 pointer-events-none"
+                "text-xs font-semibold text-rose-500 pointer-events-none"
               )}
             >
               {errors}
