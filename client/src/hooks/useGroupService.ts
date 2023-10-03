@@ -5,6 +5,7 @@ import { endpoints } from '../config'
 import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '.'
 import { IGroupService } from "./interfaces"
 import { IApiError } from "../models/error.model"
+import { IAdminGroupRequest } from "../models/admin-group.model"
 
 const useGroupService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setError: Dispatch<SetStateAction<IApiError | undefined>>): IGroupService => {
 

@@ -2,16 +2,16 @@ export const getItemInLocalStorage = (itemName: string): string | undefined => {
   return localStorage.getItem(itemName) || undefined;
 }
 
-export const setItemInLocalStorage = (itemName: string, data: any) => {
+export const setItemInLocalStorage = (itemName: string, data: string) => {
   localStorage.setItem(itemName, data);
 }
 
 export const getJsonItemInLocalStorage = (itemName: string): string | undefined => {
-  let data = localStorage.getItem(itemName);
+  const data = localStorage.getItem(itemName);
   return JSON.parse(data || "");
 }
 
-export const setJsonItemInLocalStorage = (itemName: string, data: any) => {
+export const setJsonItemInLocalStorage = (itemName: string, data: string) => {
   localStorage.setItem(itemName, JSON.stringify(data));
 }
 

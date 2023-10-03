@@ -1,4 +1,4 @@
-interface IAdminGroupRequest {
+export interface IAdminGroupRequest {
   applications: number[]
   users: string[]
 }

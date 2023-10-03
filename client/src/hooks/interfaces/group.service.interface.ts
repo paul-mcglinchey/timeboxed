@@ -1,4 +1,5 @@
 import { IGroupContext } from "../../contexts/interfaces"
+import { IAdminGroupRequest } from "../../models/admin-group.model"
 import { IGroup, IGroupRequest } from "../../models/group.model"
 
 export interface IGroupService extends IGroupContext {

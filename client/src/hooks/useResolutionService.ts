@@ -5,7 +5,7 @@ const useResolutionService = () => {
 
   const handleResolution = (
     res: Response, 
-    json: any, 
+    json: object | null, 
     verb?: string, 
     noun?: string, 
     successActions?: (() => void)[], 

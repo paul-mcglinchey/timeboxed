@@ -49,7 +49,7 @@ namespace Timeboxed.Api.Services
 
         public async Task<EmployeeResponse> GetEmployeeByIdAsync(Guid employeeId, CancellationToken cancellationToken) =>
             await this.context.Employees
-                .Where(e => e.Id == employeeId)
+                .Where(e => e.Id == employeeId && e.IsDeleted != true)
                 .Select(MapEFEmployeeToResponse)
                 .SingleOrDefaultAsync(cancellationToken)
             ?? throw new EntityNotFoundException($"Employee {employeeId} not found");
@@ -111,13 +111,13 @@ namespace Timeboxed.Api.Services
                 .SingleOrDefaultAsync(cancellationToken)
             ?? throw new EntityNotFoundException($"Employee {employeeId} not found");
 
-            this.context.Employees.Remove(employee);
+            employee.IsDeleted = true;
             await this.context.SaveChangesAsync(cancellationToken);
 
             return employee.Id;
         }
 
-        private static IQueryable<Employee> ApplyFilter(IQueryable<Employee> query, GetEmployeesRequest request) => query;
+        private static IQueryable<Employee> ApplyFilter(IQueryable<Employee> query, GetEmployeesRequest request) => query.Where(e => e.IsDeleted != true);
 
         private IQueryable<Employee> ApplySort(IQueryable<Employee> query, GetEmployeesRequest request)
         {

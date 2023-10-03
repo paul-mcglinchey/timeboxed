@@ -9,7 +9,7 @@ interface IQueue {
 }
 
 export const delay = (fn: () => void, t: number) => {
-  let queue: IQueue[] = [], self: ISelf, timer: number | null;
+  let queue: IQueue[] = [], timer: number | null;
 
   const schedule = (fn: () => void, t: number) => {
     timer = setTimeout(() => {
@@ -22,7 +22,7 @@ export const delay = (fn: () => void, t: number) => {
     }, t)
   }
 
-  self = {
+  const self: ISelf = {
     delay: (fn: () => void, t: number) => {
       if (queue.length || timer) {
         queue.push({ fn: fn, t: t });
