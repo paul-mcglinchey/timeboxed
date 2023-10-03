@@ -1,5 +1,5 @@
 import { CheckIcon, InformationCircleIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/solid"
-import { IAdminUser, IContextualFormProps, IFilter, IFilterableField, IGroup, IUser } from "../../models"
+import { IAdminUser, IContextualFormProps, IFilter, IFilterableField, IGroup } from "../../models"
 import { useCallback, useEffect, useState } from "react"
 import { useGroupService, useRequestBuilderService } from "../../hooks"
 import { endpoints } from "../../config"
@@ -126,6 +126,9 @@ export const UpdateGroupUsers = ({ groupId, ContextualSubmissionButton }: IUpdat
               )
             )}
           </div>
+          {addUserLoading && addUserError && (
+            <div className="text-rose-500 font-semibold px-3 py-1">{addUserError.message} - fix me pls</div>
+          )}
         </div>
       </div>
       {ContextualSubmissionButton('Save changes')}

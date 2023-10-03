@@ -3,7 +3,7 @@ import { useGroupService } from "../../hooks";
 import { IContextualFormProps, IGroup } from "../../models";
 import { generateColour } from "../../services";
 import { groupValidationSchema } from "../../schema";
-import { ColourPicker, FormSection, Modal, FormikInput, Button, SpinnerLoader, FormikTextArea, Table, TableRow } from "../Common";
+import { ColourPicker, FormSection, Modal, FormikInput, Button, SpinnerLoader, FormikTextArea, Table } from "../Common";
 import { useCallback, useEffect, useState } from "react";
 import { FormikForm } from "../Common/FormikForm";
 import { IApiError } from "../../models/error.model";
