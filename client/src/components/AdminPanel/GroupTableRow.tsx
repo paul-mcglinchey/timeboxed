@@ -3,6 +3,8 @@ import { InlineButton, Modal, TableRow, TableRowItem } from ".."
 import { IApplication, IGroup } from "../../models"
 import { MetaInfoContext } from "../../contexts"
 import UpdateGroupForm from "./UpdateGroupForm"
+import { PlusIcon } from "@heroicons/react/24/solid"
+import { UpdateGroupUsers } from "./UpdateGroupUsers"
 
 interface IGroupTableRowProps {
   group: IGroup
@@ -12,6 +14,7 @@ interface IGroupTableRowProps {
 const GroupTableRow = ({ group, fetchGroups }: IGroupTableRowProps) => {
 
   const [editGroupOpen, setEditGroupOpen] = useState(false)
+  const [editUsersOpen, setEditUsersOpen] = useState(false)
 
   const { applications } = useContext(MetaInfoContext)
 
@@ -29,7 +32,20 @@ const GroupTableRow = ({ group, fetchGroups }: IGroupTableRowProps) => {
         <span className="max-w-xs overflow-hidden text-ellipsis">{group.applications.map(a => getApplication(a)?.name).join(", ")}</span>
       </TableRowItem>
       <TableRowItem>
-        <span>{group.users.length}</span>
+        <div className="inline-flex gap-2 items-center">
+          <span>{group.users.length}</span>
+          <InlineButton action={() => setEditUsersOpen(true)} color="text-amber-400"><PlusIcon className="w-6 h-6" /></InlineButton>
+        </div>
+        <Modal
+          title="Edit group users"
+          description="This modal can be used to add/remove an existing groups users"
+          isOpen={editUsersOpen}
+          close={() => setEditUsersOpen(false)}
+        >
+          {(ConfirmationButton) => (
+            <UpdateGroupUsers groupId={group.id} ContextualSubmissionButton={ConfirmationButton} />
+          )}
+        </Modal>
       </TableRowItem>
       <TableRowItem hugRight>
         <InlineButton action={() => setEditGroupOpen(true)} color="text-green-600">Edit</InlineButton>

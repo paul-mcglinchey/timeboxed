@@ -1,6 +1,7 @@
 import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 import { combineClassNames } from "../../services";
+import { createRef, useEffect } from "react";
 
 interface IAppCardProps {
   title: string,
@@ -11,6 +12,12 @@ interface IAppCardProps {
 }
 
 const AppCard = ({ title, subtitle, href, backgroundImage, backgroundVideo }: IAppCardProps) => {
+
+  const videoRef = createRef<HTMLVideoElement>()
+
+  useEffect(() => {
+    videoRef.current?.load();
+  }, [backgroundVideo])
 
   return (
     <Link to={href}>
@@ -28,7 +35,7 @@ const AppCard = ({ title, subtitle, href, backgroundImage, backgroundVideo }: IA
           </div>
         </div>
         {backgroundVideo && (
-          <video autoPlay muted loop className="absolute top-0 left-0 -z-10 object-cover w-full h-full">
+          <video ref={videoRef} autoPlay muted loop className="absolute top-0 left-0 -z-10 object-cover w-full h-full">
             <source src={backgroundVideo} type="video/mp4" />
           </video>
         )}

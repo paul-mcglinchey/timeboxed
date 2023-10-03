@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { IChildrenProps, IFetch, IMetaInfo, IPermission, IRole } from "../models";
-import { useFetch, useRequestBuilderService } from "../hooks";
+import { useFetch, useGroupService, useRequestBuilderService } from "../hooks";
 import { endpoints } from "../config";
 import { IMetaInfoContext } from "./interfaces";
 import { GroupContext } from "./GroupContext";
@@ -27,7 +27,8 @@ export const MetaInfoProvider = ({ children }: IChildrenProps) => {
   const [error, setError] = useState<any>()
 
   const { buildRequest } = useRequestBuilderService()
-  const { currentGroup, getGroup } = useContext(GroupContext)
+  const { currentGroup } = useContext(GroupContext)
+  const { getGroupFromContext } = useGroupService(setIsLoading, setError)
   const { user } = useContext(AuthContext)
   const { response }: IFetch<IMetaInfo> = useFetch(endpoints.metainfo(currentGroup?.id), buildRequest(), [currentGroup], setIsLoading, setError)
 
@@ -50,7 +51,11 @@ export const MetaInfoProvider = ({ children }: IChildrenProps) => {
   }
 
   const getPermissions = (groupId: string, userId: string): number[] => {
-    return getGroup(groupId)?.users.find(gu => gu.userId === userId)?.roles.map(r => getRole(r)?.permissions).filter((p): p is number[] => !!p).flatMap(p => p) || []
+    return getGroupFromContext(groupId)
+      ?.users.find(gu => gu.userId === userId)
+        ?.roles.map(r => getRole(r)?.permissions)
+          .filter((p): p is number[] => !!p)
+          .flatMap(p => p) ?? []
   }
 
   const userHasPermission = (groupId: string, userId: string | undefined, permissionId: number | undefined): boolean => {

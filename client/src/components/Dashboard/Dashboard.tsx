@@ -13,6 +13,7 @@ import { IApiError } from "../../models/error.model";
 const Dashboard = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<IApiError | undefined>()
+  const [applications, setApplications] = useState<IApplication[]>([])
 
   const [addGroupOpen, setAddGroupOpen] = useState<boolean>(false);
 
@@ -20,20 +21,25 @@ const Dashboard = () => {
   const { fetchGroups, count, currentGroup } = useGroupService(setLoading, setError)
   const { getApplication } = useApplicationService()
 
-  const getUserAccessibleApps = (): IApplication[] => {
-    if (!currentGroup) return []
+  const setUserAccessibleApps = (): void => {
+    if (!currentGroup) return setApplications([])
 
     let groupApps = currentGroup.applications
     let userApps = currentGroup.users.find(gu => gu.userId === user?.id)?.applications || []
 
-    let userAccessibleApps = userApps.filter(ua => groupApps.includes(ua));
+    let userAccessibleAppIds = userApps.filter(ua => groupApps.includes(ua))
+    let userAccessibleApps = userAccessibleAppIds.map(uaa => getApplication(uaa)).filter((a): a is IApplication => !!a)
 
-    return userAccessibleApps.map(uaa => getApplication(uaa)).filter((a): a is IApplication => !!a)
+    setApplications(userAccessibleApps)
   }
 
   useEffect(() => {
     fetchGroups()
   }, [])
+
+  useEffect(() => {
+    setUserAccessibleApps()
+  }, [currentGroup])
   
   return (
     <>
@@ -43,7 +49,7 @@ const Dashboard = () => {
           <>
             <Toolbar title="Applications" />
             <div className="grid grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3 tracking-wide gap-4 md:gap-8">
-              {getUserAccessibleApps().map((a, i) => (
+              {applications.map((a, i) => (
                 <AppCard
                   title={a.name || '--'}
                   backgroundImage={a.backgroundImage}

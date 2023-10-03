@@ -3,8 +3,8 @@ import { useGroupService } from "../../hooks";
 import { IContextualFormProps, IGroup } from "../../models";
 import { generateColour } from "../../services";
 import { groupValidationSchema } from "../../schema";
-import { ColourPicker, FormSection, Modal, FormikInput, Button, SpinnerLoader, FormikTextArea } from "../Common";
-import { useEffect, useState } from "react";
+import { ColourPicker, FormSection, Modal, FormikInput, Button, SpinnerLoader, FormikTextArea, Table, TableRow } from "../Common";
+import { useCallback, useEffect, useState } from "react";
 import { FormikForm } from "../Common/FormikForm";
 import { IApiError } from "../../models/error.model";
 
@@ -18,20 +18,23 @@ interface IUpdateGroupFormProps {
 
 const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFormProps & IContextualFormProps) => {
 
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<IApiError>()
   const [group, setGroup] = useState<IGroup | undefined>()
 
   const [inviteUserOpen, setInviteUserOpen] = useState<boolean>(false)
-  const toggleInviteUserOpen = () => setInviteUserOpen(!inviteUserOpen)
 
-  const { getGroup, updateGroup } = useGroupService(setIsLoading, setError)
+  const { getGroup, updateGroup } = useGroupService(setLoading, setError)
+
+  const fetchGroup = useCallback(async () => {
+    setLoading(true)
+    setGroup(await getGroup(groupId))
+    setLoading(false)
+  }, [groupId, getGroup])
 
   useEffect(() => {
-    const _fetch = async () => setGroup(await getGroup(groupId))
-
-    _fetch()
-  }, [groupId, getGroup])
+    fetchGroup()
+  }, [])
 
   return (
     <>
@@ -45,7 +48,7 @@ const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFo
           }}
           validationSchema={groupValidationSchema}
           onSubmit={(values) => {
-            updateGroup({ ...group, ...values }, group.id)
+            updateGroup({ ...group, ...values}, group.id)
           }}
         >
           {({ errors, touched, values, setFieldValue, isValid }) => (
@@ -59,32 +62,34 @@ const UpdateGroupForm = ({ groupId, ContextualSubmissionButton }: IUpdateGroupFo
                   <FormikTextArea name="description" label="Description" errors={errors.description} touched={touched.description} />
                 </FormGrouping>
               </FormSection>
-              <FormSection title="Users" titleActionComponent={<Button action={toggleInviteUserOpen} content="Invite" type="button" />}>
-                {group.users
-                  .map(gu => (
-                    <GroupUserEntry group={group} gu={gu} key={gu.userId} />
-                  ))
-                }
+              <FormSection title="Users" titleActionComponent={<Button action={() => setInviteUserOpen(true)} content="Invite" type="button" />}>
+                <Table isLoading={false} compact>
+                  <Table.Body>
+                    {group.users
+                      .map(gu => (
+                        <GroupUserEntry group={group} gu={gu} key={gu.userId} />
+                      ))
+                    }
+                  </Table.Body>
+                </Table>
                 <Modal
                   title="Invite user"
                   description="This dialog can be used to invite existing users to the currently selected group."
                   isOpen={inviteUserOpen}
-                  close={toggleInviteUserOpen}
+                  close={() => setInviteUserOpen(false)}
                   level={2}
                 >
                   {() => (
-                    <div>
-                      <UserInvites g={group} />
-                    </div>
+                    <UserInvites groupId={group.id} />
                   )}
                 </Modal>
               </FormSection>
-              {ContextualSubmissionButton('Update group', undefined, isValid, isLoading)}
+              {ContextualSubmissionButton('Update group', undefined, isValid, loading)}
             </FormikForm>
           )}
         </Formik >
       ) : (
-        isLoading && <SpinnerLoader />
+        loading && <SpinnerLoader />
       )}
     </>
   )

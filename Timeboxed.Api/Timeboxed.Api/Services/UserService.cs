@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Timeboxed.Api.Models.Requests;
 using Timeboxed.Api.Models.Responses;
 using Timeboxed.Api.Services.Interfaces;
+using Timeboxed.Api.Services.Projections;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Cryptography;
 using Timeboxed.Core.Exceptions;
@@ -49,29 +50,21 @@ namespace Timeboxed.Api.Services
         public async Task<bool> UserExistsAsync(Guid userId, CancellationToken cancellationToken) =>
             await this.context.Users.Where(u => u.Id.Equals(userId)).SingleOrDefaultAsync(cancellationToken) != null;
 
-        public async Task<UserResponse> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
+        public async Task<UserAuthResponse> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
         {
             var user = await this.context.Users
                 .Where(u => u.Id == userId)
                 .Include(u => u.Preferences)
+                .Select(Common.MapEFUserToAuthResponse)
                 .SingleOrDefaultAsync(cancellationToken)
             ?? throw new EntityNotFoundException($"User {userId} not found");
 
-            return new UserResponse
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Email = user.Email,
-                IsAdmin = user.IsAdmin,
-                Token = GenerateToken(user),
-                Preferences = new UserPreferencesResponse
-                {
-                    DefaultGroup = user.Preferences.DefaultGroup,
-                },
-            };
+            user.Token = GenerateToken(user);
+
+            return user;
         }
 
-        public async Task<UserResponse> LoginAsync(LoginRequest request, CancellationToken cancellationToken)
+        public async Task<UserAuthResponse> LoginAsync(LoginRequest request, CancellationToken cancellationToken)
         {
             var user = await this.context.Users
                 .Where(u => u.Username == request.UsernameOrEmail || u.Email == request.UsernameOrEmail)
@@ -83,7 +76,7 @@ namespace Timeboxed.Api.Services
                 : null;
         }
 
-        public async Task<UserResponse> SignupAsync(SignupRequest request, CancellationToken cancellationToken)
+        public async Task<UserAuthResponse> SignupAsync(SignupRequest request, CancellationToken cancellationToken)
         {
             var alphaAccessKey = await this.context.UserAccessControl
                 .Where(ua => ua.UserEmail == request.Email)
@@ -126,7 +119,7 @@ namespace Timeboxed.Api.Services
             return new UserPreferencesResponse { Id = user.Preferences.Id, DefaultGroup = user.Preferences.DefaultGroup };
         }
 
-        private string GenerateToken(User user)
+        private string GenerateToken(UserAuthResponse user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.configuration["JwtPrivateKey"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

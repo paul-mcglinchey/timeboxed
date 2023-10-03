@@ -1,14 +1,19 @@
 import { IChildrenProps, ISortable, ITable, ITableHeader } from "../../models"
 import { SpinnerIcon, TableHeader, TableInteractiveHeader } from "."
+import { combineClassNames } from "../../services"
 
 interface ITableProps extends ITable, IChildrenProps { }
 
 const Table = ({
   isLoading,
-  children
+  children,
+  compact = false
 }: ITableProps) => {
   return (
-    <div className="overflow-x-auto rounded-md relative">
+    <div className={combineClassNames(
+      "overflow-x-auto rounded-md relative",
+      compact ? "[&_td]:px-1 [&_td]:py-2 [&_td:nth-child(1)]:pl-5 [&_td:last-child]:pr-5" : "[&_td]:px-6 [&_td]:py-4",
+    )}>
       <table className="min-w-full">
         {children}
       </table>

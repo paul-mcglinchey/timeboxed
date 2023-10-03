@@ -23,10 +23,12 @@ const useRequestBuilderService = (): IRequestBuilderService => {
     return request;
   }, [token])
 
-  const buildQuery = (filter: IFilter): string => {
+  const buildQuery = (filters: IFilter[]): string => {
     let query: string = ""
 
-    if (filter && filter.value) query += `${query.includes('?') ? '&' : '?'}${filter.name}=${filter.value}`
+    for (let filter of filters) {
+      if (filter && filter.value) query += `${query.includes('?') ? '&' : '?'}${filter.name}=${filter.value}`
+    }
 
     return query
   }

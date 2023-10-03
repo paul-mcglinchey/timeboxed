@@ -1,6 +1,6 @@
 console.log(import.meta.env)
 
-const DOTNET_API_URL = import.meta.env.NODE_ENV === 'development' ? 'http://localhost:7071/api/' : import.meta.env.VITE_DOTNET_API_URL
+const DOTNET_API_URL = import.meta.env.NODE_ENV === 'development' ? 'http://localhost:7193/api/' : import.meta.env.VITE_DOTNET_API_URL
 
 export const endpoints = {
     metainfo: (groupId?: string) => DOTNET_API_URL + `metainfo${groupId ? `?${groupId}` : ''}`,
@@ -55,6 +55,7 @@ export const endpoints = {
 
     admin: {
         groups: DOTNET_API_URL + `super/groups`,
-        group: (groupId: string) => DOTNET_API_URL + `super/groups/${groupId}`
+        group: (groupId: string) => DOTNET_API_URL + `super/groups/${groupId}`,
+        users: DOTNET_API_URL + `super/users`,
     }
 }

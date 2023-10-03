@@ -31,11 +31,7 @@ const FormikTextArea = ({
           label={label}
         >
           {touched && errors && (
-            <span
-              className={combineClassNames(
-                "text-sm font-semibold text-rose-500 transition-all pointer-events-none"
-              )}
-            >
+            <span className="text-sm font-semibold text-rose-500 transition-all pointer-events-none">
               {errors}
             </span>
           )}
@@ -45,9 +41,6 @@ const FormikTextArea = ({
         </InputLabel>
         <textarea
           id={props.id}
-          className={combineClassNames(
-            "dark:text-gray-200 text-gray-900"
-          )}
           placeholder={label}
           disabled={disabled}
           {...field}

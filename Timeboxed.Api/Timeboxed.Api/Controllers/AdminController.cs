@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,20 +19,23 @@ using Timeboxed.Data.Constants;
 
 namespace Timeboxed.Api.Controllers;
 
-public class AdminGroupController : GroupControllerWrapper<AdminGroupController>
+public class AdminController : GroupControllerWrapper<AdminController>
 {
     private readonly IHttpRequestWrapper<int> httpRequestWrapper;
     private readonly IAdminGroupService groupService;
+    private readonly IAdminUserService userService;
 
-    public AdminGroupController(
+    public AdminController(
         IHttpRequestWrapper<int> httpRequestWrapper,
         IAdminGroupService groupService,
-        ILogger<AdminGroupController> logger,
+        IAdminUserService userService,
+        ILogger<AdminController> logger,
         IGroupValidator groupValidator)
         : base(logger, httpRequestWrapper, groupValidator)
     {
         this.httpRequestWrapper = httpRequestWrapper;
         this.groupService = groupService;
+        this.userService = userService;
     }
 
     [FunctionName("AdminGetGroups")]
@@ -40,12 +44,43 @@ public class AdminGroupController : GroupControllerWrapper<AdminGroupController>
         ILogger logger,
         CancellationToken cancellationToken) =>
         await this.httpRequestWrapper.ExecuteAsync(
-            new List<int> { TimeboxedPermissions.ApplicationAccess },
+            new List<int> { },
             async () =>
             {
                 var request = req.DeserializeQueryParams<AdminGetGroupsRequest>();
 
                 return new OkObjectResult(await this.groupService.GetGroupsAsync(request, cancellationToken));
+            },  
+            cancellationToken,
+            true);
+
+    [FunctionName("AdminGetGroupById")]
+    public async Task<ActionResult<ListResponse<GroupResponse>>> AdminGetGroupById(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "super/groups/{groupId}")] HttpRequest req,
+        Guid groupId,
+        ILogger logger,
+        CancellationToken cancellationToken) =>
+        await this.httpRequestWrapper.ExecuteAsync(
+            new List<int> { },
+            async () =>
+            {
+                return new OkObjectResult(await this.groupService.GetGroupAsync(groupId, cancellationToken));
+            },
+            cancellationToken,
+            true);
+
+    [FunctionName("AdminGetUsers")]
+    public async Task<ActionResult<ListResponse<UserResponse>>> AdminGetUsers(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "super/users")] HttpRequest req,
+        ILogger logger,
+        CancellationToken cancellationToken) =>
+        await this.httpRequestWrapper.ExecuteAsync(
+            new List<int> { },
+            async () =>
+            {
+                var request = req.DeserializeQueryParams<AdminGetUsersRequest>();
+
+                return new OkObjectResult(await this.userService.GetUsersAsync(request, cancellationToken));
             },  
             cancellationToken,
             true);
@@ -57,7 +92,7 @@ public class AdminGroupController : GroupControllerWrapper<AdminGroupController>
             ILogger logger,
             CancellationToken cancellationToken) =>
             await this.ExecuteAsync(
-                new List<int> { TimeboxedPermissions.ApplicationAccess },
+                new List<int> { },
                 groupId,
                 async () =>
                 {

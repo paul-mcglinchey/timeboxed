@@ -1,15 +1,25 @@
 import { IGroupUserService } from "./interfaces"
 import { useAsyncHandler, useRequestBuilderService, useResolutionService } from "."
 import { endpoints } from "../config"
-import { Dispatch, SetStateAction } from "react"
-import { IGroupUserInviteRequest, IGroupUserRequest } from "../models"
+import { Dispatch, SetStateAction, useCallback } from "react"
+import { IFilter, IGroupUser, IGroupUserInviteRequest, IGroupUserRequest } from "../models"
 import { IApiError } from "../models/error.model"
+import { IListResponse } from "../models/list-response.model"
 
 const useGroupUserService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setError: Dispatch<SetStateAction<IApiError | undefined>>): IGroupUserService => {
 
-  const { asyncHandler } = useAsyncHandler(setIsLoading)
-  const { buildRequest } = useRequestBuilderService()
+  const { asyncHandler, asyncReturnHandler } = useAsyncHandler(setIsLoading)
+  const { buildRequest, buildQuery } = useRequestBuilderService()
   const { handleResolution } = useResolutionService()
+
+  const getGroupUsers = useCallback(asyncReturnHandler<IListResponse<IGroupUser>>(async (groupId: string, filters: IFilter[] = []) => {
+    const res = await fetch(
+      `${endpoints.groupusers(groupId)}${buildQuery(filters)}`,
+      buildRequest('GET'))
+    const json: IListResponse<IGroupUser> = await res.json()
+
+    return json
+  }), [buildRequest])
 
   const updateGroupUser = asyncHandler(async (groupId: string | undefined, userId: string | undefined, values: IGroupUserRequest) => {
     if (!groupId || !userId) throw new Error('Something went wrong...')
@@ -51,7 +61,7 @@ const useGroupUserService = (setIsLoading: Dispatch<SetStateAction<boolean>>, se
     handleResolution(res, json, 'join', 'group')
   })
 
-  return { updateGroupUser, inviteGroupUser, uninviteGroupUser, joinGroup }
+  return { getGroupUsers, updateGroupUser, inviteGroupUser, uninviteGroupUser, joinGroup }
 }
 
 export default useGroupUserService

@@ -31,6 +31,18 @@ export interface IUser {
   updatedAt?: string
 }
 
+export interface IAdminUser {
+  id: string
+  username: string
+  email: string
+  isAdmin: boolean
+  groupRoles: {
+    groupId: string
+    roles: string[]
+    hasJoined: boolean
+  }[]
+}
+
 export interface IUsersResponse {
   items: IUser[]
   count: number,

@@ -41,6 +41,23 @@ namespace Timeboxed.Api.Controllers
             this.groupContextProvider = groupContextProvider;
         }
 
+        [FunctionName("GetGroupUsers")]
+        public async Task<ActionResult<ListResponse<GroupUserResponse>>> GetGroupUsers(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups/{groupId}/users")] HttpRequest req,
+            string groupId,
+            ILogger logger,
+            CancellationToken cancellationToken) =>
+            await this.ExecuteAsync(
+                new List<int> { TimeboxedPermissions.GroupAccess },
+                groupId,
+                async () => 
+                {
+                    var request = req.DeserializeQueryParams<GetGroupUsersRequest>();
+
+                    return new OkObjectResult(await this.groupUserService.GetGroupUsers(request, cancellationToken));
+                });
+                
+
         [FunctionName("GetGroupUserById")]
         public async Task<ActionResult<GroupUserResponse>> GetGroupUserById(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "groups/{groupId}/users/{userId}")] HttpRequest req,

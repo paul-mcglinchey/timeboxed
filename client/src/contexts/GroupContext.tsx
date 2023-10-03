@@ -16,7 +16,6 @@ export const GroupContext = createContext<IGroupContext>({
   setGroups: () => {},
   count: 0,
   setCount: () => {},
-  getGroup: () => undefined,
   getGroupUser: () => undefined,
   userHasRole: () => false,
   isLoading: false,
@@ -59,10 +58,6 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
     currentGroup && setItemInLocalStorage('group-id', currentGroup.id)
   }, [currentGroup])
 
-  const getGroup = (groupId: string): IGroup | undefined => {
-    return groups.find(g => g.id === groupId)
-  }
-
   const getGroupUser = (userId: string, groupId?: string | undefined): IGroupUser | undefined => {
     return groups.find(g => groupId ? groupId === g.id : currentGroupId === g.id)?.users.find(u => u.userId === userId)
   }
@@ -81,7 +76,6 @@ export const GroupProvider = ({ children }: IChildrenProps) => {
     setGroups,
     count,
     setCount,
-    getGroup,
     getGroupUser,
     userHasRole,
     isLoading,

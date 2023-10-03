@@ -4,6 +4,7 @@ export interface ITableHeader {
 
 export interface ITable  {
   isLoading: boolean
+  compact?: boolean
 }
 
 export interface ITableHeaderItem {

@@ -11,17 +11,17 @@ const AdminPanel = () => {
       <div className="px-2 sm:px-6 lg:px-8 pb-10">
         <Toolbar title='Admin panel' />
         <div className="inline-flex space-x-2 mb-4">
+          <TabLink to="groups">Groups</TabLink>
           <TabLink to="lists">Lists</TabLink>
           <TabLink to="applications">Applications</TabLink>
           <TabLink to="permissions">Permissions</TabLink>
-          <TabLink to="groups">Groups</TabLink>
         </div>
         <Routes>
+          <Route path="groups" element={<GroupPanel />} />
           <Route path="lists" element={<SystemListCollectionPanel />} />
           <Route path="applications" element={<ApplicationPanel />} />
           <Route path="permissions" element={<PermissionPanel />} />
-          <Route path="groups" element={<GroupPanel />} />
-          <Route path="/" element={<Navigate to="lists" />} />
+          <Route path="/" element={<Navigate to="groups" />} />
         </Routes>
       </div>
     </>

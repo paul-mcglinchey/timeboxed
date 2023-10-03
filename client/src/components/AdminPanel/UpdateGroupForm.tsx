@@ -26,8 +26,7 @@ const UpdateGroupForm = ({ ContextualSubmissionButton, group, submissionAction }
         applications: group.applications || [],
       }}
       onSubmit={async (values) => {
-        console.log({ ...group, ...values })
-        await adminUpdateGroup({ ...group, ...values }, group.id)
+        await adminUpdateGroup({ ...values, users: group.users.map(u => u.userId) }, group.id)
         await submissionAction()
       }}
     >

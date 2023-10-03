@@ -1,5 +1,3 @@
-import { combineClassNames } from "../../services"
-
 interface IInputProps {
   id: string | undefined
   type: string
@@ -11,9 +9,6 @@ const Input = ({ id = undefined, type, placeholder, disabled, ...props }: IInput
   return (
     <input
       id={id}
-      className={combineClassNames(
-        "flex-grow dark:text-gray-200 text-gray-900"
-      )}
       {...props}
       type={type}
       placeholder={placeholder}

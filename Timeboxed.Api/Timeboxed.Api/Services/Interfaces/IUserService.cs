@@ -14,11 +14,11 @@ namespace Timeboxed.Api.Services.Interfaces
 
         public Task<bool> UserExistsAsync(Guid userId, CancellationToken cancellationToken);
 
-        public Task<UserResponse> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken);
+        public Task<UserAuthResponse> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken);
 
-        public Task<UserResponse> LoginAsync(LoginRequest request, CancellationToken cancellationToken);
+        public Task<UserAuthResponse> LoginAsync(LoginRequest request, CancellationToken cancellationToken);
 
-        public Task<UserResponse> SignupAsync(SignupRequest request, CancellationToken cancellationToken);
+        public Task<UserAuthResponse> SignupAsync(SignupRequest request, CancellationToken cancellationToken);
 
         public Task<UserPreferencesResponse> UpdateUserPreferencesAsync(UpdateUserPreferencesRequest request, CancellationToken cancellationToken);
     }

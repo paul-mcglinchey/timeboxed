@@ -13,5 +13,7 @@
         public bool IsAdmin { get; set; } = false;
 
         public UserPreferences? Preferences { get; set; }
+
+        public ICollection<GroupUser> Groups { get; set; }
     }
 }

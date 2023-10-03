@@ -30,6 +30,36 @@ namespace Timeboxed.Api.Services.Projections
             }).ToList(),
         };
 
+        public static Expression<Func<User, UserResponse>> MapEFUserToResponse => (User u) => new UserResponse
+        {
+            Id = u.Id,
+            Username = u.Username,
+            Email = u.Email,
+            IsAdmin = u.IsAdmin,
+            Preferences = new UserPreferencesResponse
+            {
+                DefaultGroup = u.Preferences.DefaultGroup,
+            },
+            GroupRoles = u.Groups.Select(g => new UserResponseGroup
+            { 
+                GroupId = g.GroupId,
+                Roles = g.Roles.Select(r => r.Name),
+                HasJoined = g.HasJoined,
+            }).ToList(),
+        };
+        
+        public static Expression<Func<User, UserAuthResponse>> MapEFUserToAuthResponse => (User u) => new UserAuthResponse
+        {
+            Id = u.Id,
+            Username = u.Username,
+            Email = u.Email,
+            IsAdmin = u.IsAdmin,
+            Preferences = new UserAuthPreferencesResponse
+            {
+                DefaultGroup = u.Preferences.DefaultGroup,
+            },
+        };
+
         public static Expression<Func<Email, EmailResponse>> MapEFEmailToResponse => (Email e) => new EmailResponse
         {
             Id = e.Id,

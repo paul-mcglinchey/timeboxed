@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Timeboxed.Api.Models.Requests;
 using Timeboxed.Api.Models.Responses;
+using Timeboxed.Api.Models.Responses.Common;
 using Timeboxed.Api.Services.Interfaces;
 using Timeboxed.Core.AccessControl.Interfaces;
 using Timeboxed.Core.Exceptions;
@@ -26,6 +27,28 @@ namespace Timeboxed.Api.Services
             this.userContextProvider = userContextProvider;
             this.groupContextProvider = groupContextProvider;
             this.context = context;
+        }
+
+        public async Task<ListResponse<GroupUserResponse>> GetGroupUsers(GetGroupUsersRequest request, CancellationToken cancellationToken)
+        {
+            var groupId = this.groupContextProvider.GroupId;
+
+            var groupUsersQuery = this.context.GroupUsers
+                .Where(gu => gu.GroupId == groupId)
+                .Include(gu => gu.Roles)
+                .Include(gu => gu.Applications)
+                .Select(MapEFGroupUserToResponse);
+
+            if (request.HasJoined != null)
+            {
+                groupUsersQuery = groupUsersQuery.Where(gu => gu.HasJoined == request.HasJoined);
+            }
+
+            return new ListResponse<GroupUserResponse>
+            {
+                Items = await groupUsersQuery.ToListAsync(cancellationToken),
+                Count = await groupUsersQuery.CountAsync(cancellationToken),
+            };
         }
 
         public async Task<GroupUserResponse> GetGroupUserByIdAsync(Guid userId, CancellationToken cancellationToken)
@@ -65,6 +88,8 @@ namespace Timeboxed.Api.Services
                 .Where(gu => gu.GroupId == this.groupContextProvider.GroupId && gu.UserId == this.userContextProvider.UserId)
                 .SingleOrDefaultAsync(cancellationToken)
             ?? throw new EntityNotFoundException($"User {this.userContextProvider.UserId} in Group {this.groupContextProvider.GroupId} not found");
+
+            this.context.GroupUsers.Remove(groupUser);
 
             await this.context.SaveChangesAsync(cancellationToken);
         }

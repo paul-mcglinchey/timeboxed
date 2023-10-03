@@ -10,7 +10,7 @@ interface IRestrictedRouteProps {
   redirect?: string
 }
 
-const RestrictedRoute = ({ applicationId , permission, component, redirect = "/notpermitted" }: IRestrictedRouteProps): JSX.Element => {
+const RestrictedRoute = ({ applicationId, permission, component, redirect = "/notpermitted" }: IRestrictedRouteProps): JSX.Element => {
   const { hasPermission } = useContext(MetaInfoContext)
 
   return hasPermission(applicationId, permission) ? component : <Navigate to={redirect} />

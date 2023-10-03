@@ -33,7 +33,7 @@ const ClientList = ({ setAddClientOpen }: IClientListProps) => {
               initialFilterField={filterableFields[0]!}
               filterableFields={filterableFields}
             />
-            <Table isLoading={isLoading}>
+            <Table isLoading={isLoading} compact>
               <Table.SortableHeader headers={clientTableHeaders} sortField={sortField} setSortField={setSortField} sortDirection={sortDirection} setSortDirection={setSortDirection} />
               <Table.Body>
                 {clients.map((c: IClientListResponse, index: number) => (

@@ -9,9 +9,10 @@ interface ISearchBarProps {
   initialFilterField?: IFilterableField
   filterableFields?: IFilterableField[]
   backgroundColorClasses?: string
+  id?: string
 }
 
-const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backgroundColorClasses = "bg-gray-300 dark:bg-gray-800" }: ISearchBarProps) => {
+const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backgroundColorClasses = "bg-gray-300 dark:bg-gray-800", id = "search-bar" }: ISearchBarProps) => {
 
   const [filterValue, setFilterValue] = useState<string | null>(null)
 
@@ -31,7 +32,7 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backg
   const handleWindowKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.ctrlKey && e.key === 'k') {
       e.preventDefault()
-      document.getElementById("search-bar")?.focus()
+      document.getElementById(id)?.focus()
     }
   }, [])
   
@@ -42,12 +43,16 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backg
   }, [filterValue, setFilter])
 
   useEffect(() => {
+    if (filterableFields.length === 1) {
+      updateFilterField(filterableFields[0])
+    }
+    
     window.addEventListener('keydown', handleWindowKeyDown)
-    document.getElementById("search-bar")?.addEventListener('keydown', handleSearchBarKeyDown)
+    document.getElementById(id)?.addEventListener('keydown', handleSearchBarKeyDown)
 
     return () => {
       window.removeEventListener('keydown', handleWindowKeyDown)
-      document.getElementById("search-bar")?.removeEventListener('keydown', handleSearchBarKeyDown)
+      document.getElementById(id)?.removeEventListener('keydown', handleSearchBarKeyDown)
     }
   }, [handleWindowKeyDown, handleSearchBarKeyDown])
 
@@ -64,7 +69,7 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backg
       </button>
       <div className="flex flex-1 relative">
         <input
-          id="search-bar"
+          id={id}
           placeholder="Search entries..."
           value={filterValue ?? ''}
           onChange={(e) => setFilterValue(e.target.value)}
@@ -84,13 +89,16 @@ const SearchBar = ({ setFilter, initialFilterField, filterableFields = [], backg
           </button>
         )}
       </div>
-      {initialFilterField && filterableFields.length > 0 && (
+      {initialFilterField && filterableFields.length > 1 && (
         <ListboxSelector<string>
           initialSelected={{ value: initialFilterField.name, label: initialFilterField.label }}
           items={filterableFields.map(ff => ({ value: ff.name, label: ff.label }))}
           label="Searchable fields"
           classes="hidden sm:block"
-          buttonClasses="dark:bg-gray-800 bg-gray-300 dark:hover:bg-gray-700 hover:bg-gray-400 transition-colors p-4 rounded-none rounded-r-md"
+          buttonClasses={combineClassNames(
+            backgroundColorClasses,
+            "hover:bg-gray-400 transition-colors p-4 rounded-none rounded-r-md"
+          )}
           optionsClasses="w-auto"
           onUpdate={(item) => updateFilterField({ label: item.label, name: item.value })}
         />

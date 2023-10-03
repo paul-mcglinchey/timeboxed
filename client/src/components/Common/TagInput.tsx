@@ -118,7 +118,7 @@ const TagInput = ({
           <HelperMessage message={helperMessage} />
         )}
       </InputLabel>
-      <button id="tags-input" className="py-1 px-2.5" type="button" onClick={focusInput}>
+      <div id="tags-input" className="py-1 px-2.5" onClick={focusInput}>
         <div className="flex items-center gap-1 flex-wrap">
           {tags.map(tag => {
             return (
@@ -140,15 +140,17 @@ const TagInput = ({
             onChange={(e) => handleChange(e)}
           />
         </div>
-      </button>
+      </div>
       <div className="flex gap-1 items-center">
-        <span className="inline-flex items-center text-sm">Suggested tags: </span>
-        {loading ? (
-          <SpinnerIcon className="w-4 h-4" />
+        {filteredTags.length > 0 ? (
+          <>
+            <span className="inline-flex items-center text-sm">Suggested tags: </span>
+            {filteredTags.map((tag: ITag) => (
+              <TagButton key={tag.id} tag={tag} onClick={() => addTag(tag)} tagSize="small" />
+            ))}
+          </>
         ) : (
-          filteredTags.map((tag: ITag) => (
-            <TagButton key={tag.id} tag={tag} onClick={() => addTag(tag)} tagSize="small" />
-          ))
+          loading && <SpinnerIcon className="w-4 h-4" />
         )}
       </div>
     </div>

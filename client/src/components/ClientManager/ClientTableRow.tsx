@@ -83,8 +83,8 @@ const ClientTableRow = ({ client }: { client: IClientListResponse }) => {
           )}
         </Modal>
       </TableRowItem>
-      <TableRowItem>
-        <div className="flex flex-grow items-center space-x-2 justify-end">
+      <TableRowItem hugRight>
+        <div className="flex items-center space-x-2">
           <InlineLink to={`/clients/${client.id}/view`} color="text-gray-500">View</InlineLink>
           <InlineButton action={() => setEditClientOpen(true)} color="text-blue-500">Edit</InlineButton>
           <InlineButton action={() => setDeleteClientOpen(true)} color="text-rose-500">Delete</InlineButton>

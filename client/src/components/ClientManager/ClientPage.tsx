@@ -43,7 +43,7 @@ const ClientPage = () => {
           </Routes>
         </div>
       ) : (
-        isLoading ? <SpinnerLoader /> : error ? Error : null
+        isLoading ? <SpinnerLoader /> : error ? <span className="text-red-500">{error.message}</span> : null
       )}
     </>
   )
