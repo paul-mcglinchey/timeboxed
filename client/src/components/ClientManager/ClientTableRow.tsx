@@ -31,6 +31,11 @@ const ClientTableRow = ({ client }: { client: IClientListResponse }) => {
     setAddSessionOpen(false)
   }
 
+  const handleDelete = async (clientId: string) => {
+    await deleteClient(clientId)
+    await fetchClients()
+  }
+
   useEffect(() => {
     if (error?.message) addNotification(error.message, Notification.Error)
   }, [error, addNotification])
@@ -102,7 +107,7 @@ const ClientTableRow = ({ client }: { client: IClientListResponse }) => {
         <Dialog
           isOpen={deleteClientOpen}
           close={() => setDeleteClientOpen(false)}
-          positiveAction={() => deleteClient(client.id)}
+          positiveAction={() => handleDelete(client.id)}
           title="Delete client"
           description="This action will delete the client from the current group"
           content="If you choose to continue you'll no longer have access to this client - all sessions belonging to the client will also become innaccessible."
