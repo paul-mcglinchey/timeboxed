@@ -11,7 +11,7 @@ const useNotification = () => {
       const message = `${verb && noun ? `Successfully ${verb}d ${noun}`: 'Success'}`
       notificationContext.addNotification(message, Notification.Success)
     } else {
-      const message = `${res.status < 500 ? (json.message || res.statusText) : `A problem occurred${verb && noun ? ` ${verb.slice(0, verb.length - 1)}ing ${noun}` : '...'}`}`
+      const message = `${res.status < 500 ? (json.message ?? res.statusText) : `A problem occurred${verb && noun ? ` ${verb.slice(0, verb.length - 1)}ing ${noun}` : '...'}`}`
       notificationContext.addNotification(message, Notification.Error)
     }
   }

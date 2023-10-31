@@ -106,7 +106,7 @@ const useClientService = (setIsLoading: Dispatch<SetStateAction<boolean>>, setEr
     if (!groupId) throw new Error()
 
     const res = await fetch((endpoints.session(clientId, groupId, sessionId)), buildRequest('DELETE'))
-    const json: string = await res.json()
+    const json = await res.json()
 
     handleResolution(res, json, 'delete', 'session')
   })

@@ -2,7 +2,7 @@ export const getItemInLocalStorage = (itemName: string): string | undefined => {
   return localStorage.getItem(itemName) || undefined;
 }
 
-export const setItemInLocalStorage = (itemName: string, data: string) => {
+export const setItemInLocalStorage = (itemName: string, data: any) => {
   localStorage.setItem(itemName, data);
 }
 
