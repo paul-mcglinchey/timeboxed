@@ -1,5 +1,5 @@
 import { useCallback, useContext } from "react";
-import { AuthContext } from "../contexts";
+import { AuthContext } from "../contexts/AuthContext";
 import { IFilter } from "../models";
 import { IRequestBuilderService } from "./interfaces/requestbuilder.service.interface";
 

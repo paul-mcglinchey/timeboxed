@@ -4,7 +4,8 @@ import { IRota } from '../../models';
 import { Prompter, SpinnerLoader, Table } from '../Common';
 import { Application, Permission } from '../../enums';
 import { rotaTableHeaders } from '../../config';
-import { MetaInfoContext, RotaContext } from '../../contexts';
+import { MetaInfoContext } from '../../contexts/MetaInfoContext';
+import { RotaContext } from '../../contexts/RotaContext';
 import RotaModal from './RotaModal';
 import RotaTableRow from './RotaTableRow';
 

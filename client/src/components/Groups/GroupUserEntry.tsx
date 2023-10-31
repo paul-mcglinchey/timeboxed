@@ -1,6 +1,6 @@
 import { PencilIcon } from "@heroicons/react/24/solid"
 import { useState, useContext } from "react"
-import { GroupContext } from "../../contexts"
+import { GroupContext } from "../../contexts/GroupContext"
 import { Role } from "../../enums"
 import { IGroup, IGroupUser } from "../../models"
 import { combineClassNames } from "../../services"

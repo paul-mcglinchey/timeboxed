@@ -1,7 +1,7 @@
 import { useContext, useState } from "react"
 import { InlineButton, Modal, TableRow, TableRowItem } from ".."
 import { IApplication, IGroup } from "../../models"
-import { MetaInfoContext } from "../../contexts"
+import { MetaInfoContext } from "../../contexts/MetaInfoContext"
 import UpdateGroupForm from "./UpdateGroupForm"
 import { PlusIcon } from "@heroicons/react/24/solid"
 import { UpdateGroupUsers } from "./UpdateGroupUsers"

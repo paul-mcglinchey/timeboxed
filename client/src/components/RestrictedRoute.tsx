@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { Navigate } from "react-router"
-import { MetaInfoContext } from "../contexts"
+import { MetaInfoContext } from "../contexts/MetaInfoContext"
 import { Permission } from "../enums"
 
 interface IRestrictedRouteProps {

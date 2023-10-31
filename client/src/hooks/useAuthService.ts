@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useContext } from "react"
 import { useNavigate } from "react-router"
 import { IPreferences, IUserRequest } from "../models"
-import { AuthContext } from "../contexts"
+import { AuthContext } from "../contexts/AuthContext"
 import { endpoints } from '../config'
 import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '.'
 import { IAuthService } from "./interfaces"

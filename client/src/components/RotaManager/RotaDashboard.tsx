@@ -1,7 +1,7 @@
 import { memo, useContext, useState } from 'react';
 import { Button, Prompter, Toolbar } from '../Common';
 import { Application, Permission } from '../../enums';
-import { MetaInfoContext } from '../../contexts';
+import { MetaInfoContext } from '../../contexts/MetaInfoContext';
 import RotaList from './RotaList';
 import RotaModal from './RotaModal';
 

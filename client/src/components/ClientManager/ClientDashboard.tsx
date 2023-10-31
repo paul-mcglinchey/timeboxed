@@ -1,8 +1,9 @@
 import { useContext, useState } from 'react';
 import { Toolbar, Prompter, Button, Modal } from '../Common';
-import { AddClientForm, ClientList } from '.';
 import { Application, Permission } from '../../enums';
-import { MetaInfoContext } from '../../contexts';
+import { MetaInfoContext } from '../../contexts/MetaInfoContext';
+import AddClientForm from './AddClientForm'
+import ClientList from './ClientList'
 
 const ClientDashboard = () => {
 

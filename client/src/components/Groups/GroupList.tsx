@@ -3,7 +3,7 @@ import { SpinnerLoader } from "../Common"
 import { Dispatch, SetStateAction, useContext } from "react"
 import GroupCard from "./GroupCard"
 import GroupPrompter from "./GroupPrompter"
-import { GroupContext } from "../../contexts"
+import { GroupContext } from "../../contexts/GroupContext"
 
 interface IGroupListProps {
   setAddGroupOpen: Dispatch<SetStateAction<boolean>>

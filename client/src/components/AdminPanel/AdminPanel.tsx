@@ -1,8 +1,9 @@
 import { NavMenu, SmartLink, Toolbar } from "../Common";
-import { SystemListCollectionPanel, ApplicationPanel, PermissionPanel, GroupPanel } from ".";
+import { SystemListCollectionPanel, ApplicationPanel, PermissionPanel } from ".";
 import { Navigate, PathMatch, Route, Routes } from "react-router";
 import { IChildrenProps } from "../../models";
 import { combineClassNames } from "../../services";
+import GroupPanel from './GroupPanel'
 
 const AdminPanel = () => {
   return (

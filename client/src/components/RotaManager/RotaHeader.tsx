@@ -7,7 +7,7 @@ import { useNotification, useRotaService } from "../../hooks";
 import { Button, Dialog, Dropdown, SpinnerIcon } from "../Common";
 import { Application, Notification, Permission } from "../../enums";
 import { IApiError } from "../../models/error.model";
-import { MetaInfoContext } from "../../contexts";
+import { MetaInfoContext } from "../../contexts/MetaInfoContext";
 import RotaModal from "./RotaModal";
 
 interface IRotaHeaderProps {

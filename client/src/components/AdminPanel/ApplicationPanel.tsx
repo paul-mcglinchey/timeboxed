@@ -1,8 +1,9 @@
 import { useContext } from 'react'
 import { useApplicationService } from '../../hooks'
 import { Table } from '../Common'
-import { Panel, ApplicationTableRow } from '.'
-import { MetaInfoContext } from '../../contexts'
+import { ApplicationTableRow } from '.'
+import { MetaInfoContext } from '../../contexts/MetaInfoContext'
+import Panel from './Panel'
 
 const ApplicationPanel = () => {
 

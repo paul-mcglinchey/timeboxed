@@ -1,6 +1,6 @@
 import { Outlet } from "react-router"
 import { clientLinks } from "../../config"
-import { ClientProvider } from "../../contexts"
+import { ClientProvider } from "../../contexts/ClientContext"
 import { NavMenu } from "../Common";
 
 const ClientManager = () => {

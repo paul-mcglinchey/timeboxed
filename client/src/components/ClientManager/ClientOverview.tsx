@@ -1,8 +1,8 @@
 import { IClient } from "../../models";
 import { generateColour, getInitials } from "../../services";
-import { InfoTabs } from ".";
 import { useContext } from "react";
-import { GroupContext } from "../../contexts";
+import { GroupContext } from "../../contexts/GroupContext";
+import InfoTabs from './InfoTabs'
 
 const ClientOverview = ({ client }: { client: IClient }) => {
 

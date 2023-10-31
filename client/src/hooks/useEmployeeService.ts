@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction, useContext } from "react";
 import { IEmployee } from "../models";
 import { generateColour } from "../services"
-import { EmployeeContext, GroupContext } from "../contexts";
+import { EmployeeContext } from "../contexts/EmployeeContext";
+import { GroupContext } from "../contexts/GroupContext";
 import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '../hooks'
 import { endpoints } from '../config'
 import { IEmployeeService } from "./interfaces";

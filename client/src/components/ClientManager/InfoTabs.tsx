@@ -1,4 +1,4 @@
-import { ActivityLog } from '.';
+import ActivityLog from './ActivityLog';
 
 const infoTabs = [
   { title: "Activity Log", component: ActivityLog },

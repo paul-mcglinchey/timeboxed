@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction, useContext } from "react";
 import { ISchedule, IScheduleShift, IScheduleRequest } from "../models"
 import { IScheduleService } from "./interfaces";
-import { GroupContext, ScheduleContext } from "../contexts";
+import { GroupContext } from "../contexts/GroupContext";
+import { ScheduleContext } from "../contexts/ScheduleContext";
 import { endpoints } from '../config'
 import { addDays, subDays } from "date-fns";
 import { useAsyncHandler, useResolutionService, useRequestBuilderService } from "../hooks";

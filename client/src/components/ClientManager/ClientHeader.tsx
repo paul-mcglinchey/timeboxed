@@ -1,11 +1,12 @@
 import { ArrowLeftIcon, TrashIcon, SquaresPlusIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Dialog, Dropdown, SpinnerIcon, Modal, AddSessionForm } from "..";
+import { Dialog, Dropdown, SpinnerIcon, Modal } from "..";
 import { Notification } from "../../enums";
 import { useClientService, useNotification } from "../../hooks";
 import { IClientListResponse } from "../../models";
 import { IApiError } from "../../models/error.model";
+import AddSessionForm from "./AddSessionForm";
 
 interface IClientHeaderProps {
   client: IClientListResponse

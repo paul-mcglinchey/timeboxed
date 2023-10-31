@@ -2,7 +2,7 @@
 import { ListboxSelector } from ".";
 import { combineClassNames } from "../../services";
 import { useContext } from "react";
-import { GroupContext } from "../../contexts";
+import { GroupContext } from "../../contexts/GroupContext";
 import { useNavigate } from "react-router-dom";
 
 interface IGroupSelectorProps {

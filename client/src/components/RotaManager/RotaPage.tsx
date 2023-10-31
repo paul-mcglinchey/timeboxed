@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import { ScheduleProvider } from "../../contexts";
+import { ScheduleProvider } from "../../contexts/ScheduleContext";
 import { IRota } from "../../models";
 import { useEffect, useState } from "react";
 import { SpinnerLoader } from "../Common";

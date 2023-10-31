@@ -1,5 +1,6 @@
 import { IClient, IClientsResponse, IGroupClientTagResponse, ISession, IUpdateSessionRequest } from "../models"
-import { ClientContext, GroupContext } from "../contexts"
+import { ClientContext } from "../contexts/ClientContext"
+import { GroupContext } from "../contexts/GroupContext"
 import { endpoints } from '../config'
 import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '.'
 import { Dispatch, SetStateAction, useContext, useMemo } from "react"

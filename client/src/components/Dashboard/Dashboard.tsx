@@ -7,7 +7,7 @@ import { IApplication } from "../../models";
 import GroupPrompter from "../Groups/GroupPrompter";
 import GroupModal from "../Groups/GroupModal";
 import AppCard from "./AppCard";
-import { AuthContext } from "../../contexts";
+import { AuthContext } from "../../contexts/AuthContext";
 import { IApiError } from "../../models/error.model";
 
 const Dashboard = () => {

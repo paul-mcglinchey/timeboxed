@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { UserIcon } from "@heroicons/react/24/solid";
 import { IEmployee } from "../../models";
 import { Prompter, Table } from "../Common";
-import { EmployeeContext } from "../../contexts";
+import { EmployeeContext } from "../../contexts/EmployeeContext";
 import EmployeeTableRow from "./EmployeeTableRow";
 
 const headers = [

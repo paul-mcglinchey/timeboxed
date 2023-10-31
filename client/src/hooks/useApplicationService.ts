@@ -1,7 +1,7 @@
 import { IApplication } from "../models"
 import { IApplicationService } from "./interfaces"
 import { useContext } from "react"
-import { MetaInfoContext } from "../contexts"
+import { MetaInfoContext } from "../contexts/MetaInfoContext"
 
 const useApplicationService = (): IApplicationService => {
   const metaInfoContext = useContext(MetaInfoContext)

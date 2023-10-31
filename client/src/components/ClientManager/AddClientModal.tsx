@@ -1,6 +1,6 @@
 import { Modal } from ".."
-import { AddClientForm } from "."
 import { IClient } from "../../models"
+import AddClientForm from './AddClientForm'
 
 interface IAddClientModalProps {
   isOpen: boolean,

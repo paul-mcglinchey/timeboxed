@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from "react"
-import { GroupTableRow, Panel, SearchBar, SpinnerLoader, Table } from ".."
+import { SearchBar, SpinnerLoader, Table } from ".."
 import { IFilter, IFilterableField, IGroup, ITableHeaderItem } from "../../models"
 import { endpoints } from "../../config"
 import { useRequestBuilderService } from "../../hooks"
 import { IListResponse } from "../../models/list-response.model"
 import { InformationCircleIcon } from "@heroicons/react/20/solid"
+import GroupTableRow from "./GroupTableRow"
+import Panel from "./Panel"
 
 const filters: IFilterableField[] = [
   { label: 'Group name', name: 'name' }

@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import {
   Navigate,
   Route,
   Routes,
   useParams
 } from "react-router";
-import { ClientHeader, ClientOverview, SessionList } from ".";
 import { useClientService } from "../../hooks";
 import { IClient } from "../../models";
 import { IApiError } from "../../models/error.model";
 import { SpinnerLoader } from "../Common";
+import ClientHeader from './ClientHeader'
+const ClientOverview = lazy(() => import('./ClientOverview'))
+const SessionList = lazy(() => import('./SessionList'))
 
 const ClientPage = () => {
 

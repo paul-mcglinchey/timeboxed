@@ -2,7 +2,7 @@ import { Fragment, useContext } from "react";
 import { FieldArray } from "formik";
 import { IEmployeeSchedule, ISchedule, IScheduleShift } from "../../models";
 import { generateColour, getInitials } from "../../services";
-import { EmployeeContext } from "../../contexts";
+import { EmployeeContext } from "../../contexts/EmployeeContext";
 import ScheduleTableRowItem from "./ScheduleTableRowItem";
 
 interface IScheduleTableRowProps {

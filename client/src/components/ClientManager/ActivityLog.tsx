@@ -1,4 +1,4 @@
-import { ActivityLogEntry } from ".";
+import ActivityLogEntry from "./ActivityLogEntry";
 
 const ActivityLog = () => {
 

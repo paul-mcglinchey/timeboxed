@@ -4,7 +4,7 @@ import { Formik } from "formik"
 
 import UserRoleGroup from "./UserRoleGroup"
 import { useContext, useState } from "react"
-import { MetaInfoContext } from "../../contexts"
+import { MetaInfoContext } from "../../contexts/MetaInfoContext"
 import { IApiError } from "../../models/error.model"
 import { FormikForm } from "../Common/FormikForm"
 

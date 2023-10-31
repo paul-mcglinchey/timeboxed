@@ -2,10 +2,12 @@ import { Dispatch, Fragment, SetStateAction, useContext } from 'react';
 import { UserPlusIcon } from '@heroicons/react/24/solid';
 import { IClientListResponse, IFilterableField } from '../../models';
 import { Paginator, Table, Prompter, SearchBar } from '../Common';
-import { ClientTableRow } from '.';
 import { Application, Permission } from '../../enums';
 import { clientTableHeaders } from '../../config';
-import { ClientContext, MetaInfoContext } from '../../contexts';
+import { ClientContext } from '../../contexts/ClientContext';
+import { MetaInfoContext } from '../../contexts/MetaInfoContext';
+
+import ClientTableRow from './ClientTableRow'
 
 interface IClientListProps {
   setAddClientOpen: Dispatch<SetStateAction<boolean>>

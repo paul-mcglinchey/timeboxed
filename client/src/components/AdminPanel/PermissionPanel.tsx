@@ -1,7 +1,8 @@
 import { useContext } from 'react'
 import { Table } from '../Common'
-import { Panel, PermissionTableRow } from '.'
-import { MetaInfoContext } from '../../contexts'
+import { PermissionTableRow } from '.'
+import { MetaInfoContext } from '../../contexts/MetaInfoContext'
+import Panel from './Panel'
 
 const PermissionPanel = () => {
 

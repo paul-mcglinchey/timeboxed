@@ -1,12 +1,14 @@
 import { SquaresPlusIcon } from '@heroicons/react/24/outline';
 import { IClientListResponse } from '../../models';
-import { InlineLink, InlineButton, TableRow, TableRowItem, Modal, UpdateClientForm, AddSessionForm, Dialog } from '..';
+import { InlineLink, InlineButton, TableRow, TableRowItem, Modal, Dialog } from '..';
 import { useContext, useEffect, useState } from 'react';
-import { GroupContext } from '../../contexts';
+import { GroupContext } from '../../contexts/GroupContext';
 import { useClientService, useNotification } from '../../hooks';
 import { IApiError } from '../../models/error.model';
 import { Notification } from '../../enums';
 import { PlusIcon } from '@heroicons/react/24/solid';
+import UpdateClientForm from './UpdateClientForm';
+import AddSessionForm from './AddSessionForm';
 
 const ClientTableRow = ({ client }: { client: IClientListResponse }) => {
 

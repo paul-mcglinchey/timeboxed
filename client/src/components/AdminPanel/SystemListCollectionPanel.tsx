@@ -6,8 +6,9 @@ import { IFetch, IList, IListCollection, IListValue } from "../../models"
 import { generateColour } from "../../services"
 import { endpoints } from "../../config"
 import { Button, Dialog, Fetch, FetchError, SpinnerIcon } from "../Common"
-import { EditableSubPanelTitle, ListItem, Panel, SubPanel, SubPanelContent } from "."
+import { EditableSubPanelTitle, ListItem, SubPanel, SubPanelContent } from "."
 import { IApiError } from "../../models/error.model"
+import Panel from './Panel'
 
 const SystemListCollectionPanel = () => {
 

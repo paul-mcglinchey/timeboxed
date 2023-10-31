@@ -6,7 +6,7 @@ import { combineClassNames } from '../../services';
 import { useTheme } from '../../hooks';
 import { FadeInOut, GroupSelector, SmartLink, Switch, ThumbIcon, WideIcon } from '.'
 import { useLocation } from 'react-router';
-import { AuthContext } from '../../contexts';
+import { AuthContext } from '../../contexts/AuthContext';
 
 interface INavMenuProps {
   links?: {

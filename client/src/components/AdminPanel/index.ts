@@ -1,6 +1,3 @@
-export { default as AdminPanel } from './AdminPanel'
-
-export { default as Panel } from './Panel'
 export { default as SubPanel } from './SubPanel'
 export { default as SubPanelContent } from './SubPanelContent'
 export { default as EditableSubPanelTitle } from './EditableSubPanelTitle'
@@ -13,6 +10,3 @@ export { default as ApplicationTableRow } from './ApplicationTableRow'
 
 export { default as PermissionPanel } from './PermissionPanel'
 export { default as PermissionTableRow } from './PermissionTableRow'
-
-export { default as GroupPanel } from './GroupPanel'
-export { default as GroupTableRow } from './GroupTableRow'

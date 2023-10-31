@@ -1,6 +1,8 @@
 import { Outlet } from "react-router"
 import { rotaLinks } from "../../config";
-import { EmployeeProvider, GroupContext, RotaProvider } from "../../contexts";
+import { EmployeeProvider } from "../../contexts/EmployeeContext"
+import { GroupContext } from "../../contexts/GroupContext"
+import { RotaProvider } from "../../contexts/RotaContext"
 import { NavMenu, SpinnerLoader } from "../Common";
 import { useContext } from "react";
 

@@ -1,6 +1,6 @@
 import { useContext } from "react"
 import { ListboxMultiSelector } from "."
-import { MetaInfoContext } from "../../contexts"
+import { MetaInfoContext } from "../../contexts/MetaInfoContext"
 import { IListboxOption } from "../../models"
 
 interface IPermissionMultiSelectorProps {

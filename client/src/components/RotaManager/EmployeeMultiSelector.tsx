@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { EmployeeContext } from "../../contexts";
+import { EmployeeContext } from "../../contexts/EmployeeContext";
 import { IEmployee, IFilter } from "../../models";
 import { combineClassNames } from "../../services";
 import { MultiSelector, SearchBar } from "../Common";

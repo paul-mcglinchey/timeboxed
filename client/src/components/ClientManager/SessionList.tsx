@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { SessionTableRow } from ".";
 import { useClientService } from "../../hooks";
 import { IClient, ISession } from "../../models";
 import { IApiError } from "../../models/error.model";
 import { SpinnerLoader, Table } from "../Common";
+import SessionTableRow from './SessionTableRow'
 
 interface ISessionListProps {
   client: IClient

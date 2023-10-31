@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction, useContext, useMemo } from "react"
 import { IRota, IRotaRequest, IUpdateRotaEmployeesRequest } from "../models"
 import { IRotaService } from "./interfaces"
-import { GroupContext, RotaContext } from "../contexts"
+import { GroupContext } from "../contexts/GroupContext"
+import { RotaContext } from "../contexts/RotaContext"
 import { endpoints } from "../config"
 import { useNavigate } from "react-router"
 import { useAsyncHandler, useResolutionService, useRequestBuilderService } from '.'

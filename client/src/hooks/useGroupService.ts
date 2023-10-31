@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useContext } from "react"
 import { IGroup, IGroupRequest } from "../models"
-import { GroupContext } from "../contexts"
+import { GroupContext } from "../contexts/GroupContext"
 import { endpoints } from '../config'
 import { useRequestBuilderService, useAsyncHandler, useResolutionService } from '.'
 import { IGroupService } from "./interfaces"
