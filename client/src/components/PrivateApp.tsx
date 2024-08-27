@@ -32,10 +32,10 @@ const PrivateApp = () => {
           <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route path="/dashboard" element={
             <Dashboard />
-          } />
+          }/>
           <Route path="/groups/*" element={
             <GroupDashboard />
-          } />
+          }/>
 
           {/* Client manager specific routes */}
           <Route path="/clients/*" element={
