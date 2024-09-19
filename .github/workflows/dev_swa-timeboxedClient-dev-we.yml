@@ -1,6 +1,7 @@
 name: Client build & deploy
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - '.github/workflows/dev_swa-timeboxedClient-dev-we.yml'
